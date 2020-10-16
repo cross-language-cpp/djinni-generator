@@ -1,0 +1,7 @@
+custom_datatype = record {
+  recordData: string;
+}
+
+other_record = record {
+  customDatatypeData: custom_datatype;
+}

@@ -1,0 +1,7 @@
+my_flags = flags {
+  flag1;
+  flag2;
+  flag3;
+  no_flags = none;
+  all_flags = all;
+}
