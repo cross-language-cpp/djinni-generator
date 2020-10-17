@@ -1,0 +1,8 @@
+my_cpp_interface = interface +c {
+  method_returning_nothing(value: i32);
+  method_returning_some_type(key: string): i32;
+  static get_version(): i32;
+
+  # Interfaces can also have constants
+  const version: i32 = 1;
+}

@@ -1,0 +1,16 @@
+all_datatypes = record {
+  booleanData: bool;
+  integer8Data: i8;
+  integer16Data: i16;
+  integer32Data: i32;
+  integer64Data: i64;
+  float32Data: f32;
+  float64Data: f64;
+  stringData: string;
+  binaryData: binary;
+  dateData: date;
+  listData: list<bool>;
+  setData: set<bool>;
+  mapData: map<i8, bool>;
+  optionalData: optional<bool>;
+}

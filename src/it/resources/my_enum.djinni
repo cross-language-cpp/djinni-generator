@@ -1,0 +1,5 @@
+my_enum = enum {
+  option1;
+  option2;
+  option3;
+}

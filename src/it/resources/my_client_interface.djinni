@@ -1,0 +1,3 @@
+my_client_interface = interface +j +o {
+  log_string(str: string): bool;
+}
