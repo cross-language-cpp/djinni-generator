@@ -23,16 +23,11 @@ jobs:
         run: sbt assembly
       - name: creating bat
         run: cp target/bin/djinni target/bin/djinni.bat
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+      - name: get upload-url for latest release
+        run:  |
+              upload_url=$(curl -sL https://api.github.com/repos/actions/checkout/releases/latest | jq -r '.upload_url')
+              echo ::set-env name=UPLOAD_URL::$upload_url
+        shell: bash
       - name: Upload Release Asset for macOS/Linux
         id: upload-release-asset-unix
         uses: actions/upload-release-asset@v1
