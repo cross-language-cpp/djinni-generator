@@ -34,7 +34,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset for macOS/Linux
-        id: upload-release-asset 
+        id: upload-release-asset-unix
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
           asset_path: target/bin/djinni
           asset_name: djinni
       - name: Upload Release Asset for Windows
-        id: upload-release-asset 
+        id: upload-release-asset-windows
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
