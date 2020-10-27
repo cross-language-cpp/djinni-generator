@@ -4,7 +4,7 @@ on:
     tags:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Upload Release Asset
+name: Upload Release Assets
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
         run: cp target/bin/djinni target/bin/djinni.bat
       - name: get upload-url for latest release
         run:  |
-              upload_url=$(curl -sL https://api.github.com/repos/actions/checkout/releases/latest | jq -r '.upload_url')
+              upload_url=$(curl -sL https://api.github.com/repos/jothepro/djinni-generator-1/releases/latest | jq -r '.upload_url')
               echo ::set-env name=UPLOAD_URL::$upload_url
         shell: bash
       - name: Upload Release Asset for macOS/Linux
