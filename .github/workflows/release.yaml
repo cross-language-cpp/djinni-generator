@@ -37,6 +37,7 @@ jobs:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: target/bin/djinni
           asset_name: djinni
+          asset_content_type: application/octet-stream
       - name: Upload Release Asset for Windows
         id: upload-release-asset-windows
         uses: actions/upload-release-asset@v1
@@ -46,3 +47,4 @@ jobs:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: target/bin/djinni.bat
           asset_name: djinni.bat
+          asset_content_type: application/bat
