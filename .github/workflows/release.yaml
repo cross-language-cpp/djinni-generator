@@ -25,7 +25,7 @@ jobs:
         run: cp target/bin/djinni target/bin/djinni.bat
       - name: get upload-url for latest release
         run:  |
-              upload_url=$(curl -sL https://api.github.com/repos/jothepro/djinni-generator-1/releases/latest | jq -r '.upload_url')
+              upload_url=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/latest | jq -r '.upload_url')
               echo ::set-env name=UPLOAD_URL::$upload_url
         shell: bash
       - name: Upload Release Asset for macOS/Linux
@@ -46,5 +46,5 @@ jobs:
         with:
           upload_url: ${{ env.UPLOAD_URL }}
           asset_path: target/bin/djinni.bat
-          asset_name: djinni.bat (for Windows)
+          asset_name: djinni.bat
           asset_content_type: application/bat
