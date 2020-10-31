@@ -1,0 +1,49 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Upload Release Assets
+
+jobs:
+  build:
+    name: Upload Release Assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.sbt
+            ~/.ivy2
+          key: scala-build-deps
+      - name: Building
+        run: sbt assembly
+      - name: creating bat
+        run: cp target/bin/djinni target/bin/djinni.bat
+      - name: get upload-url for latest release
+        run:  |
+              echo "UPLOAD_URL=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/latest | jq -r '.upload_url')" >> $GITHUB_ENV
+        shell: bash
+      - name: Upload Release Asset for macOS/Linux
+        id: upload-release-asset-unix
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: target/bin/djinni
+          asset_name: djinni
+          asset_content_type: application/octet-stream
+      - name: Upload Release Asset for Windows
+        id: upload-release-asset-windows
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: target/bin/djinni.bat
+          asset_name: djinni.bat
+          asset_content_type: application/bat
