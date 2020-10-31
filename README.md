@@ -35,6 +35,11 @@ Download the [latest released batch file](https://github.com/cross-language-cpp/
 
 ## Building from source
 
+### Build dependencies
+
+- Java JDK 8 or 11
+- [sbt](https://www.scala-sbt.org/)
+
 ### Building
 
 To build once:
