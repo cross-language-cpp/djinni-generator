@@ -6,6 +6,9 @@ import org.scalatest.Matchers.{convertToAnyShouldWrapper, equal}
 import scala.io.Source
 import scala.sys.process._
 
+/**
+  * Base class for integration tests, providing a few handy helper functions
+  */
 class IntegrationTest extends FunSpec {
   final val CPP = "cpp"
   final val JAVA = "java"
@@ -25,21 +28,29 @@ class IntegrationTest extends FunSpec {
   def ObjCpp(params: String*) = List(params: _*)
 
   /**
+    * Executes the djinni generator with the given parameters
+    * @param parameters parameters that should be passed to the process
+    * @return command-line output of the executed djinni-cli
+    */
+  def djinni(parameters: String): String = {
+    "target/bin/djinni " + parameters !!
+  }
+
+  /**
     * Executes the djinni generator with the given idl-file as input
     * @param idl filename of the djinni-file (without file extension). The file must be located in the
     *            `resources`-folder of the integration-tests (`src/it/resources`)
-    * @return commandline-output of the executed djinni-cli
+    * @return command-line output of the executed djinni-cli
     */
   def djinniGenerate(idl: String): String = {
-    return "target/bin/djinni " +
-      "--java-package djinni.it " +
+    djinni("--java-package djinni.it " +
       s"--java-out src/it/resources/result/$idl/java " +
       s"--cpp-out src/it/resources/result/$idl/cpp " +
       s"--jni-out src/it/resources/result/$idl/jni " +
       s"--objc-out src/it/resources/result/$idl/objc " +
       "--objc-type-prefix IT " +
       s"--objcpp-out src/it/resources/result/$idl/objcpp " +
-      s"--idl src/it/resources/$idl.djinni" !!
+      s"--idl src/it/resources/$idl.djinni")
   }
 
   /**

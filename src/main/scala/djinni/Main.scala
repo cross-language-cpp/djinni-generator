@@ -98,7 +98,7 @@ object Main {
       }
 
       override def showUsageOnError = false
-      head("djinni generator version", Main.getClass.getPackage.getImplementationVersion, "\n\nget the latest version at https://github.com/cross-language-cpp/djinni-generator/releases")
+      head("djinni generator version", Main.getClass.getPackage.getImplementationVersion)
       help("help")
       version("version")
       opt[File]("idl").valueName("<in-file>").required().foreach(idlFile = _)
