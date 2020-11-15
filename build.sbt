@@ -7,7 +7,6 @@ lazy val djinni = (project in file("."))
   .configs(IntegrationTest)
   .settings(
     name := "djinni",
-    version := "0.1.0",
     Defaults.itSettings,
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "it",
     libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
