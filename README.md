@@ -1,6 +1,7 @@
 # Djinni Generator
 
 ![Build](https://github.com/cross-language-cpp/djinni-generator/workflows/CI/badge.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)
 
 Djinni is a tool for generating cross-language type declarations and interface bindings. It's designed to connect C++ with either Java or Objective-C.
 
