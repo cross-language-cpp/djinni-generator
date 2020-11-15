@@ -16,9 +16,10 @@
 
 package djinni
 
-import java.io.{IOException, FileNotFoundException, File, BufferedWriter, FileWriter}
+import java.io.{BufferedWriter, File, FileNotFoundException, FileWriter, IOException}
 
 import djinni.generatorTools._
+import scopt.{OptionDef, OptionParser}
 
 object Main {
 
@@ -85,9 +86,9 @@ object Main {
     var yamlOutFile: Option[String] = None
     var yamlPrefix: String = ""
 
-    val argParser = new scopt.OptionParser[Unit]("djinni") {
+    val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
-      def identStyle(optionName: String, update: IdentConverter => Unit) = {
+      def identStyle(optionName: String, update: IdentConverter => Unit): OptionDef[String, Unit] = {
         opt[String](optionName).valueName("...").foreach(spec =>
           IdentStyle.infer(spec) match {
             case None => failure("invalid ident spec: \"" + spec + "\"")
@@ -97,7 +98,9 @@ object Main {
       }
 
       override def showUsageOnError = false
+      head("djinni generator version", Main.getClass.getPackage.getImplementationVersion, "\n\nget the latest version at https://github.com/cross-language-cpp/djinni-generator/releases")
       help("help")
+      version("version")
       opt[File]("idl").valueName("<in-file>").required().foreach(idlFile = _)
         .text("The IDL file with the type definitions, typically with extension \".djinni\".")
       opt[String]("idl-include-path").valueName("<path> ...").optional().unbounded().foreach(x => idlIncludePaths = idlIncludePaths :+ x)
@@ -264,7 +267,7 @@ object Main {
       None
     }
     val idl = try {
-      (new Parser(idlIncludePaths)).parseFile(idlFile, inFileListWriter)
+      Parser(idlIncludePaths).parseFile(idlFile, inFileListWriter)
     }
     catch {
       case ex @ (_: FileNotFoundException | _: IOException) =>
