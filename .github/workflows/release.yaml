@@ -15,6 +15,7 @@ jobs:
       - name: Caching dependencies
         uses: actions/cache@v2
         with:
+          fetch-depth: 0
           path: |
             ~/.sbt
             ~/.ivy2
