@@ -38,6 +38,16 @@ CJNIEXPORT jint JNICALL Java_djinni_it_MyCppInterface_00024CppProxy_native_1meth
     } JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)
 }
 
+CJNIEXPORT jint JNICALL Java_djinni_it_MyCppInterface_00024CppProxy_native_1methodChangingNothing(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef)
+{
+    try {
+        DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);
+        const auto& ref = ::djinni::objectFromHandleAddress<::MyCppInterface>(nativeRef);
+        auto r = ref->method_changing_nothing();
+        return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));
+    } JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)
+}
+
 CJNIEXPORT jint JNICALL Java_djinni_it_MyCppInterface_00024CppProxy_getVersion(JNIEnv* jniEnv, jobject /*this*/)
 {
     try {

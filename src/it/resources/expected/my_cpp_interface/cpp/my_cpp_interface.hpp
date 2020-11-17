@@ -17,5 +17,7 @@ public:
 
     virtual int32_t method_returning_some_type(const std::string & key) = 0;
 
+    virtual int32_t method_changing_nothing() const = 0;
+
     static int32_t get_version();
 };
