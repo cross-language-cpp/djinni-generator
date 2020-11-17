@@ -13,6 +13,8 @@ public abstract class MyCppInterface {
 
     public abstract int methodReturningSomeType(String key);
 
+    public abstract int methodChangingNothing();
+
     public static int getVersion()
     {
         return CppProxy.getVersion();
@@ -56,6 +58,14 @@ public abstract class MyCppInterface {
             return native_methodReturningSomeType(this.nativeRef, key);
         }
         private native int native_methodReturningSomeType(long _nativeRef, String key);
+
+        @Override
+        public int methodChangingNothing()
+        {
+            assert !this.destroyed.get() : "trying to use a destroyed object";
+            return native_methodChangingNothing(this.nativeRef);
+        }
+        private native int native_methodChangingNothing(long _nativeRef);
 
         public static native int getVersion();
     }

@@ -43,6 +43,13 @@ static_assert(__has_feature(objc_arc), "Djinni requires ARC to be enabled for th
     } DJINNI_TRANSLATE_EXCEPTIONS()
 }
 
+- (int32_t)methodChangingNothing {
+    try {
+        auto objcpp_result_ = _cppRefHandle.get()->method_changing_nothing();
+        return ::djinni::I32::fromCpp(objcpp_result_);
+    } DJINNI_TRANSLATE_EXCEPTIONS()
+}
+
 + (int32_t)getVersion {
     try {
         auto objcpp_result_ = ::MyCppInterface::get_version();

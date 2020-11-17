@@ -12,6 +12,8 @@ extern int32_t const ITMyCppInterfaceVersion;
 
 - (int32_t)methodReturningSomeType:(nonnull NSString *)key;
 
+- (int32_t)methodChangingNothing;
+
 + (int32_t)getVersion;
 
 @end
