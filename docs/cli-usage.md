@@ -1,8 +1,8 @@
 # Using the Generator
 
-When the Djinni file(s) are ready, from the command line or a bash script you can run:
+When the Djinni file(s) are ready, from the command line you can run:
 
-```
+```bash
 djinni \
    --java-out JAVA_OUTPUT_FOLDER \
    --java-package com.example.jnigenpackage \
@@ -25,6 +25,7 @@ djinni \
 ```
 
 !!! note
+
     If a language's output folder is not specified, that language will not be generated.
 
 ## All Arguments

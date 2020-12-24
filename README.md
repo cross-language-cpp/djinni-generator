@@ -3,9 +3,12 @@
 ![Build](https://github.com/cross-language-cpp/djinni-generator/workflows/CI/badge.svg)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)
 
+:arrow_right: Documentation: [djinni.xlcpp.dev](https://djinni.xlcpp.dev/djinni-generator/setup/)
+
 Djinni is a tool for generating cross-language type declarations and interface bindings. It's designed to connect C++ with either Java or Objective-C.
 
 Djinni generator parses an interface definition file and generates:
+
 - C++ implementations of types (enums, records)
 - Java implementations of types
 - Objective-C implementations of types
@@ -32,61 +35,3 @@ Make sure to [put it on your PATH permanently](https://stackabuse.com/how-to-per
 ### Windows
 
 Download the [latest released batch file](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni.bat), copy it where you want and [put the folder on your PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
-
-
-## Building from source
-
-### Build dependencies
-
-- Java JDK 8 or 11
-- [sbt](https://www.scala-sbt.org/)
-
-### Building
-
-To build once:
-
-```bash
-sbt compile
-```
-
-To automatically re-build on every change, open the sbt shell & prefix `compile` with `~`
-
-```bash
-$ sbt
-sbt:djinni> ~compile
-```
-
-
-### Running
-
-```bash
-sbt "run
-    --idl input.djinni
-    --cpp-out out/cpp
-    --java-out out/java/src
-    --jni-out out/java/jni
-    --objc-out out/objc"
-```
-
-```bash
-sbt "run --help"  # show all options
-```
-
-*It is important to put `run` and all arguments in `"`, to be able to pass arguments to the executed jar*
-
-### Packaging
-
-To create a standalone jar run
-
-```bash
-sbt assembly
-```
-
-This will generate a standalone, self-executing jar in `target/bin`.
-You can run the jar like this (no need for `java -jar`):
-
-```bash
-./djinni --help
-```
-
-On Windows the file must be renamed to `djinni.bat` to make it executable.

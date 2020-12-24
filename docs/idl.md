@@ -1,4 +1,4 @@
-# Interface Definition Language
+# Interface Definition Language (IDL)
 
 Djinni's input is an interface description file. Here's an example:
 
@@ -247,3 +247,12 @@ record_with_const = record +c +j +o {
 
 will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java, and
 `RecordWithConstConstValue` in Objective-C.
+
+## Comments
+
+```
+# This is a comment
+```
+
+If comments are are placed **on top or inside a type definition**,
+they will be converted to **Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces.
