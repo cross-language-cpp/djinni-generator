@@ -74,3 +74,10 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 ## Project Structure
 
 !!! bug "TODO"
+
+## Release process
+
+To release a new version of the generator, the following steps must be followed:
+
+1. Create a new release-tag. Set a meaningful version number and describe what has changed in the new version.
+2. Wait. Github will automatically build the project and upload the resulting binaries to the release.
