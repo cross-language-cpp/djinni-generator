@@ -4,3 +4,11 @@
 /test/result
 /classes
 /.idea
+# vs code stuff
+.vscode/
+.bloop/
+.metals/
+project/metals.sbt
+
+# for personal trials / tests that shall be ignored but stay on your disk
+ztest/
