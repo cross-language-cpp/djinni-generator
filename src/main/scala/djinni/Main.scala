@@ -64,6 +64,7 @@ object Main {
     var cppIdentStyle = IdentStyle.cppDefault
     var cppTypeEnumIdentStyle: IdentConverter = null
     var objcOutFolder: Option[File] = None
+    var objcHeaderOutFolderOptional: Option[File] = None
     var objcppOutFolder: Option[File] = None
     var objcppExt: String = "mm"
     var objcHeaderExt: String = "h"
@@ -169,6 +170,8 @@ object Main {
       note("")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
+      opt[File]("objc-header-out").valueName("<out-folder>").foreach(x => objcHeaderOutFolderOptional = Some(x))
+        .text("The folder for the Objective-C header files (default: the same as --objc-out).")
       opt[String]("objc-h-ext").valueName("<ext>").foreach(objcHeaderExt = _)
         .text("The filename extension for Objective-C[++] header files (default: \"h\")")
       opt[String]("objc-type-prefix").valueName("<pre>").foreach(objcTypePrefix = _)
@@ -243,6 +246,7 @@ object Main {
 
     val cppHeaderOutFolder = if (cppHeaderOutFolderOptional.isDefined) cppHeaderOutFolderOptional else cppOutFolder
     val jniHeaderOutFolder = if (jniHeaderOutFolderOptional.isDefined) jniHeaderOutFolderOptional else jniOutFolder
+    val objcHeaderOutFolder = if (objcHeaderOutFolderOptional.isDefined) objcHeaderOutFolderOptional else objcOutFolder
     val jniClassIdentStyle = jniClassIdentStyleOptional.getOrElse(cppIdentStyle.ty)
     val jniBaseLibClassIdentStyle = jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
     val jniFileIdentStyle = jniFileIdentStyleOptional.getOrElse(cppFileIdentStyle)
@@ -343,6 +347,7 @@ object Main {
       cppExt,
       cppHeaderExt,
       objcOutFolder,
+      objcHeaderOutFolder,
       objcppOutFolder,
       objcIdentStyle,
       objcFileIdentStyle,
