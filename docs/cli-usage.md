@@ -87,6 +87,7 @@ djinni \
 | Argument | Description |
 | -------- | ----------- |
 | `--objc-out <out-folder>` | The output folder for Objective-C files (Generator disabled if unspecified). |
+| `--objc-header-out <out-folder>` | The output folder for Objective-C header files (default: the same as --objc-out). |
 | `--objc-h-ext <ext>` | The filename extension for Objective-C[++] header files (default: `h`) |
 | `--objc-type-prefix <pre>` | The prefix for Objective-C data types (usually two or three letters) |
 | `--objc-include-prefix <prefix>` | The prefix for #import of header files from Objective-C files. |
@@ -115,7 +116,7 @@ djinni \
 |`--yaml-out-file <out-file>` | If specified all types are merged into a single YAML file instead of generating one file per type (relative to `--yaml-out`).  |
 |`--yaml-prefix <pre>` | The prefix to add to type names stored in YAML files (default: "").  |
 
-### Other 
+### Other
 
 | Argument | Description |
 | -------- | ----------- |

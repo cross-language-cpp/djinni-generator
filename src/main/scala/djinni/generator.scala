@@ -63,6 +63,7 @@ package object generatorTools {
                    cppExt: String,
                    cppHeaderExt: String,
                    objcOutFolder: Option[File],
+                   objcHeaderOutFolder: Option[File],
                    objcppOutFolder: Option[File],
                    objcIdentStyle: ObjcIdentStyle,
                    objcFileIdentStyle: IdentConverter,
@@ -205,9 +206,12 @@ package object generatorTools {
         }
         new JNIGenerator(spec).generate(idl)
       }
-      if (spec.objcOutFolder.isDefined) {
-        if (!spec.skipGeneration) {
+      if (!spec.skipGeneration) {
+        if (spec.objcOutFolder.isDefined) {
           createFolder("Objective-C", spec.objcOutFolder.get)
+        }
+        if (spec.objcHeaderOutFolder.isDefined) {
+          createFolder("Objective-C header", spec.objcHeaderOutFolder.get)
         }
         new ObjcGenerator(spec).generate(idl)
       }
