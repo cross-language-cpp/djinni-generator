@@ -56,7 +56,7 @@ object Main {
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
-    var jniBaseLibIncludePrefix: String = ""
+    var jniBaseLibIncludePrefix: String = "djinni/jni/"
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
     var cppHeaderExt: String = "hpp"
@@ -79,7 +79,7 @@ object Main {
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcppNamespace: String = "djinni_generated"
-    var objcBaseLibIncludePrefix: String = ""
+    var objcBaseLibIncludePrefix: String = "djinni/objc/"
     var inFileListPath: Option[File] = None
     var outFileListPath: Option[File] = None
     var skipGeneration: Boolean = false
@@ -166,7 +166,7 @@ object Main {
       opt[String]("jni-namespace").valueName("...").foreach(x => jniNamespace = x)
         .text("The namespace name to use for generated JNI C++ classes.")
       opt[String]("jni-base-lib-include-prefix").valueName("...").foreach(x => jniBaseLibIncludePrefix = x)
-        .text("The JNI base library's include path, relative to the JNI C++ classes.")
+        .text("The JNI base support library's include path (default: djinni/jni/).")
       note("")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
@@ -200,7 +200,7 @@ object Main {
       opt[String]("objcpp-namespace").valueName("<prefix>").foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
       opt[String]("objc-base-lib-include-prefix").valueName("...").foreach(x => objcBaseLibIncludePrefix = x)
-        .text("The Objective-C++ base library's include path, relative to the Objective-C++ classes.")
+        .text("The Objective-C base support library's include path (default: djinni/objc/).")
       note("")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
