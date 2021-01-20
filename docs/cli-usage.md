@@ -187,7 +187,7 @@ This way you can adopt code generation to some extend to your existing coding st
 
 The best way to find out how that works is playing around with different values for different identifier options.
 
-If you wish not text transformation to happen, use the `foo_bar` style.
+**If you wish not text transformation to happen, use the `foo_bar` style.**
 
 !!! note
 
