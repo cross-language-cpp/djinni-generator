@@ -191,5 +191,5 @@ The best way to find out how that works is playing around with different values 
 
 !!! note
 
-    Some defaults have been set while back, that, for example enum names are transformed to uppercase letters.
-    At the moment we do not want to change that behavior, but please be aware that we think the default should always be no text transformation for all settings.
+    Some identifiers do have text transformation enabled by default. 
+    Nevertheless make sure to **explicitly set** text transformation styles if you need them! All text transformation may be disabled by default in a future release of the generator.
