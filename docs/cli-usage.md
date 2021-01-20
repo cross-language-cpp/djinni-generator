@@ -150,7 +150,6 @@ Identifier styles (ex: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`)
 | `--ident-objc-type-param ...` |
 | `--ident-objc-local ...` |
 | `--ident-objc-file ...` |
-|   |
 
 The _Identifier Style_ is a text conversion hint on how to generate names from the djinni idl file.
 
