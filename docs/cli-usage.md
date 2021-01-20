@@ -80,7 +80,7 @@ djinni \
 | `--jni-include-prefix <prefix>` | The prefix for #includes of JNI header files from JNI C++ files. |
 | `--jni-include-cpp-prefix <prefix>` | The prefix for #includes of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
-| `--jni-base-lib-include-prefix ...` | The JNI base library's include path, relative to the JNI C++ classes. |
+| `--jni-base-lib-include-prefix ...` | The JNI base support library's include path (default: djinni/jni/). |
 
 ### Objective-C
 
@@ -106,7 +106,7 @@ djinni \
 | `--cpp-extended-record-include-prefix <prefix>` | The prefix path for #include of the extended record C++ header (`.hpp`) files |
 |`--objc-extended-record-include-prefix <prefix>` | The prefix path for #import of the extended record Objective-C header (`.h`) files  |
 |`--objcpp-namespace <prefix>` | The namespace name to use for generated Objective-C++ classes.  |
-|`--objc-base-lib-include-prefix ...` | The Objective-C++ base library's include path, relative to the Objective-C++ classes.  |
+|`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: djinni/objc/).  |
 
 ### Yaml Generation
 
@@ -151,5 +151,44 @@ Identifier styles (ex: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`)
 | `--ident-objc-local ...` |
 | `--ident-objc-file ...` |
 
+The _Identifier Style_ is a text conversion hint on how to generate names from the djinni idl file.
+
+Example:
+The djinni idl for an enum
+
+```
+SomeEnum = enum {
+    Value;
+}
+```
+
+transforms per default to the following Java code
+
+```
+public enum SomeEnum {
+    VALUE,
+    ;
+}
+```
+As you see, _VALUE_ is now in upper case letters.
+
+If you use `--ident-java-enum foo_bar` then _Value_ will not be transformed into upper case and the following Java code will be generated.
+
+```
+public enum SomeEnum {
+    Value,
+    ;
+}
+```
+
+This way you can adopt code generation to some extend to your existing coding style.
 
 
+The best way to find out how that works is playing around with different values for different identifier options.
+
+**If you wish not text transformation to happen, use the `foo_bar` style.**
+
+!!! note
+
+    Some identifiers do have text transformation enabled by default. 
+    Nevertheless make sure to **explicitly set** text transformation styles if you need them! All text transformation may be disabled by default in a future release of the generator.
