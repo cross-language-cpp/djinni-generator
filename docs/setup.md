@@ -8,6 +8,8 @@
 
 ### Linux, macOS
 
+#### Download & Install Manually
+
 Download the [lastest released binary](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni), make it executable and put the containing folder on your PATH:
 
 ```bash
@@ -17,6 +19,13 @@ export PATH=$(pwd):$PATH
 ```
 
 Make sure to [put it on your PATH permanently](https://stackabuse.com/how-to-permanently-set-path-in-linux/) once you fell in love with djinni! :blush:
+
+#### Install with [asdf](https://asdf-vm.com/)
+
+```bash
+asdf plugin add djinni
+asdf install djinni latest
+```
 
 ### Windows
 
