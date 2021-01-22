@@ -2,6 +2,7 @@
 
 ![Build](https://github.com/cross-language-cpp/djinni-generator/workflows/CI/badge.svg)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)
+![GitHub all releases](https://img.shields.io/github/downloads/cross-language-cpp/djinni-generator/total)
 
 :arrow_right: Documentation: [djinni.xlcpp.dev](https://djinni.xlcpp.dev/djinni-generator/setup/)
 
@@ -22,6 +23,8 @@ Djinni **requires Java** to be able to execute!
 
 ### Linux, macOS
 
+#### Download & Install Manually
+
 Download the [lastest released binary](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni), make it executable and put the containing folder on your PATH:
 
 ```bash
@@ -31,6 +34,13 @@ export PATH=$(pwd):$PATH
 ```
 
 Make sure to [put it on your PATH permanently](https://stackabuse.com/how-to-permanently-set-path-in-linux/) once you fell in love with djinni! :blush:
+
+#### Install with [asdf](https://asdf-vm.com/)
+
+```bash
+asdf plugin add djinni
+asdf install djinni latest
+```
 
 ### Windows
 
