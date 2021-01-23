@@ -190,5 +190,42 @@ The best way to find out how that works is playing around with different values 
 
 !!! note
 
-    Some identifiers do have text transformation enabled by default. 
+    Some identifiers do have text transformation enabled by default.
     Nevertheless make sure to **explicitly set** text transformation styles if you need them! All text transformation may be disabled by default in a future release of the generator.
+
+### Default Identifier Style settings
+(Please note that this list is work in progress)
+#### C++
+
+| Argument | Default  |
+| -------- | -------- |
+| `--ident-cpp-enum` | FooBar |
+| `--ident-cpp-field` | foo_bar |
+| `--ident-cpp-method` | foo_bar |
+| `--ident-cpp-type` | FooBar |
+| `--ident-cpp-enum-type` | FOO_BAR |
+| `--ident-cpp-type-param` | fooBar |
+| `--ident-cpp-local` | foo_bar |
+| `--ident-cpp-file` | - |
+
+#### Java
+
+| Argument | Default  |
+| -------- | -------- |
+| `--ident-java-enum` | FOO_BAR |
+| `--ident-java-field` | fooBar |
+| `--ident-java-type` | FooBar |
+| `--ident-jni-class` | - |
+| `--ident-jni-file` | - |
+
+#### Objective C
+
+| Argument | Default      |
+| -------- | -------- |
+| `--ident-objc-enum` | FooBar |
+| `--ident-objc-field` | fooBar |
+| `--ident-objc-method` | fooBar |
+| `--ident-objc-type` | FooBar |
+| `--ident-objc-type-param` | FooBar |
+| `--ident-objc-local` | fooBar |
+| `--ident-objc-file` | - |
