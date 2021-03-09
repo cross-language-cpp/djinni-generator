@@ -228,4 +228,4 @@ The best way to find out how that works is playing around with different values 
 | `--ident-objc-type` | FooBar |
 | `--ident-objc-type-param` | FooBar |
 | `--ident-objc-local` | fooBar |
-| `--ident-objc-file` | - |
+| `--ident-objc-file` | FooBar |
