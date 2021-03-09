@@ -203,8 +203,8 @@ The best way to find out how that works is playing around with different values 
 | `--ident-cpp-field` | foo_bar |
 | `--ident-cpp-method` | foo_bar |
 | `--ident-cpp-type` | FooBar |
-| `--ident-cpp-enum-type` | FOO_BAR |
-| `--ident-cpp-type-param` | fooBar |
+| `--ident-cpp-enum-type` | FooBar |
+| `--ident-cpp-type-param` | FooBar |
 | `--ident-cpp-local` | foo_bar |
 | `--ident-cpp-file` | - |
 
