@@ -215,8 +215,8 @@ The best way to find out how that works is playing around with different values 
 | `--ident-java-enum` | FOO_BAR |
 | `--ident-java-field` | fooBar |
 | `--ident-java-type` | FooBar |
-| `--ident-jni-class` | - |
-| `--ident-jni-file` | - |
+| `--ident-jni-class` | FooBar |
+| `--ident-jni-file` | foo_bar |
 
 #### Objective C
 
