@@ -194,7 +194,7 @@ The best way to find out how that works is playing around with different values 
     Nevertheless make sure to **explicitly set** text transformation styles if you need them! All text transformation may be disabled by default in a future release of the generator.
 
 ### Default Identifier Style settings
-(Please note that this list is work in progress)
+
 #### C++
 
 | Argument | Default  |
