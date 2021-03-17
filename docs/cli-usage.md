@@ -199,33 +199,33 @@ The best way to find out how that works is playing around with different values 
 
 | Argument | Default  |
 | -------- | -------- |
-| `--ident-cpp-enum` | FOO_BAR |
-| `--ident-cpp-field` | foo_bar |
-| `--ident-cpp-method` | foo_bar |
-| `--ident-cpp-type` | FooBar |
-| `--ident-cpp-enum-type` | FooBar |
-| `--ident-cpp-type-param` | FooBar |
-| `--ident-cpp-local` | foo_bar |
-| `--ident-cpp-file` | foo_bar |
+| `--ident-cpp-enum` | `FOO_BAR` |
+| `--ident-cpp-field` | `foo_bar` |
+| `--ident-cpp-method` | `foo_bar` |
+| `--ident-cpp-type` | `FooBar` |
+| `--ident-cpp-enum-type` | `FooBar` |
+| `--ident-cpp-type-param` | `FooBar` |
+| `--ident-cpp-local` | `foo_bar` |
+| `--ident-cpp-file` | `foo_bar` |
 
 #### Java
 
 | Argument | Default  |
 | -------- | -------- |
-| `--ident-java-enum` | FOO_BAR |
-| `--ident-java-field` | fooBar |
-| `--ident-java-type` | FooBar |
-| `--ident-jni-class` | FooBar |
-| `--ident-jni-file` | foo_bar |
+| `--ident-java-enum` | `FOO_BAR` |
+| `--ident-java-field` | `fooBar` |
+| `--ident-java-type` | `FooBar` |
+| `--ident-jni-class` | `FooBar` |
+| `--ident-jni-file` | `foo_bar` |
 
 #### Objective C
 
 | Argument | Default      |
 | -------- | -------- |
-| `--ident-objc-enum` | FooBar |
-| `--ident-objc-field` | fooBar |
-| `--ident-objc-method` | fooBar |
-| `--ident-objc-type` | FooBar |
-| `--ident-objc-type-param` | FooBar |
-| `--ident-objc-local` | fooBar |
-| `--ident-objc-file` | FooBar |
+| `--ident-objc-enum` | `FooBar` |
+| `--ident-objc-field` | `fooBar` |
+| `--ident-objc-method` | `fooBar` |
+| `--ident-objc-type` | `FooBar` |
+| `--ident-objc-type-param` | `FooBar` |
+| `--ident-objc-local` | `fooBar` |
+| `--ident-objc-file` | `FooBar` |
