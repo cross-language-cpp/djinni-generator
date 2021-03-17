@@ -89,8 +89,8 @@ object Main {
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
-      def identStyle(optionName: String, update: IdentConverter => Unit): OptionDef[String, Unit] = {
-        opt[String](optionName).valueName("...").foreach(spec =>
+      def identStyle(optionName: String, defaultValue: String , update: IdentConverter => Unit): OptionDef[String, Unit] = {
+        opt[String](optionName).valueName("...").text(s"(default: $defaultValue)").foreach(spec =>
           IdentStyle.infer(spec) match {
             case None => failure("invalid ident spec: \"" + spec + "\"")
             case Some(func) => update(func)
@@ -216,27 +216,33 @@ object Main {
       opt[Boolean]("skip-generation").valueName("<true/false>").foreach(x => skipGeneration = x)
         .text("Way of specifying if file generation should be skipped (default: false)")
 
-      note("\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")\n")
-      identStyle("ident-java-enum",      c => { javaIdentStyle = javaIdentStyle.copy(enum = c) })
-      identStyle("ident-java-field",     c => { javaIdentStyle = javaIdentStyle.copy(field = c) })
-      identStyle("ident-java-type",      c => { javaIdentStyle = javaIdentStyle.copy(ty = c) })
-      identStyle("ident-cpp-enum",       c => { cppIdentStyle = cppIdentStyle.copy(enum = c) })
-      identStyle("ident-cpp-field",      c => { cppIdentStyle = cppIdentStyle.copy(field = c) })
-      identStyle("ident-cpp-method",     c => { cppIdentStyle = cppIdentStyle.copy(method = c) })
-      identStyle("ident-cpp-type",       c => { cppIdentStyle = cppIdentStyle.copy(ty = c) })
-      identStyle("ident-cpp-enum-type",  c => { cppTypeEnumIdentStyle = c })
-      identStyle("ident-cpp-type-param", c => { cppIdentStyle = cppIdentStyle.copy(typeParam = c) })
-      identStyle("ident-cpp-local",      c => { cppIdentStyle = cppIdentStyle.copy(local = c) })
-      identStyle("ident-cpp-file",       c => { cppFileIdentStyle = c })
-      identStyle("ident-jni-class",      c => { jniClassIdentStyleOptional = Some(c)})
-      identStyle("ident-jni-file",       c => { jniFileIdentStyleOptional = Some(c)})
-      identStyle("ident-objc-enum",       c => { objcIdentStyle = objcIdentStyle.copy(enum = c) })
-      identStyle("ident-objc-field",      c => { objcIdentStyle = objcIdentStyle.copy(field = c) })
-      identStyle("ident-objc-method",     c => { objcIdentStyle = objcIdentStyle.copy(method = c) })
-      identStyle("ident-objc-type",       c => { objcIdentStyle = objcIdentStyle.copy(ty = c) })
-      identStyle("ident-objc-type-param", c => { objcIdentStyle = objcIdentStyle.copy(typeParam = c) })
-      identStyle("ident-objc-local",      c => { objcIdentStyle = objcIdentStyle.copy(local = c) })
-      identStyle("ident-objc-file",       c => { objcFileIdentStyleOptional = Some(c) })
+      note("\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")")
+
+      note("\nC++ options:")
+      identStyle("ident-cpp-enum",        "FOO_BAR" ,    c => { cppIdentStyle = cppIdentStyle.copy(enum = c) })
+      identStyle("ident-cpp-field",       "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(field = c) })
+      identStyle("ident-cpp-method",      "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(method = c) })
+      identStyle("ident-cpp-type",        "FooBar" ,    c => { cppIdentStyle = cppIdentStyle.copy(ty = c) })
+      identStyle("ident-cpp-enum-type",   "FooBar" , c => { cppTypeEnumIdentStyle = c })
+      identStyle("ident-cpp-type-param",  "FooBar" ,c => { cppIdentStyle = cppIdentStyle.copy(typeParam = c) })
+      identStyle("ident-cpp-local",       "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(local = c) })
+      identStyle("ident-cpp-file",        "foo_bar" ,    c => { cppFileIdentStyle = c })
+
+      note("\nJava and JNI options:")
+      identStyle("ident-java-enum",   "FOO_BAR" ,    c => { javaIdentStyle = javaIdentStyle.copy(enum = c) })
+      identStyle("ident-java-field",  "fooBar" ,   c => { javaIdentStyle = javaIdentStyle.copy(field = c) })
+      identStyle("ident-java-type",   "FooBar" ,   c => { javaIdentStyle = javaIdentStyle.copy(ty = c) })
+      identStyle("ident-jni-class",   "FooBar" ,    c => { jniClassIdentStyleOptional = Some(c)})
+      identStyle("ident-jni-file",    "foo_bar" ,    c => { jniFileIdentStyleOptional = Some(c)})
+
+      note("\nObjective-C options:")
+      identStyle("ident-objc-enum",       "FooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(enum = c) })
+      identStyle("ident-objc-field",      "fooBar" ,   c => { objcIdentStyle = objcIdentStyle.copy(field = c) })
+      identStyle("ident-objc-method",     "fooBar" ,   c => { objcIdentStyle = objcIdentStyle.copy(method = c) })
+      identStyle("ident-objc-type",       "FooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(ty = c) })
+      identStyle("ident-objc-type-param", "FooBar" , c => { objcIdentStyle = objcIdentStyle.copy(typeParam = c) })
+      identStyle("ident-objc-local",      "fooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(local = c) })
+      identStyle("ident-objc-file",       "FooBar" ,    c => { objcFileIdentStyleOptional = Some(c) })
 
     }
 
