@@ -116,15 +116,9 @@ package object generatorTools {
     val underCaps = (s: String) => s.toUpperCase
     val prefix = (prefix: String, suffix: IdentConverter) => (s: String) => prefix + suffix(s)
 
-    val javaDefault = JavaIdentStyle(ty = camelUpper, typeParam = camelUpper,
-                                     method = camelLower, field = camelLower, local = camelLower,
-                                     enum = underCaps, const = underCaps)
-    val cppDefault = CppIdentStyle(ty = camelUpper, enumType = camelUpper, typeParam = camelUpper,
-                                   method = underLower, field = underLower, local = underLower,
-                                   enum = underCaps, const = underCaps)
-    val objcDefault = ObjcIdentStyle(ty = camelUpper, typeParam = camelUpper,
-                                     method = camelLower, field = camelLower, local = camelLower,
-                                     enum = camelUpper, const = camelUpper)
+    val javaDefault = JavaIdentStyle(camelUpper, camelUpper, camelLower, camelLower, camelLower, underCaps, underCaps)
+    val cppDefault = CppIdentStyle(camelUpper, camelUpper, camelUpper, underLower, underLower, underLower, underCaps, underCaps)
+    val objcDefault = ObjcIdentStyle(camelUpper, camelUpper, camelLower, camelLower, camelLower, camelUpper, camelUpper)
 
     val styles = Map(
       "FooBar" -> camelUpper,
