@@ -227,10 +227,12 @@ package object generatorTools {
         }
         new ObjcppGenerator(spec).generate(idl)
       }
-      if (spec.objcSwiftBridgingHeaderWriter.isDefined) {
-        SwiftBridgingHeaderGenerator.writeAutogenerationWarning(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
-        SwiftBridgingHeaderGenerator.writeBridgingVars(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
-        new SwiftBridgingHeaderGenerator(spec).generate(idl)
+      if (!spec.skipGeneration) {
+        if (spec.objcSwiftBridgingHeaderWriter.isDefined) {
+          SwiftBridgingHeaderGenerator.writeAutogenerationWarning(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
+          SwiftBridgingHeaderGenerator.writeBridgingVars(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
+          new SwiftBridgingHeaderGenerator(spec).generate(idl)
+        }
       }
       if (spec.yamlOutFolder.isDefined) {
         if (!spec.skipGeneration) {
