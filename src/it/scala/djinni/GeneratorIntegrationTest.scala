@@ -1,6 +1,7 @@
 package djinni
 
 import org.scalatest.GivenWhenThen
+import org.scalatest.Matchers.{convertToAnyShouldWrapper, equal}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
@@ -77,6 +78,34 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         Then(s"the expected files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
       }
+    }
+
+    it("should be able to only generate Java output") {
+      val outputPath = "src/it/resources/result/only_java_out"
+      When("calling the generator with just `--java-out`")
+      val output: String = djinni(s"--idl src/it/resources/all_datatypes.djinni --java-out $outputPath")
+      Then("the generator should successfully generate just java output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/AllDatatypes.java")
+    }
+
+    it("should be able to only generate Obj-C output") {
+      val outputPath = "src/it/resources/result/only_objc_out"
+      When("calling the generator with just `--objc-out`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-out $outputPath")
+      Then("the generator should successfully generate just objc output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/AllDatatypes.h")
+      assertFileExists(s"$outputPath/AllDatatypes.mm")
+    }
+
+    it("should be able to only generate C++ output") {
+      val outputPath = "src/it/resources/result/only_cpp_out"
+      When("calling the generator with just `--cpp-out`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --cpp-out $outputPath")
+      Then("the generator should successfully generate just cpp output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/all_datatypes.hpp")
     }
   }
 }
