@@ -1,7 +1,7 @@
 package djinni
 
 import org.scalatest.FunSpec
-import org.scalatest.Matchers.{convertToAnyShouldWrapper, equal}
+import org.scalatest.Matchers.{be, convertToAnyShouldWrapper, equal, noException}
 
 import scala.io.Source
 import scala.sys.process._
@@ -68,6 +68,10 @@ class IntegrationTest extends FunSpec {
       resultFile.close()
       expectationFile.close()
     }
+  }
+
+  def assertFileExists(filename: String): Unit = {
+      noException should be thrownBy Source.fromFile(filename)
   }
 
 }
