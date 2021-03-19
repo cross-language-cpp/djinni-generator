@@ -212,12 +212,12 @@ package object generatorTools {
         }
         new JNIGenerator(spec).generate(idl)
       }
-      if (!spec.skipGeneration) {
-        if (spec.objcOutFolder.isDefined) {
+      if (spec.objcOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
           createFolder("Objective-C", spec.objcOutFolder.get)
-        }
-        if (spec.objcHeaderOutFolder.isDefined) {
-          createFolder("Objective-C header", spec.objcHeaderOutFolder.get)
+          if (spec.objcHeaderOutFolder.isDefined) {
+            createFolder("Objective-C header", spec.objcHeaderOutFolder.get)
+          }
         }
         new ObjcGenerator(spec).generate(idl)
       }
@@ -227,10 +227,12 @@ package object generatorTools {
         }
         new ObjcppGenerator(spec).generate(idl)
       }
-      if (spec.objcSwiftBridgingHeaderWriter.isDefined) {
-        SwiftBridgingHeaderGenerator.writeAutogenerationWarning(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
-        SwiftBridgingHeaderGenerator.writeBridgingVars(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
-        new SwiftBridgingHeaderGenerator(spec).generate(idl)
+      if (!spec.skipGeneration) {
+        if (spec.objcSwiftBridgingHeaderWriter.isDefined) {
+          SwiftBridgingHeaderGenerator.writeAutogenerationWarning(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
+          SwiftBridgingHeaderGenerator.writeBridgingVars(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
+          new SwiftBridgingHeaderGenerator(spec).generate(idl)
+        }
       }
       if (spec.yamlOutFolder.isDefined) {
         if (!spec.skipGeneration) {
