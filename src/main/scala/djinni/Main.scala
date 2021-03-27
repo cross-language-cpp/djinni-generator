@@ -86,6 +86,14 @@ object Main {
     var yamlOutFolder: Option[File] = None
     var yamlOutFile: Option[String] = None
     var yamlPrefix: String = ""
+    var pyOutFolder: Option[File] = None
+    var pyPackageName: String = ""
+    var pyIdentStyle = IdentStyle.pythonDefault
+    var cWrapperOutFolder: Option[File] = None
+    var pycffiPackageName: String = ""
+    var pycffiDynamicLibList: String = ""
+    var pycffiOutFolder: Option[File] = None
+    var pyImportPrefix: String = ""
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -215,6 +223,18 @@ object Main {
         .text("Optional file in which to write the list of output files produced.")
       opt[Boolean]("skip-generation").valueName("<true/false>").foreach(x => skipGeneration = x)
         .text("Way of specifying if file generation should be skipped (default: false)")
+      opt[File]("py-out").valueName("<out-folder>").foreach(x => pyOutFolder = Some(x))
+        .text("The output folder for Python files (Generator disabled if unspecified).")
+      opt[File]("pycffi-out").valueName("<out-folder>").foreach(x => pycffiOutFolder = Some(x))
+        .text("The output folder for PyCFFI files (Generator disabled if unspecified).")
+      opt[String]("pycffi-package-name").valueName("...").foreach(x => pycffiPackageName= x)
+        .text("The package name to use for the generated PyCFFI classes.")
+      opt[String]("pycffi-dynamic-lib-list").valueName("...").foreach(x => pycffiDynamicLibList= x)
+        .text("The names of the dynamic libraries to be linked with PyCFFI.")
+      opt[File]("c-wrapper-out").valueName("<out-folder>").foreach(x => cWrapperOutFolder = Some(x))
+        .text("The output folder for Wrapper C files (Generator disabled if unspecified).")
+      opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
+        .text("The import prefix used within python genereated files (default: \"\")")
 
       note("\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")")
 
@@ -373,7 +393,16 @@ object Main {
       skipGeneration,
       yamlOutFolder,
       yamlOutFile,
-      yamlPrefix)
+      yamlPrefix,
+      pyOutFolder,
+      pyPackageName,
+      pyIdentStyle,
+      pycffiOutFolder,
+      pycffiPackageName,
+      pycffiDynamicLibList,
+      idlFile.getName(),
+      cWrapperOutFolder,
+      pyImportPrefix)
 
 
     try {
