@@ -308,7 +308,7 @@ object Main {
       None
     }
     val objcSwiftBridgingHeaderWriter = if (objcSwiftBridgingHeaderName.isDefined && objcOutFolder.isDefined) {
-      val objcSwiftBridgingHeaderFile = new File(objcOutFolder.get.getPath, objcSwiftBridgingHeaderName.get + ".h")
+      val objcSwiftBridgingHeaderFile = new File(objcHeaderOutFolder.get.getPath, objcSwiftBridgingHeaderName.get + ".h")
       if (objcSwiftBridgingHeaderFile.getParentFile != null)
         createFolder("output file list", objcSwiftBridgingHeaderFile.getParentFile)
       Some(new BufferedWriter(new FileWriter(objcSwiftBridgingHeaderFile)))
