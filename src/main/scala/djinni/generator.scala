@@ -326,6 +326,10 @@ abstract class Generator(spec: Spec)
   }
 
   protected def appendToFile(folder: File, fileName: String, f: IndentWriter => Unit): Unit = {
+    if (spec.skipGeneration) {
+      return
+    }
+
     val file = new File(folder, fileName)
 
     val fout = new FileOutputStream(file, true)
