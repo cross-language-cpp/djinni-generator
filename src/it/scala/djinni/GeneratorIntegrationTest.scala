@@ -16,7 +16,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         "jniHeaderFilenames",
         "objcFilenames",
         "objcHeaderFilenames",
-        "objcppFilenames"),
+        "objcppFilenames",
+        "pythonFilenames",
+        "pyCffiFilenames",
+        "cWrapperFilenames"),
       ("my_enum",
         Cpp(),
         CppHeaders("my_enum.hpp"),
@@ -25,7 +28,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_enum.hpp"),
         ObjC(),
         ObjCHeaders("ITMyEnum.h", "bridging-header.h"),
-        ObjCpp("ITMyEnum+Private.h")),
+        ObjCpp("ITMyEnum+Private.h"),
+        Python("my_enum.py"),
+        PyCffi(),
+        CWrapper("dh__my_enum.cpp", "dh__my_enum.h", "dh__my_enum.hpp")),
       ("my_flags",
         Cpp(),
         CppHeaders("my_flags.hpp"),
@@ -34,7 +40,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_flags.hpp"),
         ObjC(),
         ObjCHeaders("ITMyFlags.h"),
-        ObjCpp("ITMyFlags+Private.h")),
+        ObjCpp("ITMyFlags+Private.h"),
+        Python("my_flags.py"),
+        PyCffi(),
+        CWrapper("dh__my_flags.cpp", "dh__my_flags.h", "dh__my_flags.hpp")),
       ("my_record",
         Cpp("my_record.cpp"),
         CppHeaders("my_record.hpp"),
@@ -43,7 +52,11 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_record.hpp"),
         ObjC("ITMyRecord.mm"),
         ObjCHeaders("ITMyRecord.h", "bridging-header.h"),
-        ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm")),
+        ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm"),
+        Python("dh__map_string_int32_t.py", "dh__set_string.py", "my_record.py", "my_record_helper.py"),
+        PyCffi(),
+        CWrapper("dh__map_string_int32_t.cpp", "dh__map_string_int32_t.h", "dh__map_string_int32_t.hpp", "dh__my_record.cpp",
+          "dh__my_record.h", "dh__my_record.hpp", "dh__set_string.cpp", "dh__set_string.h", "dh__set_string.hpp")),
       ("my_cpp_interface",
         Cpp("my_cpp_interface.cpp"),
         CppHeaders("my_cpp_interface.hpp"),
@@ -52,7 +65,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_cpp_interface.hpp"),
         ObjC("ITMyCppInterface.mm"),
         ObjCHeaders("ITMyCppInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm")),
+        ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm"),
+        Python("my_cpp_interface.py"),
+        PyCffi("pycffi_lib_build.py"),
+        CWrapper("cw__my_cpp_interface.cpp", "cw__my_cpp_interface.h", "cw__my_cpp_interface.hpp")),
       ("my_client_interface",
         Cpp(),
         CppHeaders("my_client_interface.hpp"),
@@ -61,7 +77,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_client_interface.hpp"),
         ObjC(),
         ObjCHeaders("ITMyClientInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm")),
+        ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm"),
+        Python("my_client_interface.py"),
+        PyCffi("pycffi_lib_build.py"),
+        CWrapper("cw__my_client_interface.cpp", "cw__my_client_interface.h", "cw__my_client_interface.hpp")),
       ("all_datatypes",
         Cpp(),
         CppHeaders("all_datatypes.hpp"),
@@ -70,7 +89,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("all_datatypes.hpp"),
         ObjC("ITAllDatatypes.mm"),
         ObjCHeaders("ITAllDatatypes.h", "bridging-header.h"),
-        ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm")),
+        ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm"),
+        Python("all_datatypes.py", "all_datatypes_helper.py", "dh__list_bool.py", "dh__map_int8_t_bool.py", "dh__set_bool.py"),
+        PyCffi(),
+        CWrapper("dh__all_datatypes.cpp", "dh__all_datatypes.h", "dh__all_datatypes.hpp", "dh__list_bool.cpp", "dh__list_bool.h",
+          "dh__list_bool.hpp", "dh__map_int8_t_bool.cpp", "dh__map_int8_t_bool.h", "dh__map_int8_t_bool.hpp", "dh__set_bool.cpp",
+          "dh__set_bool.h", "dh__set_bool.hpp")),
       ("using_custom_datatypes",
         Cpp(),
         CppHeaders("custom_datatype.hpp", "other_record.hpp"),
@@ -79,9 +103,13 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("custom_datatype.hpp", "other_record.hpp"),
         ObjC("ITCustomDatatype.mm", "ITOtherRecord.mm"),
         ObjCHeaders("ITCustomDatatype.h","ITOtherRecord.h", "bridging-header.h"),
-        ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"))
+        ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"),
+        Python("custom_datatype.py", "custom_datatype_helper.py", "other_record.py", "other_record_helper.py"),
+        PyCffi(),
+        CWrapper("dh__custom_datatype.cpp", "dh__custom_datatype.h", "dh__custom_datatype.hpp", "dh__other_record.cpp",
+          "dh__other_record.h", "dh__other_record.hpp"))
       )
-    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp) =>
+    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp, pythonFilenames: Python, pyCffiFilenames: PyCffi, cWrapperFilenames: CWrapper) =>
       it(s"should generate valid language bridges for `$idlFile`-types") {
         Given(s"`$idlFile.djinni`")
         When(s"generating language-bridges from `$idlFile.djinni`")
@@ -110,6 +138,15 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
         Then(s"the expected files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
+
+        Then(s"the expected files should be created for python: ${pythonFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, PY, pythonFilenames)
+
+        Then(s"the expected files should be created for cffi: ${pyCffiFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, CFFI, pyCffiFilenames)
+
+        Then(s"the expected files should be created for c wrapper: ${cWrapperFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, CWRAPPER, cWrapperFilenames)
       }
     }
 
@@ -139,6 +176,19 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       Then("the generator should successfully generate just cpp output")
       output should equal ("Parsing...\nResolving...\nGenerating...\n")
       assertFileExists(s"$outputPath/all_datatypes.hpp")
+    }
+
+    it("should be able to only generate Python output") {
+      val outputPath = "src/it/resources/result/only_python_out"
+      When("calling the generator with just `--py-out`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --py-out $outputPath")
+      Then("the generator should successfully generate just python output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/all_datatypes.py")
+      assertFileExists(s"$outputPath/all_datatypes_helper.py")
+      assertFileExists(s"$outputPath/dh__list_bool.py")
+      assertFileExists(s"$outputPath/dh__map_int8_t_bool.py")
+      assertFileExists(s"$outputPath/dh__set_bool.py")
     }
   }
 }
