@@ -48,8 +48,10 @@ Download the [latest released batch file](https://github.com/cross-language-cpp/
 
 ### Conan
 
-The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS:
+The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS.
 
-```sh
-conan install djinni-generator/0.3.1@
+Add the generator as a build requirement in `conanfile.txt`:
+```
+[build_requires]
+djinni-generator/0.3.1
 ```
