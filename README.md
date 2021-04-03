@@ -43,7 +43,8 @@ asdf install djinni latest
 The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS.
 
 Add the generator as a build requirement in `conanfile.txt`:
-```
+
+```text
 [build_requires]
 djinni-generator/0.3.1
 ```
