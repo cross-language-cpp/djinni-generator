@@ -1,7 +1,7 @@
 # Djinni Generator
 
-![Build](https://github.com/cross-language-cpp/djinni-generator/workflows/CI/badge.svg)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)
+[![CI](https://github.com/cross-language-cpp/djinni-generator/actions/workflows/main.yaml/badge.svg)](https://github.com/cross-language-cpp/djinni-generator/actions/workflows/main.yaml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)](https://github.com/cross-language-cpp/djinni-generator/releases/latest)
 ![GitHub all releases](https://img.shields.io/github/downloads/cross-language-cpp/djinni-generator/total)
 
 :arrow_right: Documentation: [djinni.xlcpp.dev](https://djinni.xlcpp.dev/djinni-generator/setup/)
@@ -45,3 +45,11 @@ asdf install djinni latest
 ### Windows
 
 Download the [latest released batch file](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni.bat), copy it where you want and [put the folder on your PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+
+### Conan
+
+The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS:
+
+```sh
+conan install djinni-generator/0.3.1@
+```
