@@ -1,7 +1,7 @@
 # Djinni Generator
 
-![Build](https://github.com/cross-language-cpp/djinni-generator/workflows/CI/badge.svg)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)
+[![CI](https://github.com/cross-language-cpp/djinni-generator/actions/workflows/main.yaml/badge.svg)](https://github.com/cross-language-cpp/djinni-generator/actions/workflows/main.yaml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator)](https://github.com/cross-language-cpp/djinni-generator/releases/latest)
 ![GitHub all releases](https://img.shields.io/github/downloads/cross-language-cpp/djinni-generator/total)
 
 :arrow_right: Documentation: [djinni.xlcpp.dev](https://djinni.xlcpp.dev/djinni-generator/setup/)
@@ -23,17 +23,9 @@ Djinni **requires Java** to be able to execute!
 
 ### Linux, macOS
 
-#### Download & Install Manually
+#### Manually
 
-Download the [lastest released binary](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni), make it executable and put the containing folder on your PATH:
-
-```bash
-curl -LO https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni
-chmod u+x djinni
-export PATH=$(pwd):$PATH
-```
-
-Make sure to [put it on your PATH permanently](https://stackabuse.com/how-to-permanently-set-path-in-linux/) once you fell in love with djinni! :blush:
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator?label=Download&logo=linux&logoColor=%23fff&style=for-the-badge)](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni)
 
 #### Install with [asdf](https://asdf-vm.com/)
 
@@ -44,4 +36,15 @@ asdf install djinni latest
 
 ### Windows
 
-Download the [latest released batch file](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni.bat), copy it where you want and [put the folder on your PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator?label=Download&logo=windows&style=for-the-badge)](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni.bat)
+
+### Conan
+
+The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS.
+
+Add the generator as a build requirement in `conanfile.txt`:
+
+```text
+[build_requires]
+djinni-generator/0.3.1
+```

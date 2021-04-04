@@ -73,7 +73,47 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 
 ## Project Structure
 
-!!! bug "TODO"
+```text
+.
+├── CODE_OF_CONDUCT.md (1)
+├── LICENSE (2)
+├── README.md (3)
+├── build.sbt (4)
+├── docs (5)
+│   └── ...
+├── mkdocs.yml (6)
+├── project (7)
+│   └── ...
+└── src (8)
+    ├── it (9)
+    │   ├── resources (10)
+    │   │   ├── expected (11)
+    │   │   │   └── ...
+    │   │   └── result (12)
+    │   │       └── ...
+    │   └── scala 
+    │       └── djinni (13)
+    │           └── ...
+    └── main
+        └── scala
+            └── djinni (14)
+                └── ...
+```
+
+1. Project Code of Conduct.
+2. Project License (Apache License).
+3. Readme file.
+4. Sbt build configuration.
+5. Documentation folder containing markdown documentation that will be rendered with MkDocs.
+6. [MkDocs](https://www.mkdocs.org/) configuration. Will be included by the [cross-language-cpp.github.io](https://github.com/cross-language-cpp/cross-language-cpp.github.io) repository and published to [djinni.xlcpp.dev](https://djinni.xlcpp.dev/).
+7. Sbt configuration.
+8. Sources folder.
+9. Integration testing directory.
+10. Resources for integration tests.
+11. Folder containing expected outcomes of the djinni generator. These files are matched against the real result of the generator in the integration tests.
+12. Folder that will be used for generator outputs in the integration tests. Files in here should not be checked in to source control.
+13. Folder containing the integration testing code.
+14. djinni-generator source code.
 
 ## Release process
 
