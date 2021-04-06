@@ -47,7 +47,7 @@ djinni \
 | `--java-class-access-modifier <public/package>` | The access modifier to use for generated Java classes (default: `public`). |
 | `--java-cpp-exception <exception-class>` | The type for translated C++ exceptions in Java (default: `java.lang.RuntimeException` that is not checked) |
 | `--java-annotation <annotation-class>` | Java annotation (`@Foo`) to place on all generated Java classes |
-| `--java-generate-interfaces <true/false>` | Whether Java interfaces should be used instead of abstract classes where possible (default: false). |
+| `--java-generate-interfaces <true/false>` | Whether Java interfaces should be used instead of abstract classes where possible (default: `false`). |
 | `--java-nullable-annotation <nullable-annotation-class>` | Java annotation (`@Nullable`) to place on all fields and return values that are optional |
 | `--java-nonnull-annotation <nonnull-annotation-class>` | Java annotation (`@Nonnull`) to place on all fields and return values that are not optional |
 | `--java-implement-android-os-parcelable <true/false>` | all generated java classes will implement the interface android.os.Parcelable |
@@ -80,18 +80,18 @@ djinni \
 | `--jni-include-prefix <prefix>` | The prefix for #includes of JNI header files from JNI C++ files. |
 | `--jni-include-cpp-prefix <prefix>` | The prefix for #includes of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
-| `--jni-base-lib-include-prefix ...` | The JNI base support library's include path (default: djinni/jni/). |
+| `--jni-base-lib-include-prefix ...` | The JNI base support library's include path (default: `djinni/jni/`). |
 
 ### Objective-C
 
 | Argument | Description |
 | -------- | ----------- |
 | `--objc-out <out-folder>` | The output folder for Objective-C files (Generator disabled if unspecified). |
-| `--objc-header-out <out-folder>` | The output folder for Objective-C header files (default: the same as --objc-out). |
+| `--objc-header-out <out-folder>` | The output folder for Objective-C header files (default: the same as `--objc-out`). |
 | `--objc-h-ext <ext>` | The filename extension for Objective-C[++] header files (default: `h`) |
 | `--objc-type-prefix <pre>` | The prefix for Objective-C data types (usually two or three letters) |
 | `--objc-include-prefix <prefix>` | The prefix for #import of header files from Objective-C files. |
-| `--objc-swift-bridging-header <name>` | The name of Objective-C Bridging Header used in XCode's Swift projects. |
+| `--objc-swift-bridging-header <name>` | The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is `--objc-header-out`. |
 | `--objc-closed-enums <true/false>` | All generated Objective-C enums will be NS_CLOSED_ENUM (default: `false`). |
 
 ### Objective-C++
@@ -106,7 +106,7 @@ djinni \
 | `--cpp-extended-record-include-prefix <prefix>` | The prefix path for #include of the extended record C++ header (`.hpp`) files |
 |`--objc-extended-record-include-prefix <prefix>` | The prefix path for #import of the extended record Objective-C header (`.h`) files  |
 |`--objcpp-namespace <prefix>` | The namespace name to use for generated Objective-C++ classes.  |
-|`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: djinni/objc/).  |
+|`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: `djinni/objc/`).  |
 
 ### Yaml Generation
 

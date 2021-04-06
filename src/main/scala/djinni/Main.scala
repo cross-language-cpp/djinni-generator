@@ -179,7 +179,7 @@ object Main {
       opt[String]("objc-include-prefix").valueName("<prefix>").foreach(objcIncludePrefix = _)
         .text("The prefix for #import of header files from Objective-C files.")
       opt[String]("objc-swift-bridging-header").valueName("<name>").foreach(x => objcSwiftBridgingHeaderName = Some(x))
-        .text("The name of Objective-C Bridging Header used in XCode's Swift projects.")
+        .text("The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is --objc-header-out.")
       opt[Boolean]("objc-closed-enums").valueName("<true/false>").foreach(x => objcClosedEnums = x)
         .text("All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). ")
       note("")
@@ -308,7 +308,7 @@ object Main {
       None
     }
     val objcSwiftBridgingHeaderWriter = if (objcSwiftBridgingHeaderName.isDefined && objcOutFolder.isDefined) {
-      val objcSwiftBridgingHeaderFile = new File(objcOutFolder.get.getPath, objcSwiftBridgingHeaderName.get + ".h")
+      val objcSwiftBridgingHeaderFile = new File(objcHeaderOutFolder.get.getPath, objcSwiftBridgingHeaderName.get + ".h")
       if (objcSwiftBridgingHeaderFile.getParentFile != null)
         createFolder("output file list", objcSwiftBridgingHeaderFile.getParentFile)
       Some(new BufferedWriter(new FileWriter(objcSwiftBridgingHeaderFile)))
