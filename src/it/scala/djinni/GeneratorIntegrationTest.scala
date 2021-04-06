@@ -10,70 +10,103 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     val djinniTypes = Table(
       ("idlFile",
         "cppFilenames",
+        "cppHeaderFilenames",
         "javaFilenames",
         "jniFilenames",
+        "jniHeaderFilenames",
         "objcFilenames",
+        "objcHeaderFilenames",
         "objcppFilenames"),
       ("my_enum",
-        Cpp("my_enum.hpp"),
+        Cpp(),
+        CppHeaders("my_enum.hpp"),
         Java("MyEnum.java"),
-        Jni("my_enum.hpp"),
-        ObjC("ITMyEnum.h"),
+        Jni(),
+        JniHeaders("my_enum.hpp"),
+        ObjC(),
+        ObjCHeaders("ITMyEnum.h", "bridging-header.h"),
         ObjCpp("ITMyEnum+Private.h")),
       ("my_flags",
-        Cpp("my_flags.hpp"),
+        Cpp(),
+        CppHeaders("my_flags.hpp"),
         Java("MyFlags.java"),
-        Jni("my_flags.hpp"),
-        ObjC("ITMyFlags.h"),
+        Jni(),
+        JniHeaders("my_flags.hpp"),
+        ObjC(),
+        ObjCHeaders("ITMyFlags.h"),
         ObjCpp("ITMyFlags+Private.h")),
       ("my_record",
-        Cpp("my_record.hpp", "my_record.cpp"),
+        Cpp("my_record.cpp"),
+        CppHeaders("my_record.hpp"),
         Java("MyRecord.java"),
-        Jni("my_record.hpp", "my_record.cpp"),
-        ObjC("ITMyRecord.h", "ITMyRecord.mm"),
+        Jni("my_record.cpp"),
+        JniHeaders("my_record.hpp"),
+        ObjC("ITMyRecord.mm"),
+        ObjCHeaders("ITMyRecord.h", "bridging-header.h"),
         ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm")),
       ("my_cpp_interface",
-        Cpp("my_cpp_interface.hpp", "my_cpp_interface.cpp"),
+        Cpp("my_cpp_interface.cpp"),
+        CppHeaders("my_cpp_interface.hpp"),
         Java("MyCppInterface.java"),
-        Jni("my_cpp_interface.hpp", "my_cpp_interface.cpp"),
-        ObjC("ITMyCppInterface.h", "ITMyCppInterface.mm"),
+        Jni("my_cpp_interface.cpp"),
+        JniHeaders("my_cpp_interface.hpp"),
+        ObjC("ITMyCppInterface.mm"),
+        ObjCHeaders("ITMyCppInterface.h", "bridging-header.h"),
         ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm")),
       ("my_client_interface",
-        Cpp("my_client_interface.hpp"),
+        Cpp(),
+        CppHeaders("my_client_interface.hpp"),
         Java("MyClientInterface.java"),
-        Jni("my_client_interface.hpp", "my_client_interface.cpp"),
-        ObjC("ITMyClientInterface.h"),
+        Jni("my_client_interface.cpp"),
+        JniHeaders("my_client_interface.hpp"),
+        ObjC(),
+        ObjCHeaders("ITMyClientInterface.h", "bridging-header.h"),
         ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm")),
       ("all_datatypes",
-        Cpp("all_datatypes.hpp"),
+        Cpp(),
+        CppHeaders("all_datatypes.hpp"),
         Java("AllDatatypes.java"),
-        Jni("all_datatypes.hpp", "all_datatypes.cpp"),
-        ObjC("ITAllDatatypes.h", "ITAllDatatypes.mm"),
+        Jni("all_datatypes.cpp"),
+        JniHeaders("all_datatypes.hpp"),
+        ObjC("ITAllDatatypes.mm"),
+        ObjCHeaders("ITAllDatatypes.h", "bridging-header.h"),
         ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm")),
       ("using_custom_datatypes",
-        Cpp("custom_datatype.hpp", "other_record.hpp"),
+        Cpp(),
+        CppHeaders("custom_datatype.hpp", "other_record.hpp"),
         Java("CustomDatatype.java", "OtherRecord.java"),
-        Jni("custom_datatype.hpp", "custom_datatype.cpp", "other_record.hpp", "other_record.cpp"),
-        ObjC("ITCustomDatatype.h", "ITCustomDatatype.mm", "ITOtherRecord.h", "ITOtherRecord.mm"),
+        Jni("custom_datatype.cpp", "other_record.cpp"),
+        JniHeaders("custom_datatype.hpp", "other_record.hpp"),
+        ObjC("ITCustomDatatype.mm", "ITOtherRecord.mm"),
+        ObjCHeaders("ITCustomDatatype.h","ITOtherRecord.h", "bridging-header.h"),
         ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"))
       )
-    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, javaFilenames: Java, jniFilenames: Jni, objcFilenames: ObjC, objcppFilenames: ObjCpp) =>
+    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp) =>
       it(s"should generate valid language bridges for `$idlFile`-types") {
         Given(s"`$idlFile.djinni`")
         When(s"generating language-bridges from `$idlFile.djinni`")
         djinniGenerate(idlFile)
 
-        Then(s"the expected files should be created for cpp: ${cppFilenames.mkString(", ")}")
+        Then(s"the expected source files should be created for cpp: ${cppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, CPP, cppFilenames)
+
+        Then(s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
 
         Then(s"the expected files should be created for java: ${javaFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, JAVA, javaFilenames)
 
-        Then(s"the expected files should be created for jni: ${jniFilenames.mkString(", ")}")
+        Then(s"the expected source files should be created for jni: ${jniFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, JNI, jniFilenames)
 
-        Then(s"the expected files should be created for objc: ${objcFilenames.mkString(", ")}")
+        Then(s"the expected header files should be created for jni: ${jniHeaderFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, JNI_HEADERS, jniHeaderFilenames)
+
+        Then(s"the expected source files should be created for objc: ${objcFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJC, objcFilenames)
+
+        Then(s"the expected header files should be created for objc: ${objcHeaderFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
 
         Then(s"the expected files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
