@@ -42,7 +42,7 @@ sbt "run
 sbt "run --help"  # show all options
 ```
 
-*It is important to put `run` and all arguments in `"`, to be able to pass arguments to the executed jar*
+*It is important to put `run` and all arguments in `"`, to be able to pass arguments to the executed jar!*
 
 ### Running Tests
 
@@ -59,7 +59,7 @@ sbt assembly
 ```
 
 This will generate a standalone, self-executing jar in `target/bin`.
-You can run the jar like this (no need for `java -jar`):
+You can run the jar like this:
 
 ```bash
 ./djinni --help
@@ -69,7 +69,7 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 
 !!! attention
 
-    The resulting binary still requires Java to able to run! [Details on how the self-executing jar works](https://github.com/sbt/sbt-assembly#prepending-a-launch-script).
+    The resulting binary still requires Java to be able to run! [Details on how the self-executing jar works](https://github.com/sbt/sbt-assembly#prepending-a-launch-script).
 
 ## Project Structure
 
@@ -119,5 +119,6 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 
 To release a new version of the generator, the following steps must be followed:
 
-1. Create a new release-tag. Set a meaningful version number and describe what has changed in the new version.
-2. Wait. Github will automatically build the project and upload the resulting binaries to the release.
+1. Create a [new release](https://github.com/cross-language-cpp/djinni-generator/releases/new) on Github. Set a tag version following [semantic versioning](https://semver.org/) rules (`v<MAJOR>.<MINOR>.<PATCH>`) and describe what has changed in the new version.
+2. Wait. The [Github "release" Action](https://github.com/cross-language-cpp/djinni-generator/blob/main/.github/workflows/release.yaml) will automatically build the project and upload the resulting binaries to the release.
+3. Create a PR to the [conan-center-index](https://github.com/conan-io/conan-center-index/tree/master/recipes/djinni-generator) to publish the new version to [Conan Center](https://conan.io/center/djinni-generator).

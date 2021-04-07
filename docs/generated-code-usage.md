@@ -13,8 +13,7 @@ The following headers / code will be generated for each defined type:
 
 (+) Generated only for types that contain constants.
 
-Add all generated source files to your build target, as well as the contents of
-`support-lib/java`.
+Add all generated source files to your build target, and link the C++ code against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
 
 ### Our JNI approach
 JNI stands for [Java Native Interface](http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html), an extension of the Java language to allow interop with
@@ -27,16 +26,25 @@ class with a `toJava` and `fromJava` function to translate back and forth.
 Application code is responsible for the initial load of the JNI library. Add a static block
 somewhere in your code:
 
-    System.loadLibrary("YourLibraryName");
-    // The name is specified in Android.mk / build.gradle / Makefile, depending on your build system.
+```java
+class Main {
+    static {
+      System.loadLibrary("YourLibraryName");
+      // The name  of the library is specified in Android.mk / build.gradle / Makefile / CMakeLists.txt, 
+      // depending on your build system.
+    }
+}
+```
 
 If you package your native library in a jar, you can also use the [`NativeLibLoader`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/java/com/dropbox/djinni/NativeLibLoader.java)
 to help unpack and load your lib(s).
 
-When a native library is called, JNI calls a special function called `JNI_OnLoad`. If you use
-Djinni for all JNI interface code, include `support_lib/jni/djinni_main.cpp`; if not,
-you'll need to add calls to your own `JNI_OnLoad` and `JNI_OnUnload` functions. See
-`support-lib/jni/djinni_main.cpp` for details.
+When a native library is called, JNI calls a special function called [`JNI_OnLoad`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/djinni/jni/djinni_main.cpp#L23).
+
+If your app doesn't use JNI except through Djinni, include [`djinni/jni/djinni_main.cpp`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/djinni/jni/djinni_main.cpp). 
+It defines default `JNI_Onload` and `JNI_OnUnload` functions for Djinni.
+
+If your app also includes a non-Djinni JNI interface, you'll need to define your own `JNI_OnLoad` and `JNI_OnUnload` functions.
 
 ## Objective-C / C++ Project
 
@@ -54,5 +62,6 @@ Generated files for Objective-C / C++ are as follows (assuming prefix is `DB`):
 - :one: Generated only for types that contain constants.
 - :two: Generated only for types with derived operations and/or constants. These have `.mm` extensions to allow non-trivial constants.
 
-Add all generated files to your build target, as well as the contents of `support-lib/objc`.
+Add all generated files to your build target, and link against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
+
 Note that `+Private` files can only be used with ObjC++ source (other headers are pure ObjC) and are not required by Objective-C users of your interface.
