@@ -37,7 +37,7 @@ djinni \
 | `--help` | Print help  |
 | `--version` | Print version |
 | `--idl <in-file>` | The IDL file with the type definitions, typically with extension `.djinni`. |
-| `--idl-include-path <path> ...` | An include path to search for Djinni @import directives. Can specify multiple paths. |
+| `--idl-include-path <path> ...` | An include path to search for Djinni `@import` directives. Can specify multiple paths. |
 
 ### Java
 | Argument | Description |
@@ -50,7 +50,7 @@ djinni \
 | `--java-generate-interfaces <true/false>` | Whether Java interfaces should be used instead of abstract classes where possible (default: `false`). |
 | `--java-nullable-annotation <nullable-annotation-class>` | Java annotation (`@Nullable`) to place on all fields and return values that are optional |
 | `--java-nonnull-annotation <nonnull-annotation-class>` | Java annotation (`@Nonnull`) to place on all fields and return values that are not optional |
-| `--java-implement-android-os-parcelable <true/false>` | all generated java classes will implement the interface android.os.Parcelable |
+| `--java-implement-android-os-parcelable <true/false>` | all generated java classes will implement the interface `android.os.Parcelable` |
 | `--java-use-final-for-record <use-final-for-record>` | Whether generated Java classes for records should be marked `final` (default: `true`). |
 
 ### C++
@@ -59,13 +59,13 @@ djinni \
 | -------- | ----------- |
 | `--cpp-out <out-folder>` | The output folder for C++ files (Generator disabled if unspecified). |
 | `--cpp-header-out <out-folder>` | The output folder for C++ header files (default: the same as `--cpp-out`). |
-| `--cpp-include-prefix <prefix>` | The prefix for #includes of header files from C++ files. |
+| `--cpp-include-prefix <prefix>` | The prefix for `#includes` of header files from C++ files. |
 | `--cpp-namespace ...` | The namespace name to use for generated C++ classes. |
 | `--cpp-ext <ext>` | The filename extension for C++ files (default: `cpp`). |
 | `--hpp-ext <ext>` | The filename extension for C++ header files (default: `hpp`). |
 | `--cpp-optional-template <template>` | The template to use for optional values (default: `std::optional`) |
 | `--cpp-optional-header <header>` | The header to use for optional values (default: `<optional>`) |
-| `--cpp-enum-hash-workaround <true/false>` | Work around LWG-2148 by generating std::hash specializations for C++ enums (default: `true`) |
+| `--cpp-enum-hash-workaround <true/false>` | Work around LWG-2148 by generating `std::hash` specializations for C++ enums (default: `true`) |
 | `--cpp-nn-header <header>` | The header to use for non-nullable pointers |
 | `--cpp-nn-type <header>` | The type to use for non-nullable pointers (as a substitute for `std::shared_ptr`) |
 | `--cpp-nn-check-expression <header>` | The expression to use for building non-nullable pointers |
@@ -77,8 +77,8 @@ djinni \
 | -------- | ----------- |
 | `--jni-out <out-folder>` | The folder for the JNI C++ output files (Generator disabled if unspecified). |
 | `--jni-header-out <out-folder>` | The folder for the JNI C++ header files (default: the same as `--jni-out`). |
-| `--jni-include-prefix <prefix>` | The prefix for #includes of JNI header files from JNI C++ files. |
-| `--jni-include-cpp-prefix <prefix>` | The prefix for #includes of the main header files from JNI C++ files. |
+| `--jni-include-prefix <prefix>` | The prefix for `#includes` of JNI header files from JNI C++ files. |
+| `--jni-include-cpp-prefix <prefix>` | The prefix for `#includes` of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
 | `--jni-base-lib-include-prefix ...` | The JNI base support library's include path (default: `djinni/jni/`). |
 
@@ -90,9 +90,9 @@ djinni \
 | `--objc-header-out <out-folder>` | The output folder for Objective-C header files (default: the same as `--objc-out`). |
 | `--objc-h-ext <ext>` | The filename extension for Objective-C[++] header files (default: `h`) |
 | `--objc-type-prefix <pre>` | The prefix for Objective-C data types (usually two or three letters) |
-| `--objc-include-prefix <prefix>` | The prefix for #import of header files from Objective-C files. |
+| `--objc-include-prefix <prefix>` | The prefix for `#import` of header files from Objective-C files. |
 | `--objc-swift-bridging-header <name>` | The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is `--objc-header-out`. |
-| `--objc-closed-enums <true/false>` | All generated Objective-C enums will be NS_CLOSED_ENUM (default: `false`). |
+| `--objc-closed-enums <true/false>` | All generated Objective-C enums will be `NS_CLOSED_ENUM` (default: `false`). |
 
 ### Objective-C++
 
@@ -101,10 +101,10 @@ djinni \
 | `--objcpp-out <out-folder>` | The output folder for private Objective-C++ files (Generator disabled if unspecified). |
 | `--objcpp-ext <ext>` | The filename extension for Objective-C++ files (default: `mm`) |
 | `--objcpp-include-prefix <prefix>` | The prefix for #import of Objective-C++ header files from Objective-C++ files. |
-| `--objcpp-include-cpp-prefix <prefix>` | The prefix for #include of the main C++ header files from Objective-C++ files. |
-| `--objcpp-include-objc-prefix <prefix>` | The prefix for #import of the Objective-C header files from Objective-C++ files (default: the same as `--objcpp-include-prefix`) |
-| `--cpp-extended-record-include-prefix <prefix>` | The prefix path for #include of the extended record C++ header (`.hpp`) files |
-|`--objc-extended-record-include-prefix <prefix>` | The prefix path for #import of the extended record Objective-C header (`.h`) files  |
+| `--objcpp-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from Objective-C++ files. |
+| `--objcpp-include-objc-prefix <prefix>` | The prefix for `#import` of the Objective-C header files from Objective-C++ files (default: the same as `--objcpp-include-prefix`) |
+| `--cpp-extended-record-include-prefix <prefix>` | The prefix path for `#include` of the extended record C++ header (`.hpp`) files |
+|`--objc-extended-record-include-prefix <prefix>` | The prefix path for `#import` of the extended record Objective-C header (`.h`) files  |
 |`--objcpp-namespace <prefix>` | The namespace name to use for generated Objective-C++ classes.  |
 |`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: `djinni/objc/`).  |
 
