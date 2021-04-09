@@ -218,7 +218,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
         w.wl
         if (spec.cppNnType.nonEmpty) {
           def nnCheck(expr: String): String = spec.cppNnCheckExpression.fold(expr)(check => s"$check($expr)")
-          w.w("static CppType toCpp(JNIEnv* jniEnv, JniType j)").bracedSemi {
+          w.w("static CppType toCpp(JNIEnv* jniEnv, JniType j)").braced {
             w.wl(s"""DJINNI_ASSERT_MSG(j, jniEnv, "$jniSelf::fromCpp requires a non-null Java object");""")
             w.wl(s"""return ${nnCheck(s"::djinni::JniClass<$jniSelf>::get()._fromJava(jniEnv, j)")};""")
           }
