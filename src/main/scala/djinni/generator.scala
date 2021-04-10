@@ -1,5 +1,6 @@
 /**
   * Copyright 2014 Dropbox, Inc.
+  * Copyright 2021 cross-language-cpp
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -77,6 +78,9 @@ package object generatorTools {
                    objcppNamespace: String,
                    objcBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderWriter: Option[Writer],
+                   cppCliOutFolder: Option[File],
+                   cppCliIdentStyle: CppCliIdentStyle,
+                   cppCliNamespace: String,
                    objcSwiftBridgingHeaderName: Option[String],
                    objcClosedEnums: Boolean,
                    outFileListWriter: Option[Writer],
@@ -105,6 +109,10 @@ package object generatorTools {
                             method: IdentConverter, field: IdentConverter, local: IdentConverter,
                             enum: IdentConverter, const: IdentConverter)
 
+  case class CppCliIdentStyle(ty: IdentConverter, typeParam: IdentConverter, property: IdentConverter,
+                              method: IdentConverter, field: IdentConverter, local: IdentConverter,
+                              enum: IdentConverter, const: IdentConverter, file: IdentConverter)
+
   object IdentStyle {
     val camelUpper = (s: String) => s.split('_').map(firstUpper).mkString
     val camelLower = (s: String) => {
@@ -125,6 +133,10 @@ package object generatorTools {
     val objcDefault = ObjcIdentStyle(ty = camelUpper, typeParam = camelUpper,
                                      method = camelLower, field = camelLower, local = camelLower,
                                      enum = camelUpper, const = camelUpper)
+
+    val csDefault = CppCliIdentStyle(ty = camelUpper, typeParam = camelUpper, property = camelUpper,
+                                    method = camelUpper, field = camelLower, local = camelLower,
+                                    enum = camelUpper, const = camelUpper, file = camelUpper)
 
     val styles = Map(
       "FooBar" -> camelUpper,
@@ -234,6 +246,12 @@ package object generatorTools {
           new SwiftBridgingHeaderGenerator(spec).generate(idl)
         }
       }
+      if (spec.cppCliOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("C++/CLI", spec.cppCliOutFolder.get)
+        }
+        new CppCliGenerator(spec).generate(idl)
+      }
       if (spec.yamlOutFolder.isDefined) {
         if (!spec.skipGeneration) {
           createFolder("YAML", spec.yamlOutFolder.get)
@@ -296,6 +314,7 @@ abstract class Generator(spec: Spec)
   val idCpp = spec.cppIdentStyle
   val idJava = spec.javaIdentStyle
   val idObjc = spec.objcIdentStyle
+  val idCs = spec.cppCliIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {

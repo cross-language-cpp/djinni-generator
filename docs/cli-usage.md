@@ -108,6 +108,14 @@ djinni \
 |`--objcpp-namespace <prefix>` | The namespace name to use for generated Objective-C++ classes.  |
 |`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: `djinni/objc/`).  |
 
+### C++/CLI
+
+| Argument | Description |
+| -------- | ----------- |
+| `--cppcli-out <out-folder>` | The output folder for C++/CLI files (Generator disabled if unspecified). |
+| `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
+
+
 ### Yaml Generation
 
 | Argument | Description |
@@ -156,7 +164,7 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 
 #### Objective C
 
-| Argument | Default      |
+| Argument | Default  |
 | -------- | -------- |
 | `--ident-objc-enum` | `FooBar` |
 | `--ident-objc-field` | `fooBar` |
@@ -166,6 +174,18 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 | `--ident-objc-local` | `fooBar` |
 | `--ident-objc-file` | `FooBar` |
 
+#### C++/CLI
+
+| Argument | Default  |
+| -------- | -------- |
+| `--ident-cppcli-type` | `FooBar` |
+| `--ident-cppcli-type-param` | `FooBar` |
+| `--ident-cppcli-property` | `FooBar` |
+| `--ident-cppcli-method` | `FooBar` |
+| `--ident-cppcli-local` | `fooBar` |
+| `--ident-cppcli-enum` | `FooBar` |
+| `--ident-cppcli-const` | `FooBar` |
+| `--ident-cppcli-file` | `FooBar` |
 
 Example:
 

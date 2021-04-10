@@ -52,8 +52,8 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java and ObjC and can be called from C++.
-my_client_interface = interface +j +o {
+# This interface will be implemented in Java, ObjC and C# and can be called from C++.
+my_client_interface = interface +j +o +s {
     log_string(str: string): bool;
 }
 ```
@@ -78,15 +78,18 @@ The available data types for a record, argument, or return value are:
  - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
  - Strings (`string`)
  - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   and `NSData` in Objective-C.
- - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java, and
-   `NSDate` in Objective-C.
- - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, and `NSArray`
-   in Objective-C. Primitives in a list will be boxed in Java and Objective-C.
- - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, and `NSSet` in
-   Objective-C. Primitives in a set will be boxed in Java and Objective-C.
- - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, and
-   `NSDictionary` in Objective-C. Primitives in a map will be boxed in Java and Objective-C.
+   `NSData` in Objective-C, and `array<System::Byte>` in C++/CLI.
+ - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
+   `NSDate` in Objective-C, and `System::DateTime` in C++/CLI.
+ - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
+   in Objective-C, and `System::Collections::Generic::List` in C++/CLI.
+   Primitives in a list will be boxed in Java and Objective-C.
+ - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
+   Objective-C, and `System::Collections::Generic::HashSet` in C++/CLI.
+   Primitives in a set will be boxed in Java and Objective-C.
+ - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java,
+   `NSDictionary` in Objective-C, and `System::Collections::Generic::Dictionary` in C++/CLI.
+   Primitives in a map will be boxed in Java and Objective-C.
  - Enumerations / Flags
  - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
    boxed primitive reference in Java (which can be `null`), and object / NSNumber strong
@@ -95,14 +98,15 @@ The available data types for a record, argument, or return value are:
    deep-copy the contents.
 
 ## Types
+
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
 * [**Enums**](#enums) become C++ enum classes, Java enums, or ObjC `NS_ENUM`s.
 * [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, or ObjC `NS_OPTIONS`.
+  In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
-  produces code allowing an interface implemented in C++ to be transparently used from ObjC or
-  Java, and vice versa.
+  produces code allowing an interface implemented in C++ to be transparently used from ObjC, Java or C#, and vice versa.
 
 ### Enums
 
@@ -131,7 +135,8 @@ my_flags = flags {
 
 Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set
 of overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type
-`NSUInteger`, and Java `EnumSet<>`. Contrary to the above enums, the enumerants of flags represent
+`NSUInteger`, and Java `EnumSet<>`. In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
+Contrary to the above enums, the enumerants of flags represent
 single bits instead of integral values.
 
 In the above example the elements marked with `none` and `all` are given special meaning.
@@ -208,8 +213,8 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java and ObjC and can be called from C++.
-my_client_interface = interface +j +o {
+# This interface will be implemented in Java, ObjC and C# and can be called from C++.
+my_client_interface = interface +j +o +s {
     log_string(str: string): bool;
 }
 ```

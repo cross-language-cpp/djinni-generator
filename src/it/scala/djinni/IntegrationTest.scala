@@ -18,6 +18,7 @@ class IntegrationTest extends FunSpec {
   final val OBJC = "objc"
   final val OBJC_HEADERS = "objc-headers"
   final val OBJCPP = "objcpp"
+  final val CPPCLI = "cppcli"
 
   type Cpp = List[String]
   def Cpp(params: String*) = List(params: _*)
@@ -35,6 +36,8 @@ class IntegrationTest extends FunSpec {
   def ObjCHeaders(params: String*) = List(params: _*)
   type ObjCpp = List[String]
   def ObjCpp(params: String*) = List(params: _*)
+  type CppCli = List[String]
+  def CppCli(params: String*) = List(params: _*)
 
   /**
     * Executes the djinni generator with the given parameters
@@ -63,6 +66,7 @@ class IntegrationTest extends FunSpec {
       "--objc-swift-bridging-header bridging-header " +
       "--objc-type-prefix IT " +
       s"--objcpp-out src/it/resources/result/$idl/objcpp " +
+      s"--cppcli-out src/it/resources/result/$idl/cppcli " +
       s"--idl src/it/resources/$idl.djinni")
   }
 

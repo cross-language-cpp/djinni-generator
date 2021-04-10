@@ -65,3 +65,20 @@ Generated files for Objective-C / C++ are as follows (assuming prefix is `DB`):
 Add all generated files to your build target, and link against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
 
 Note that `+Private` files can only be used with ObjC++ source (other headers are pure ObjC) and are not required by Objective-C users of your interface.
+
+## C++/CLI / C++ Project
+
+### Includes & Build target
+
+The following code will be generated for each defined type:
+
+| Type       | C++ header             | C++ source                 | C++/CLI header/sources              |              
+|------------|------------------------|----------------------------|-------------------------------------|
+| Enum/Flags | my\_enum.hpp           |                            | MyEnum.hpp, MyEnum.cpp              | 
+| Record     | my\_record.hpp         | my\_record.cpp             | MyRecord.hpp, MyRecord.cpp          |
+| Interface  | my\_interface.hpp      | my\_interface.cpp (+)      | MyInterface.hpp, MyInterface.cpp    |
+
+
+!!! bug
+
+    TODO add more information about C++/CLI generator output

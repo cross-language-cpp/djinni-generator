@@ -16,7 +16,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         "jniHeaderFilenames",
         "objcFilenames",
         "objcHeaderFilenames",
-        "objcppFilenames"),
+        "objcppFilenames",
+        "cppcliFilenames"),
       ("my_enum",
         Cpp(),
         CppHeaders("my_enum.hpp"),
@@ -25,7 +26,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_enum.hpp"),
         ObjC(),
         ObjCHeaders("ITMyEnum.h", "bridging-header.h"),
-        ObjCpp("ITMyEnum+Private.h")),
+        ObjCpp("ITMyEnum+Private.h"),
+        CppCli("MyEnum.hpp", "MyEnum.cpp")),
       ("my_flags",
         Cpp(),
         CppHeaders("my_flags.hpp"),
@@ -34,7 +36,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_flags.hpp"),
         ObjC(),
         ObjCHeaders("ITMyFlags.h"),
-        ObjCpp("ITMyFlags+Private.h")),
+        ObjCpp("ITMyFlags+Private.h"),
+        CppCli("MyFlags.hpp", "MyFlags.cpp")),
       ("my_record",
         Cpp("my_record.cpp"),
         CppHeaders("my_record.hpp"),
@@ -43,7 +46,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_record.hpp"),
         ObjC("ITMyRecord.mm"),
         ObjCHeaders("ITMyRecord.h", "bridging-header.h"),
-        ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm")),
+        ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm"),
+        CppCli("MyRecord.hpp", "MyRecord.cpp")),
       ("my_cpp_interface",
         Cpp("my_cpp_interface.cpp"),
         CppHeaders("my_cpp_interface.hpp"),
@@ -52,7 +56,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_cpp_interface.hpp"),
         ObjC("ITMyCppInterface.mm"),
         ObjCHeaders("ITMyCppInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm")),
+        ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm"),
+        CppCli("MyCppInterface.hpp", "MyCppInterface.cpp")),
       ("my_client_interface",
         Cpp(),
         CppHeaders("my_client_interface.hpp"),
@@ -61,7 +66,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_client_interface.hpp"),
         ObjC(),
         ObjCHeaders("ITMyClientInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm")),
+        ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm"),
+        CppCli("MyClientInterface.hpp", "MyClientInterface.cpp")),
       ("all_datatypes",
         Cpp(),
         CppHeaders("all_datatypes.hpp"),
@@ -70,7 +76,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("all_datatypes.hpp"),
         ObjC("ITAllDatatypes.mm"),
         ObjCHeaders("ITAllDatatypes.h", "bridging-header.h"),
-        ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm")),
+        ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm"),
+        CppCli("AllDatatypes.hpp", "AllDatatypes.cpp")),
       ("using_custom_datatypes",
         Cpp(),
         CppHeaders("custom_datatype.hpp", "other_record.hpp"),
@@ -79,9 +86,10 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("custom_datatype.hpp", "other_record.hpp"),
         ObjC("ITCustomDatatype.mm", "ITOtherRecord.mm"),
         ObjCHeaders("ITCustomDatatype.h","ITOtherRecord.h", "bridging-header.h"),
-        ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"))
+        ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"),
+        CppCli("CustomDatatype.hpp", "CustomDatatype.cpp"))
       )
-    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp) =>
+    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp, cppcliFilenames: CppCli) =>
       it(s"should generate valid language bridges for `$idlFile`-types") {
         Given(s"`$idlFile.djinni`")
         When(s"generating language-bridges from `$idlFile.djinni`")
@@ -110,6 +118,9 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
         Then(s"the expected files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
+
+        Then(s"the expected files should be created for C++/CLI: ${cppcliFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
       }
     }
 
@@ -130,6 +141,16 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       output should equal ("Parsing...\nResolving...\nGenerating...\n")
       assertFileExists(s"$outputPath/AllDatatypes.h")
       assertFileExists(s"$outputPath/AllDatatypes.mm")
+    }
+
+    it("should be able to only generate C++/CLI output") {
+      val outputPath = "src/it/resources/result/only_cppcli_out"
+      When("calling the generator with just `--cppcli-out`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --cppcli-out $outputPath")
+      Then("the generator should successfully generate just C++/CLI output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/AllDatatypes.hpp")
+      assertFileExists(s"$outputPath/AllDatatypes.cpp")
     }
 
     it("should be able to only generate C++ output") {

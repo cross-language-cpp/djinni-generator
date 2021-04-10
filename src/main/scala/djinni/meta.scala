@@ -30,7 +30,7 @@ abstract sealed class Meta
 
 case class MParam(name: String) extends Meta { val numParams = 0 }
 case class MDef(name: String, override val numParams: Int, defType: DefType, body: TypeDef) extends Meta
-case class MExtern(name: String, override val numParams: Int, defType: DefType, body: TypeDef, cpp: MExtern.Cpp, objc: MExtern.Objc, objcpp: MExtern.Objcpp, java: MExtern.Java, jni: MExtern.Jni) extends Meta
+case class MExtern(name: String, override val numParams: Int, defType: DefType, body: TypeDef, cpp: MExtern.Cpp, objc: MExtern.Objc, objcpp: MExtern.Objcpp, java: MExtern.Java, jni: MExtern.Jni, cs: MExtern.Cs) extends Meta
 object MExtern {
   // These hold the information marshals need to interface with existing types correctly
   // All include paths are complete including quotation marks "a/b/c" or angle brackets <a/b/c>.
@@ -67,6 +67,12 @@ object MExtern {
     typename: String, // The JNI type to use (e.g. jobject, jstring)
     typeSignature: String // The mangled Java type signature (e.g. "Ljava/lang/String;")
   )
+  case class Cs(
+    translator: String, // C++ typename containing ToCpp/TromCpp methods
+    header: String, // Where to find the translator class
+    typename: String,
+    reference: Boolean
+  )
 }
 
 abstract sealed class MOpaque extends Meta { val idlName: String }
@@ -76,7 +82,7 @@ case object DEnum extends DefType
 case object DInterface extends DefType
 case object DRecord extends DefType
 
-case class MPrimitive(_idlName: String, jName: String, jniName: String, cName: String, jBoxed: String, jSig: String, objcName: String, objcBoxed: String) extends MOpaque { val numParams = 0; val idlName = _idlName }
+case class MPrimitive(_idlName: String, jName: String, jniName: String, cName: String, jBoxed: String, jSig: String, objcName: String, objcBoxed: String, csName: String, cppCliName: String) extends MOpaque { val numParams = 0; val idlName = _idlName }
 case object MString extends MOpaque { val numParams = 0; val idlName = "string" }
 case object MDate extends MOpaque { val numParams = 0; val idlName = "date" }
 case object MBinary extends MOpaque { val numParams = 0; val idlName = "binary" }
@@ -86,13 +92,13 @@ case object MSet extends MOpaque { val numParams = 1; val idlName = "set" }
 case object MMap extends MOpaque { val numParams = 2; val idlName = "map" }
 
 val defaults: Map[String,MOpaque] = immutable.HashMap(
-  ("i8",   MPrimitive("i8",   "byte",    "jbyte",    "int8_t",  "Byte",    "B", "int8_t",  "NSNumber")),
-  ("i16",  MPrimitive("i16",  "short",   "jshort",   "int16_t", "Short",   "S", "int16_t", "NSNumber")),
-  ("i32",  MPrimitive("i32",  "int",     "jint",     "int32_t", "Integer", "I", "int32_t", "NSNumber")),
-  ("i64",  MPrimitive("i64",  "long",    "jlong",    "int64_t", "Long",    "J", "int64_t", "NSNumber")),
-  ("f32",  MPrimitive("f32",  "float",   "jfloat",   "float",   "Float",   "F", "float",   "NSNumber")),
-  ("f64",  MPrimitive("f64",  "double",  "jdouble",  "double",  "Double",  "D", "double",  "NSNumber")),
-  ("bool", MPrimitive("bool", "boolean", "jboolean", "bool",    "Boolean", "Z", "BOOL",    "NSNumber")),
+  ("i8",   MPrimitive("i8",   "byte",    "jbyte",    "int8_t",  "Byte",    "B", "int8_t",  "NSNumber", "sbyte",  "char")),
+  ("i16",  MPrimitive("i16",  "short",   "jshort",   "int16_t", "Short",   "S", "int16_t", "NSNumber", "short",  "short")),
+  ("i32",  MPrimitive("i32",  "int",     "jint",     "int32_t", "Integer", "I", "int32_t", "NSNumber", "int",    "int")),
+  ("i64",  MPrimitive("i64",  "long",    "jlong",    "int64_t", "Long",    "J", "int64_t", "NSNumber", "long",   "__int64")),
+  ("f32",  MPrimitive("f32",  "float",   "jfloat",   "float",   "Float",   "F", "float",   "NSNumber", "float",  "float")),
+  ("f64",  MPrimitive("f64",  "double",  "jdouble",  "double",  "Double",  "D", "double",  "NSNumber", "double", "double")),
+  ("bool", MPrimitive("bool", "boolean", "jboolean", "bool",    "Boolean", "Z", "BOOL",    "NSNumber", "bool",   "bool")),
   ("string", MString),
   ("binary", MBinary),
   ("optional", MOptional),

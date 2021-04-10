@@ -1,5 +1,6 @@
 /**
   * Copyright 2014 Dropbox, Inc.
+  * Copyright 2021 cross-language-cpp
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -80,6 +81,9 @@ object Main {
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcppNamespace: String = "djinni_generated"
     var objcBaseLibIncludePrefix: String = "djinni/objc/"
+    var cppCliOutFolder: Option[File] = None
+    var cppCliIdentStyle = IdentStyle.csDefault
+    var cppCliNamespace: String = ""
     var inFileListPath: Option[File] = None
     var outFileListPath: Option[File] = None
     var skipGeneration: Boolean = false
@@ -202,6 +206,11 @@ object Main {
       opt[String]("objc-base-lib-include-prefix").valueName("...").foreach(x => objcBaseLibIncludePrefix = x)
         .text("The Objective-C base support library's include path (default: djinni/objc/).")
       note("")
+      opt[File]("cppcli-out").valueName("<out-folder>").foreach(x => cppCliOutFolder = Some(x))
+        .text("The output folder for C++/CLI files (Generator disabled if unspecified).")
+      opt[String]("cppcli-namespace").valueName("...").foreach(cppCliNamespace = _)
+        .text("The namespace name to use for generated C++/CLI classes.")
+      note("")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
       opt[String]("yaml-out-file").valueName("<out-file>").foreach(x => yamlOutFile = Some(x))
@@ -244,6 +253,15 @@ object Main {
       identStyle("ident-objc-local",      "fooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(local = c) })
       identStyle("ident-objc-file",       "FooBar" ,    c => { objcFileIdentStyleOptional = Some(c) })
 
+      note("\nC++/CLI options:")
+      identStyle("ident-cppcli-type", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(ty = c) })
+      identStyle("ident-cppcli-type-param", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(typeParam = c) })
+      identStyle("ident-cppcli-property", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(property = c) })
+      identStyle("ident-cppcli-method", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(method = c) })
+      identStyle("ident-cppcli-local", "fooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(local = c) })
+      identStyle("ident-cppcli-enum", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(enum = c) })
+      identStyle("ident-cppcli-const", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(const = c) })
+      identStyle("ident-cppcli-file", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(file = c) })
     }
 
     if (!argParser.parse(args)) {
@@ -367,6 +385,9 @@ object Main {
       objcppNamespace,
       objcBaseLibIncludePrefix,
       objcSwiftBridgingHeaderWriter,
+      cppCliOutFolder,
+      cppCliIdentStyle,
+      cppCliNamespace,
       objcSwiftBridgingHeaderName,
       objcClosedEnums,
       outFileListWriter,
