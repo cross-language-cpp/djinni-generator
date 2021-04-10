@@ -6,12 +6,12 @@
 #include <memory>
 
 CustomDatatype::CustomDatatype(System::String^ recordData)
-: recordData(recordData)
+: _recordData(recordData)
 {}
 
 System::String^ CustomDatatype::RecordData::get()
 {
-    return recordData;
+    return _recordData;
 }
 
 System::String^ CustomDatatype::ToString()

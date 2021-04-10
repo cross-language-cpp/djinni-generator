@@ -135,7 +135,7 @@ package object generatorTools {
                                      enum = camelUpper, const = camelUpper)
 
     val csDefault = CppCliIdentStyle(ty = camelUpper, typeParam = camelUpper, property = camelUpper,
-                                    method = camelUpper, field = camelLower, local = camelLower,
+                                    method = camelUpper, field = prefix("_", camelLower), local = camelLower,
                                     enum = camelUpper, const = camelUpper, file = camelUpper)
 
     val styles = Map(

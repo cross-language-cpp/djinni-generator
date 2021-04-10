@@ -6,12 +6,12 @@
 #include <memory>
 
 OtherRecord::OtherRecord(CustomDatatype^ customDatatypeData)
-: customDatatypeData(customDatatypeData)
+: _customDatatypeData(customDatatypeData)
 {}
 
 CustomDatatype^ OtherRecord::CustomDatatypeData::get()
 {
-    return customDatatypeData;
+    return _customDatatypeData;
 }
 
 System::String^ OtherRecord::ToString()

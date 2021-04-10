@@ -55,7 +55,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
   val writeCppCliCppFile = writeCppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace, spec.cppCliIdentStyle.file, "") _
 
   def writeCppCliHppFile(name: String, origin: String, includes: Iterable[String], fwds: Iterable[String], f: IndentWriter => Unit, f2: IndentWriter => Unit = w => {}) =
-    writeHppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace.replace(".", "::"), spec.cppCliIdentStyle.file)(name, origin, includes, fwds, f, f2)
+    writeHppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace, spec.cppCliIdentStyle.file)(name, origin, includes, fwds, f, f2)
 
   def generateConstants(w: IndentWriter, ident: Ident, r: Record, consts: Seq[Const]): Unit = {
     def writeCppCliLiteral(ty: TypeRef, v: Any) = {
@@ -229,7 +229,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
         // Field definitions.
         for (f <- r.fields) {
           writeDoc(w, f.doc)
-          w.wl(s"${marshal.fqFieldType(f.ty.resolved, fieldNamesInScope)} _${idCs.field(f.ident)};")
+          w.wl(s"${marshal.fqFieldType(f.ty.resolved, fieldNamesInScope)} ${idCs.field(f.ident)};")
         }
       }
     })

@@ -19,90 +19,90 @@ AllDatatypes::AllDatatypes(bool booleanData,
                            System::Collections::Generic::HashSet<bool>^ setData,
                            System::Collections::Generic::Dictionary<char, bool>^ mapData,
                            System::Nullable<bool> optionalData)
-: booleanData(booleanData)
-, integer8Data(integer8Data)
-, integer16Data(integer16Data)
-, integer32Data(integer32Data)
-, integer64Data(integer64Data)
-, float32Data(float32Data)
-, float64Data(float64Data)
-, stringData(stringData)
-, binaryData(binaryData)
-, dateData(dateData)
-, listData(listData)
-, setData(setData)
-, mapData(mapData)
-, optionalData(optionalData)
+: _booleanData(booleanData)
+, _integer8Data(integer8Data)
+, _integer16Data(integer16Data)
+, _integer32Data(integer32Data)
+, _integer64Data(integer64Data)
+, _float32Data(float32Data)
+, _float64Data(float64Data)
+, _stringData(stringData)
+, _binaryData(binaryData)
+, _dateData(dateData)
+, _listData(listData)
+, _setData(setData)
+, _mapData(mapData)
+, _optionalData(optionalData)
 {}
 
 bool AllDatatypes::BooleanData::get()
 {
-    return booleanData;
+    return _booleanData;
 }
 
 char AllDatatypes::Integer8Data::get()
 {
-    return integer8Data;
+    return _integer8Data;
 }
 
 short AllDatatypes::Integer16Data::get()
 {
-    return integer16Data;
+    return _integer16Data;
 }
 
 int AllDatatypes::Integer32Data::get()
 {
-    return integer32Data;
+    return _integer32Data;
 }
 
 __int64 AllDatatypes::Integer64Data::get()
 {
-    return integer64Data;
+    return _integer64Data;
 }
 
 float AllDatatypes::Float32Data::get()
 {
-    return float32Data;
+    return _float32Data;
 }
 
 double AllDatatypes::Float64Data::get()
 {
-    return float64Data;
+    return _float64Data;
 }
 
 System::String^ AllDatatypes::StringData::get()
 {
-    return stringData;
+    return _stringData;
 }
 
 array<System::Byte>^ AllDatatypes::BinaryData::get()
 {
-    return binaryData;
+    return _binaryData;
 }
 
 System::DateTime AllDatatypes::DateData::get()
 {
-    return dateData;
+    return _dateData;
 }
 
 System::Collections::Generic::List<bool>^ AllDatatypes::ListData::get()
 {
-    return listData;
+    return _listData;
 }
 
 System::Collections::Generic::HashSet<bool>^ AllDatatypes::SetData::get()
 {
-    return setData;
+    return _setData;
 }
 
 System::Collections::Generic::Dictionary<char, bool>^ AllDatatypes::MapData::get()
 {
-    return mapData;
+    return _mapData;
 }
 
 System::Nullable<bool> AllDatatypes::OptionalData::get()
 {
-    return optionalData;
+    return _optionalData;
 }
 
 System::String^ AllDatatypes::ToString()

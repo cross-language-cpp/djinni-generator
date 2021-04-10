@@ -9,30 +9,30 @@ MyRecord::MyRecord(int id,
                    System::String^ info,
                    System::Collections::Generic::HashSet<System::String^>^ store,
                    System::Collections::Generic::Dictionary<System::String^, int>^ hash)
-: id(id)
-, info(info)
-, store(store)
-, hash(hash)
+: _id(id)
+, _info(info)
+, _store(store)
+, _hash(hash)
 {}
 
 int MyRecord::Id::get()
 {
-    return id;
+    return _id;
 }
 
 System::String^ MyRecord::Info::get()
 {
-    return info;
+    return _info;
 }
 
 System::Collections::Generic::HashSet<System::String^>^ MyRecord::Store::get()
 {
-    return store;
+    return _store;
 }
 
 System::Collections::Generic::Dictionary<System::String^, int>^ MyRecord::Hash::get()
 {
-    return hash;
+    return _hash;
 }
 
 System::String^ MyRecord::ToString()
