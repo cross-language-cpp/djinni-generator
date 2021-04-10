@@ -50,9 +50,9 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def withCppCliNs(namespace: String, t: String): String = withNs(Some(namespace.replace(".", "::")), t)
+  def withCppCliNs(namespace: String, t: String): String = withNs(Some(namespace), t)
 
-  val writeCppCliCppFile = writeCppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace.replace(".", "::"), spec.cppCliIdentStyle.file, "") _
+  val writeCppCliCppFile = writeCppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace, spec.cppCliIdentStyle.file, "") _
 
   def writeCppCliHppFile(name: String, origin: String, includes: Iterable[String], fwds: Iterable[String], f: IndentWriter => Unit, f2: IndentWriter => Unit = w => {}) =
     writeHppFileGeneric(spec.cppCliOutFolder.get, spec.cppCliNamespace.replace(".", "::"), spec.cppCliIdentStyle.file)(name, origin, includes, fwds, f, f2)

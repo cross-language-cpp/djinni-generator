@@ -13,8 +13,10 @@ Djinni generator parses an interface definition file and generates:
 - C++ implementations of types (enums, records)
 - Java implementations of types
 - Objective-C implementations of types
+- C++/CLI implementation of types
 - C++ code to convert between C++ and Java over JNI
-- Objective-C++ code to convert between C++ and Objective-C.
+- Objective-C++ code to convert between C++ and Objective-C
+- C++/CLI code to convert between C++ and C#
 
 
 ## Installation
