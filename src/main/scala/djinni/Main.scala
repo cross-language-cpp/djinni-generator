@@ -84,6 +84,7 @@ object Main {
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
     var cppCliNamespace: String = ""
+    var cppCliBaseLibIncludePrefix: String = "djinni/cppcli/"
     var inFileListPath: Option[File] = None
     var outFileListPath: Option[File] = None
     var skipGeneration: Boolean = false
@@ -210,6 +211,8 @@ object Main {
         .text("The output folder for C++/CLI files (Generator disabled if unspecified).")
       opt[String]("cppcli-namespace").valueName("...").foreach(cppCliNamespace = _)
         .text("The namespace name to use for generated C++/CLI classes.")
+      opt[String]("cppcli-base-lib-include-prefix").valueName("...").foreach(x => cppCliBaseLibIncludePrefix = x)
+        .text("The C++/CLI base support library's include path (default: djinni/cppcli/).")
       note("")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
@@ -388,6 +391,7 @@ object Main {
       cppCliOutFolder,
       cppCliIdentStyle,
       cppCliNamespace,
+      cppCliBaseLibIncludePrefix,
       objcSwiftBridgingHeaderName,
       objcClosedEnums,
       outFileListWriter,

@@ -81,6 +81,7 @@ package object generatorTools {
                    cppCliOutFolder: Option[File],
                    cppCliIdentStyle: CppCliIdentStyle,
                    cppCliNamespace: String,
+                   cppCliBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderName: Option[String],
                    objcClosedEnums: Boolean,
                    outFileListWriter: Option[Writer],

@@ -114,6 +114,7 @@ djinni \
 | -------- | ----------- |
 | `--cppcli-out <out-folder>` | The output folder for C++/CLI files (Generator disabled if unspecified). |
 | `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
+| `--cppcli-base-lib-include-prefix ...` | The C++/CLI base support library's include path (default: `djinni/cppcli/`). |
 
 
 ### Yaml Generation

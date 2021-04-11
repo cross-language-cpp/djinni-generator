@@ -234,7 +234,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       }
     })
 
-    refs.cpp.add("#include \"Marshal.hpp\"")
+    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Marshal.hpp"))
     refs.cpp.add("#include <memory>")
 
     writeCppCliCppFile(ident, origin, refs.cpp, w => {
@@ -390,9 +390,9 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       }
     })
 
-    refs.cpp.add("#include \"Marshal.hpp\"")
-    refs.cpp.add("#include \"Error.hpp\"")
-    refs.cpp.add("#include \"WrapperCache.hpp\"")
+    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Marshal.hpp"))
+    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Error.hpp"))
+    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "WrapperCache.hpp"))
     i.methods.foreach(m => {
       m.params.foreach(p => {
         def include(tm: MExpr): Unit = tm.base match {
