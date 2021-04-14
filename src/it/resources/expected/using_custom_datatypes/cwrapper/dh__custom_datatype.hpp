@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "custom_datatype.hpp"
+#include "../cpp-headers/custom_datatype.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__custom_datatype.h"
+#include "../cwrapper-headers/dh__custom_datatype.h"
 
 #ifdef __cplusplus
 }
