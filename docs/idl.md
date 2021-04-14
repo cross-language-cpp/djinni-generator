@@ -52,8 +52,8 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java and ObjC and can be called from C++.
-my_client_interface = interface +j +o {
+# This interface will be implemented in Java, ObjC and Python and can be called from C++.
+my_client_interface = interface +j +o +p {
     log_string(str: string): bool;
 }
 ```
@@ -79,8 +79,8 @@ The available data types for a record, argument, or return value are:
  - Strings (`string`)
  - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
    and `NSData` in Objective-C.
- - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java, and
-   `NSDate` in Objective-C.
+ - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
+   `NSDate` in Objective-C, and `datetime.datetime` in Python.
  - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, and `NSArray`
    in Objective-C. Primitives in a list will be boxed in Java and Objective-C.
  - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, and `NSSet` in
@@ -97,12 +97,12 @@ The available data types for a record, argument, or return value are:
 ## Types
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
-* [**Enums**](#enums) become C++ enum classes, Java enums, or ObjC `NS_ENUM`s.
+* [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, or Python `IntEnum`s.
 * [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, or ObjC `NS_OPTIONS`.
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
-  produces code allowing an interface implemented in C++ to be transparently used from ObjC or
-  Java, and vice versa.
+  produces code allowing an interface implemented in C++ to be transparently used from ObjC,
+  Java, or Python and vice versa.
 
 ### Enums
 
@@ -115,7 +115,7 @@ my_enum = enum {
 ```
 
 Enums are translated to C++ `enum class`es with underlying type `int`, ObjC `NS_ENUM`s with
-underlying type `NSInteger`, and Java enums.
+underlying type `NSInteger`, Java enums, and Python `IntEnum`s.
 
 ### Flags
 
@@ -209,14 +209,14 @@ my_cpp_interface = interface +c {
 }
 
 # This interface will be implemented in Java and ObjC and can be called from C++.
-my_client_interface = interface +j +o {
+my_client_interface = interface +j +o +p {
     log_string(str: string): bool;
 }
 ```
 
 Interfaces are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
-produces code allowing an interface implemented in C++ to be transparently used from ObjC or
-Java, and vice versa.
+produces code allowing an interface implemented in C++ to be transparently used from ObjC,
+Java or Python and vice versa.
 
 #### Special Methods for C++ Only
 `+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which have special effects in C++:
@@ -240,7 +240,7 @@ generated class; and in Objective-C, constant names are globals with the name of
 interface/record prefixed. Example:
 
 ```
-record_with_const = record +c +j +o {
+record_with_const = record +c +j +o +p {
     const const_value: i32 = 8;
 }
 ```
