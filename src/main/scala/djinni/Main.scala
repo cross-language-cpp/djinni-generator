@@ -234,7 +234,7 @@ object Main {
       opt[File]("c-wrapper-out").valueName("<out-folder>").foreach(x => cWrapperOutFolder = Some(x))
         .text("The output folder for Wrapper C files (Generator disabled if unspecified).")
       opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
-        .text("The import prefix used within python genereated files (default: \"\")")
+        .text("The import prefix used within python generated files (default: \"\")")
 
       note("\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")")
 
