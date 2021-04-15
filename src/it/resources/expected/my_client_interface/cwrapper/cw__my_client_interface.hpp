@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "my_client_interface.hpp"
+#include "../cpp-headers/my_client_interface.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "cw__my_client_interface.h"
+#include "../cwrapper-headers/cw__my_client_interface.h"
 
 #ifdef __cplusplus
 }

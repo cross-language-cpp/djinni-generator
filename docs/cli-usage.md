@@ -106,7 +106,7 @@ djinni \
 | -------- | ----------- |
 | `--objcpp-out <out-folder>` | The output folder for private Objective-C++ files (Generator disabled if unspecified). |
 | `--objcpp-ext <ext>` | The filename extension for Objective-C++ files (default: `mm`) |
-| `--objcpp-include-prefix <prefix>` | The prefix for #import of Objective-C++ header files from Objective-C++ files. |
+| `--objcpp-include-prefix <prefix>` | The prefix for `#import` of Objective-C++ header files from Objective-C++ files. |
 | `--objcpp-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from Objective-C++ files. |
 | `--objcpp-include-objc-prefix <prefix>` | The prefix for `#import` of the Objective-C header files from Objective-C++ files (default: the same as `--objcpp-include-prefix`) |
 | `--cpp-extended-record-include-prefix <prefix>` | The prefix path for `#include` of the extended record C++ header (`.hpp`) files |
@@ -122,7 +122,11 @@ djinni \
 | `--pycffi-out <out-folder>` | The output folder for PyCFFI files (Generator disabled if unspecified). |
 | `--pycffi-package-name ...`  | The package name to use for the generated PyCFFI classes. |
 | `--pycffi-dynamic-lib-list ...` | The names of the dynamic libraries to be linked with PyCFFI. |
-| `--c-wrapper-out <out-folder>` | The output folder for Wrapper C files (Generator disabled if unspecified). |
+| `--c-wrapper-out <out-folder>` |  The output folder for C wrapper files (Generator disabled if unspecified). |
+| `--c-wrapper-header-out <out-folder>` | The output folder for C wrapper header files (default: the same as `--c-wrapper-out`). |
+| `--c-wrapper-include-prefix <prefix>` | The prefix for #includes of C wrapper header files from C wrapper C++ files. |
+| `--c-wrapper-include-cpp-prefix <prefix>` | The prefix for #includes of C++ header files from C wrapper C++ files. |
+| `--c-wrapper-base-lib-include-prefix <prefix>` | The C wrapper base support library's include path (default: `djinni/cwrapper/`). |
 | `--py-import-prefix <import-prefix>` | The import prefix used within python generated files (default: "") |
 
 ### Yaml Generation

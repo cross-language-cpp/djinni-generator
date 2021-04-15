@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "other_record.hpp"
+#include "../cpp-headers/other_record.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__other_record.h"
+#include "../cwrapper-headers/dh__other_record.h"
 
 #ifdef __cplusplus
 }

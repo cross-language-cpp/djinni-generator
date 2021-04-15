@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "my_record.hpp"
+#include "../cpp-headers/my_record.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__map_string_int32_t.h"
+#include "../cwrapper-headers/dh__map_string_int32_t.h"
 
 #ifdef __cplusplus
 }

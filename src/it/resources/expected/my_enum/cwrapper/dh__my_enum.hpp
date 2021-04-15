@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "my_enum.hpp"
+#include "../cpp-headers/my_enum.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__my_enum.h"
+#include "../cwrapper-headers/dh__my_enum.h"
 
 #ifdef __cplusplus
 }

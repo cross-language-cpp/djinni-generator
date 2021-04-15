@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "all_datatypes.hpp"
+#include "../cpp-headers/all_datatypes.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__map_int8_t_bool.h"
+#include "../cwrapper-headers/dh__map_int8_t_bool.h"
 
 #ifdef __cplusplus
 }

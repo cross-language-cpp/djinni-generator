@@ -5,12 +5,12 @@
 
 #include <atomic>
 #include <optional>
-#include "my_flags.hpp"
+#include "../cpp-headers/my_flags.hpp"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "dh__my_flags.h"
+#include "../cwrapper-headers/dh__my_flags.h"
 
 #ifdef __cplusplus
 }
