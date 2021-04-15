@@ -84,6 +84,7 @@ object Main {
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
     var cppCliNamespace: String = ""
+    var cppCliIncludeCppPrefix: String = ""
     var cppCliBaseLibIncludePrefix: String = "djinni/cppcli/"
     var inFileListPath: Option[File] = None
     var outFileListPath: Option[File] = None
@@ -132,7 +133,7 @@ object Main {
         .text("all generated java classes will implement the interface android.os.Parcelable")
       opt[Boolean]("java-use-final-for-record").valueName("<use-final-for-record>").foreach(x => javaUseFinalForRecord = x)
         .text("Whether generated Java classes for records should be marked 'final' (default: true). ")
-      note("")
+      note("\nC++")
       opt[File]("cpp-out").valueName("<out-folder>").foreach(x => cppOutFolder = Some(x))
         .text("The output folder for C++ files (Generator disabled if unspecified).")
       opt[File]("cpp-header-out").valueName("<out-folder>").foreach(x => cppHeaderOutFolderOptional = Some(x))
@@ -159,7 +160,7 @@ object Main {
         .text("The expression to use for building non-nullable pointers")
       opt[Boolean]( "cpp-use-wide-strings").valueName("<true/false>").foreach(x => cppUseWideStrings = x)
         .text("Use wide strings in C++ code (default: false)")
-      note("")
+      note("\nJNI")
       opt[File]("jni-out").valueName("<out-folder>").foreach(x => jniOutFolder = Some(x))
         .text("The folder for the JNI C++ output files (Generator disabled if unspecified).")
       opt[File]("jni-header-out").valueName("<out-folder>").foreach(x => jniHeaderOutFolderOptional = Some(x))
@@ -172,7 +173,7 @@ object Main {
         .text("The namespace name to use for generated JNI C++ classes.")
       opt[String]("jni-base-lib-include-prefix").valueName("...").foreach(x => jniBaseLibIncludePrefix = x)
         .text("The JNI base support library's include path (default: djinni/jni/).")
-      note("")
+      note("\nObjective-C")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
       opt[File]("objc-header-out").valueName("<out-folder>").foreach(x => objcHeaderOutFolderOptional = Some(x))
@@ -187,7 +188,7 @@ object Main {
         .text("The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is --objc-header-out.")
       opt[Boolean]("objc-closed-enums").valueName("<true/false>").foreach(x => objcClosedEnums = x)
         .text("All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). ")
-      note("")
+      note("\nObjective-C++")
       opt[File]("objcpp-out").valueName("<out-folder>").foreach(x => objcppOutFolder = Some(x))
         .text("The output folder for private Objective-C++ files (Generator disabled if unspecified).")
       opt[String]("objcpp-ext").valueName("<ext>").foreach(objcppExt = _)
@@ -206,14 +207,16 @@ object Main {
         .text("The namespace name to use for generated Objective-C++ classes.")
       opt[String]("objc-base-lib-include-prefix").valueName("...").foreach(x => objcBaseLibIncludePrefix = x)
         .text("The Objective-C base support library's include path (default: djinni/objc/).")
-      note("")
+      note("\nC++/CLI")
       opt[File]("cppcli-out").valueName("<out-folder>").foreach(x => cppCliOutFolder = Some(x))
         .text("The output folder for C++/CLI files (Generator disabled if unspecified).")
       opt[String]("cppcli-namespace").valueName("...").foreach(cppCliNamespace = _)
         .text("The namespace name to use for generated C++/CLI classes.")
-      opt[String]("cppcli-base-lib-include-prefix").valueName("...").foreach(x => cppCliBaseLibIncludePrefix = x)
+      opt[String]("cppcli-include-cpp-prefix").valueName("<prefix>").foreach(x => cppCliIncludeCppPrefix = x)
+        .text("The prefix for #include of the main C++ header files from C++/CLI files.")
+      opt[String]("cppcli-base-lib-include-prefix").valueName("<prefix>").foreach(x => cppCliBaseLibIncludePrefix = x)
         .text("The C++/CLI base support library's include path (default: djinni/cppcli/).")
-      note("")
+      note("\nYaml Generation")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
       opt[String]("yaml-out-file").valueName("<out-file>").foreach(x => yamlOutFile = Some(x))
@@ -391,6 +394,7 @@ object Main {
       cppCliOutFolder,
       cppCliIdentStyle,
       cppCliNamespace,
+      cppCliIncludeCppPrefix,
       cppCliBaseLibIncludePrefix,
       objcSwiftBridgingHeaderName,
       objcClosedEnums,

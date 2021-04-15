@@ -78,6 +78,9 @@ The following code will be generated for each defined type:
 | Record     | my\_record.hpp         | my\_record.cpp             | MyRecord.hpp, MyRecord.cpp          |
 | Interface  | my\_interface.hpp      | my\_interface.cpp (+)      | MyInterface.hpp, MyInterface.cpp    |
 
+Add all generated files to your build target, and link against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
+
+C++/CLI sources have to be compiled with [`/clr` (Common Language Runtime Compilation)](https://docs.microsoft.com/en-us/cpp/build/reference/clr-common-language-runtime-compilation?view=msvc-160)
 
 !!! bug
 

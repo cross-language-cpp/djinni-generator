@@ -33,7 +33,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     val hpp = new mutable.TreeSet[String]()
     val hppFwds = new mutable.TreeSet[String]()
     val cpp = new mutable.TreeSet[String]()
-    val cppPrefix = spec.cppIncludePrefix
+    val cppPrefix: String = spec.cppCliIncludeCppPrefix
 
     hpp.add("#include " + q(cppPrefix + spec.cppFileIdentStyle(name) + "." + spec.cppHeaderExt))
 

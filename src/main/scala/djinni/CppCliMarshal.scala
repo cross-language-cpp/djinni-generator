@@ -60,7 +60,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
     q(spec.cppCliIdentStyle.file(ident) + "." + spec.cppHeaderExt)
   }
 
-  def isReference(td: TypeDecl) = td.body match {
+  def isReference(td: TypeDecl): Boolean = td.body match {
     case i: Interface => true
     case r: Record => true
     case e: Enum =>  false

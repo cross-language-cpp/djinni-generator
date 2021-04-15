@@ -67,6 +67,7 @@ class IntegrationTest extends FunSpec {
       "--objc-type-prefix IT " +
       s"--objcpp-out src/it/resources/result/$idl/objcpp " +
       s"--cppcli-out src/it/resources/result/$idl/cppcli " +
+      s"--cppcli-include-cpp-prefix ../cpp-headers/ " +
       s"--idl src/it/resources/$idl.djinni")
   }
 
