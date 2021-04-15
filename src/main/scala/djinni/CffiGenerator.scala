@@ -35,7 +35,6 @@ class CffiGenerator(spec: Spec) extends Generator(spec) {
   }
 
   override def generateInterface(origin: String, ident: Ident, doc: Doc, typeParams: Seq[TypeParam], i: Interface): Unit = {
-    System.out.println("Generting cffi interface...", origin, ident)
     writeCffiFile("pycffi_lib_build.py", origin, w => {
       w.wl("import sys")
       w.wl("from cffi import FFI")

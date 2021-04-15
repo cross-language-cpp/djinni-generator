@@ -213,7 +213,6 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   }
 
   def generateContainer(tm: MExpr, isOpt: Boolean, fileName: String, classAsMethodName: String, ident: Ident, origin: String, python: mutable.TreeSet[String]) = {
-//    System.out.println("PYTHON: generating container ", fileName)
     val helperClass = idPython.className(fileName) + "Helper"
     val proxyName = idPython.className(fileName) + "Proxy"
     val next = if(tm.base == MList) ""
@@ -777,7 +776,6 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   }
 
   override def generateInterface(origin: String, ident: Ident, doc: Doc, typeParams: Seq[TypeParam], i: Interface): Unit = {
-    System.out.println("Generting python interface...", origin, ident)
     val pythonClass = idPython.className(ident.name)
     val cMethodWrapper = idPython.method(ident.name)
     val refs = new PythonRefs(ident, origin)

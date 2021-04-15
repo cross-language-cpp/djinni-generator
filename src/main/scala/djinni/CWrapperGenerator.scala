@@ -1113,8 +1113,6 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
   def generateInterface(origin: String, ident: Ident, doc: Doc, typeParams: Seq[TypeParam], i: Interface): Unit ={
     val cppClass = idCpp.ty(ident.name)
 
-    System.out.println("Generting C interface...", origin)
-
     val refs = new CRefs(ident, origin)
     // first collect all references, don't write
     i.methods.map(m => {
