@@ -78,7 +78,7 @@ The available data types for a record, argument, or return value are:
  - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
  - Strings (`string`)
  - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   and `NSData` in Objective-C.
+   `NSData` in Objective-C, and an object supporting the `buffer` interface in Python.
  - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
    `NSDate` in Objective-C, and `datetime.datetime` in Python.
  - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, and `NSArray`
