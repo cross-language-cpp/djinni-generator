@@ -81,12 +81,13 @@ The available data types for a record, argument, or return value are:
    `NSData` in Objective-C, and an object supporting the `buffer` interface in Python.
  - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
    `NSDate` in Objective-C, and `datetime.datetime` in Python.
- - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, and `NSArray`
-   in Objective-C. Primitives in a list will be boxed in Java and Objective-C.
- - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, and `NSSet` in
-   Objective-C. Primitives in a set will be boxed in Java and Objective-C.
- - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, and
-   `NSDictionary` in Objective-C. Primitives in a map will be boxed in Java and Objective-C.
+ - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
+   in Objective-C, and `List` in Python. Primitives in a list will be boxed in Java and Objective-C.
+ - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
+   Objective-C, and `Set` in Python. Primitives in a set will be boxed in Java and Objective-C.
+ - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, 
+   `NSDictionary` in Objective-C, and `Dictionary` in Python. Primitives in a map will be boxed in Java
+   and Objective-C.
  - Enumerations / Flags
  - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
    boxed primitive reference in Java (which can be `null`), and object / NSNumber strong
