@@ -6,9 +6,8 @@ from djinni.exception import CPyException # default imported in all files
 
 from djinni import exception # this forces run of __init__.py which gives cpp option to call back into py to create exception
 
-from enum import IntEnum, unique
+from enum import IntEnum
 
-@unique
 class MyEnum(IntEnum):
     Option1 = 0
     Option2 = 1

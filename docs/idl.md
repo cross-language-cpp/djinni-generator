@@ -99,7 +99,7 @@ The available data types for a record, argument, or return value are:
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
 * [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, or Python `IntEnum`s.
-* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, or ObjC `NS_OPTIONS`.
+* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, ObjC `NS_OPTIONS`, or Python `IntFlag`s.
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
   produces code allowing an interface implemented in C++ to be transparently used from ObjC,
@@ -130,15 +130,15 @@ my_flags = flags {
 }
 ```
 
-Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set
-of overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type
-`NSUInteger`, and Java `EnumSet<>`. Contrary to the above enums, the enumerants of flags represent
-single bits instead of integral values.
+Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set of
+overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type `NSUInteger`,
+Java `EnumSet<>`, and Python `IntFlag`. Contrary to the above enums, the enumerants of flags
+represent single bits instead of integral values.
 
-In the above example the elements marked with `none` and `all` are given special meaning.
-In C++ and ObjC the `no_flags` option is generated with a value that has no bits set (i.e. `0`),
-and `all_flags` is generated as a bitwise-or combination of all other values. In Java these
-special options are not generated as one can just use `EnumSet.noneOf()` and `EnumSet.allOf()`.
+In the above example the elements marked with `none` and `all` are given special meaning.  In C++,
+ObjC, and Python the `no_flags` option is generated with a value that has no bits set (i.e. `0`),
+and `all_flags` is generated as a bitwise-or combination of all other values. In Java these special
+options are not generated as one can just use `EnumSet.noneOf()` and `EnumSet.allOf()`.
 
 ### Records
 
@@ -185,8 +185,8 @@ another_record = record {
 ```
 
 For record types, Haskell-style "deriving" declarations are supported to generate some common
-methods. Djinni is capable of generating equality and order comparators, implemented
-as operator overloading in C++ and standard comparison functions in Java / Objective-C.
+methods. Djinni is capable of generating equality and order comparators, implemented as operator
+overloading in C++ and standard comparison functions in Java, Objective-C, and Python.
 
 !!! note
 
@@ -209,7 +209,7 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java and ObjC and can be called from C++.
+# This interface will be implemented in Java, ObjC, and Python and can be called from C++.
 my_client_interface = interface +j +o +p {
     log_string(str: string): bool;
 }

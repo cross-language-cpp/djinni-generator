@@ -19,6 +19,7 @@ package djinni
 import djinni.ast.Record.DerivingType
 
 import scala.collection.mutable
+import scala.math.pow
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
@@ -1070,21 +1071,39 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     val enumClassName = idPython.className(ident.name)
     val refs = new PythonRefs(ident, origin)
     writePythonFile(ident, origin, refs.python, includeCffiLib = false, w => {
-      w.wl("from enum import IntEnum, unique")
+      val flagOrEnum = if (e.flags) "IntFlag" else "IntEnum"
+      w.wl(s"from enum import $flagOrEnum")
       w.wl
-      // TODO: Consider whether to use IntEnum rather than Enum
-      w.wl("@unique")
-      w.wl("class " + enumClassName + p("IntEnum") + ":").nested {
+      w.wl("class " + enumClassName + p(flagOrEnum) + ":").nested {
         if (writeDocString(w, doc)) { w.wl }
 
-        // Generate enum fields, and set their values to 0..# of fields -1
-        var i = 0
-        for (o <- e.options) {
-          writeDocString(w, o.doc) // Enum supports docstrings, unlike plain constant variables.
-          w.wl(s"${idPython.enum(o.ident.name)} = $i")
-          i += 1
-        }
+        writeEnumOptionNone(w, e)
+        writeEnumOptions(w, e)
+        writeEnumOptionAll(w, e)
       }
     })
+  }
+
+  def writeEnumOptionNone(w: IndentWriter, e: Enum) {
+    for (o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))) {
+      writeDocString(w, o.doc)
+      w.wl(s"${idPython.enum(o.ident.name)} = 0")
+    }
+  }
+
+  def writeEnumOptions(w: IndentWriter, e: Enum) {
+    var shift = 0
+    for (o <- normalEnumOptions(e)) {
+      writeDocString(w, o.doc)
+      w.wl(s"${idPython.enum(o.ident.name)} = ${if (e.flags) 1 << shift else shift}")
+      shift += 1
+    }
+  }
+
+  def writeEnumOptionAll(w: IndentWriter, e: Enum) {
+    for (o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))) {
+      writeDocString(w, o.doc)
+      w.wl(s"${idPython.enum(o.ident.name)} = ${pow(2, normalEnumOptions(e).size).toInt - 1}")
+    }
   }
 }
