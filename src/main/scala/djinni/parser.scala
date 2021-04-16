@@ -17,12 +17,12 @@
 
 package djinni
 
-import java.io.{File, FileNotFoundException, InputStreamReader, FileInputStream, Writer}
-
+import java.io.{File, FileInputStream, FileNotFoundException, InputStreamReader, Writer}
 import djinni.ast.Interface.Method
 import djinni.ast.Record.DerivingType.DerivingType
 import djinni.syntax._
 import djinni.ast._
+import org.apache.commons.io.FilenameUtils
 import java.util.{Map => JMap}
 import org.yaml.snakeyaml.Yaml
 import scala.collection.JavaConversions._
@@ -285,7 +285,7 @@ def parseExtern(origin: String, in: java.io.Reader): Either[Error, Seq[TypeDecl]
 
 def parseExternFile(externFile: File, inFileListWriter: Option[Writer]) : Seq[TypeDecl] = {
   if (inFileListWriter.isDefined) {
-    inFileListWriter.get.write(externFile + "\n")
+    inFileListWriter.get.write(FilenameUtils.separatorsToUnix(externFile.getPath) + "\n")
   }
 
   visitedFiles.add(externFile)

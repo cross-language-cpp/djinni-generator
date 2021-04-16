@@ -21,6 +21,7 @@ import djinni.ast._
 import java.io._
 import djinni.generatorTools._
 import djinni.writer.IndentWriter
+import org.apache.commons.io.FilenameUtils
 import scala.language.implicitConversions
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -281,7 +282,7 @@ abstract class Generator(spec: Spec)
 
   protected def createFile(folder: File, fileName: String, makeWriter: OutputStreamWriter => IndentWriter, f: IndentWriter => Unit): Unit = {
     if (spec.outFileListWriter.isDefined) {
-      spec.outFileListWriter.get.write(new File(folder, fileName).getPath + "\n")
+      spec.outFileListWriter.get.write(FilenameUtils.separatorsToUnix(new File(folder, fileName).getPath) + "\n")
     }
     if (spec.skipGeneration) {
       return
