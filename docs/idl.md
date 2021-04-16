@@ -226,14 +226,14 @@ Java or Python and vice versa.
        const accessor_method();
        static factory_method();
    }
-   
+
 - `const` methods will be declared as const in C++, though this cannot be enforced on callers in other languages, which lack this feature.
 - `static` methods will become a static method of the C++ class, which can be called from other languages without an object.  This is often useful for factory methods to act as a cross-language constructor.
 
 #### Exception Handling
 When an interface implemented in C++ throws a `std::exception`, it will be translated to a
-`java.lang.RuntimeException` in Java or an `NSException` in Objective-C. The `what()` message
-will be translated as well.
+`java.lang.RuntimeException` in Java, an `NSException` in Objective-C or a `RuntimeError` in Python.
+The `what()` message will be translated as well.
 
 #### Constants
 Constants can be defined within interfaces and records. In Java and C++ they are part of the
