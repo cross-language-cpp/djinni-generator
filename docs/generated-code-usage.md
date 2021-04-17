@@ -125,6 +125,4 @@ your C++ library through the CFFI bridge.
 
 * External types defined in YAML are not yet supported.
 * Use of non-nullable pointers is not yet supported.
-* There are no arguments for configurable header prefixes (or use of existing arguments).  All includes are unqualified.
-
 
