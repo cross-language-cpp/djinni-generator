@@ -236,7 +236,7 @@ When an interface implemented in C++ throws a `std::exception`, it will be trans
 The `what()` message will be translated as well.
 
 #### Constants
-Constants can be defined within interfaces and records. In Java and C++ they are part of the
+Constants can be defined within interfaces and records. In Java, Python and C++ they are part of the
 generated class; and in Objective-C, constant names are globals with the name of the
 interface/record prefixed. Example:
 
@@ -246,8 +246,8 @@ record_with_const = record +c +j +o +p {
 }
 ```
 
-will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java, and
-`RecordWithConstConstValue` in Objective-C.
+will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java,
+`RecordWithConst.CONST_VALUE` in Python, and `RecordWithConstConstValue` in Objective-C.
 
 ## Comments
 
@@ -255,5 +255,6 @@ will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in 
 # This is a comment
 ```
 
-If comments are are placed **on top or inside a type definition**,
-they will be converted to **Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces.
+If comments are are placed **on top or inside a type definition**, they will be converted to
+**Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces, or a
+Python **docstring**.
