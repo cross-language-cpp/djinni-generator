@@ -167,10 +167,10 @@ records (so a record cannot contain itself).
 
 #### Extensions
 
-To support extra fields and/or methods, a record can be "extended" in any language. To extend
-a record in a language, you can add a `+c` (C++), `+j` (Java), or `+o` (ObjC) flag after the
-record tag. The generated type will have a `Base` suffix, and you should create a derived type
-without the suffix that extends the record type.
+To support extra fields and/or methods, a record can be "extended" in any language. To extend a
+record in a language, you can add a `+c` (C++), `+j` (Java), `+o` (ObjC), or `+p` (Python) flag
+after the record tag. The generated type will have a `Base` suffix, and you should create a derived
+type without the suffix that extends the record type.
 
 The derived type must be constructible in the same way as the `Base` type. Interfaces will
 always use the derived type.
