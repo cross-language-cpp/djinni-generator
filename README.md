@@ -13,9 +13,11 @@ Djinni generator parses an interface definition file and generates:
 - C++ implementations of types (enums, records)
 - Java implementations of types
 - Objective-C implementations of types
+- Python implementation of types
 - C++/CLI implementation of types
 - C++ code to convert between C++ and Java over JNI
 - Objective-C++ code to convert between C++ and Objective-C
+- Python and C code to convert between C++ and Python over CFFI
 - C++/CLI code to convert between C++ and C#
 
 
