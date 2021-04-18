@@ -42,12 +42,8 @@ private object IdlParser extends RegexParsers {
 
   def importFileRef(): Parser[FileRef] = {
     ("@" ~> directive) ~ ("\"" ~> filePath <~ "\"") ^^ {
-      case "import" ~ x => {
-        new IdlFileRef(importFile(x))
-      }
-      case "extern" ~ x => {
-        new ExternFileRef(importFile(x))
-      }
+      case "import" ~ x => IdlFileRef(importFile(x))
+      case "extern" ~ x => ExternFileRef(importFile(x))
     }
   }
 
@@ -64,7 +60,7 @@ private object IdlParser extends RegexParsers {
 
     if (file.isEmpty) throw new FileNotFoundException("Unable to find file \"" + fileName + "\" at " + fileStack.top.getCanonicalPath)
 
-    return file.get
+    file.get
   }
 
   def filePath = "[^\"]*".r
@@ -78,8 +74,8 @@ private object IdlParser extends RegexParsers {
   }
 
   def ext(default: Ext) = (rep1("+" ~> ident) >> checkExts) | success(default)
-  def extRecord = ext(Ext(false, false, false, false))
-  def extInterface = ext(Ext(true, true, true, true))
+  def extRecord = ext(Ext(java = false, cpp = false, objc = false, py = false, cppcli = false))
+  def extInterface = ext(Ext(java = true, cpp = true, objc = true, py = true, cppcli = true))
 
   def checkExts(parts: List[Ident]): Parser[Ext] = {
     var foundCpp = false
@@ -144,10 +140,10 @@ private object IdlParser extends RegexParsers {
   def enumHeader = "enum".r
   def flagsHeader = "flags".r
   def enum: Parser[Enum] = enumHeader ~> bracesList(enumOption) ^^ {
-    case items => Enum(items, false)
+    case items => Enum(items, flags = false)
   }
   def flags: Parser[Enum] = flagsHeader ~> bracesList(flagsOption) ^^ {
-    case items => Enum(items, true)
+    case items => Enum(items, flags = true)
   }
 
   def enumOption: Parser[Enum.Option] = doc ~ ident ^^ {
@@ -169,8 +165,8 @@ private object IdlParser extends RegexParsers {
   }
 
   def externTypeDecl: Parser[TypeDef] = externEnum | externFlags | externInterface | externRecord
-  def externEnum: Parser[Enum] = enumHeader ^^ { case _ => Enum(List(), false) }
-  def externFlags: Parser[Enum] = flagsHeader ^^ { case _ => Enum(List(), true) }
+  def externEnum: Parser[Enum] = enumHeader ^^ { case _ => Enum(List(), flags = false) }
+  def externFlags: Parser[Enum] = flagsHeader ^^ { case _ => Enum(List(), flags = true) }
   def externRecord: Parser[Record] = recordHeader ~ opt(deriving) ^^ { case ext~deriving => Record(ext, List(), List(), deriving.getOrElse(Set[DerivingType]())) }
   def externInterface: Parser[Interface] = interfaceHeader ^^ { case ext => Interface(ext, List(), List()) }
 
@@ -309,7 +305,7 @@ def parseExternFile(externFile: File, inFileListWriter: Option[Writer]) : Seq[Ty
 }
 
 def normalizePath(path: File) : File = {
-  return new File(java.nio.file.Paths.get(path.toString()).normalize().toString())
+  new File(java.nio.file.Paths.get(path.toString()).normalize().toString())
 }
 
 def parseFile(idlFile: File, inFileListWriter: Option[Writer]): Seq[TypeDecl] = {
@@ -325,7 +321,7 @@ def parseFile(idlFile: File, inFileListWriter: Option[Writer]): Seq[TypeDecl] = 
     parse(normalizedIdlFile.getName, new InputStreamReader(fin, "UTF-8")) match {
       case Left(err) =>
         System.err.println(err)
-        System.exit(1); return null;
+        System.exit(1); null;
       case Right(idl) => {
         var types = idl.typeDecls
         idl.imports.foreach(x => {

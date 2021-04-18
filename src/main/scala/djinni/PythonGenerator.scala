@@ -277,7 +277,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
             // change function get elem with get key and write function to get elem
           case MSet =>
             val keyTyRef = getContainerElTyRef(tm, 0, ident)
-            val keyTy =  cMarshal.cReturnType(Some(keyTyRef), true)
+            val keyTy =  cMarshal.cReturnType(Some(keyTyRef), forHeader = true)
 
             writeGettersCallbacks(tm, ident, fileName, helperClass, w,
               "CPyObjectProxy.toPyObj(cself)", "", "",
@@ -355,7 +355,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
         }
         case MOptional =>
            tm.args.head.base match {
-             case m @ (MPrimitive(_,_,_,_,_,_,_,_) | MDate) => {
+             case m @ (MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate) => {
                python.add("from djinni.pycffi_marshal import CPyBoxed" + idPython.className(m.asInstanceOf[MOpaque].idlName))
              }
              case _ => collect(tm.args.head, justCollect, isOpt = true)
@@ -509,7 +509,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
             w.wl("with " + marshal.convertFrom(libCall, ret) + " as py_obj:").nested {
               w.wl("return " + marshal.releaseRAII("py_obj", optTy, isOpt = true)) // here
             } }, returnNotVoid = true, w)
-          case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
+          case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
             checkForExceptionFromPython( w=> {
             w.wl("with " + marshal.convertFrom(libCall, ret) + " as py_obj:").nested {
               w.wl("return " + marshal.releaseRAII("py_obj", ret)) // here
@@ -528,7 +528,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
             w.wl("_ret = " + marshal.convertFrom(libCall, ret))
             w.wl("assert _ret != -1")
             w.wl("return _ret")
-          }, true, w)
+          }, returnNotVoid = true, w)
           return
         case _ => "_ret = " + marshal.convertFrom(libCall, ret)
       }
@@ -781,20 +781,20 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     val cMethodWrapper = idPython.method(ident.name)
     val refs = new PythonRefs(ident, origin)
     i.consts.map(c => {
-      refs.collect(c.ty, true)
+      refs.collect(c.ty, justCollect = true)
     })
     i.methods.map(m => {
-      m.params.foreach(p => refs.collect(p.ty, true))
-      m.ret.foreach(t => refs.collect(t, true))
+      m.params.foreach(p => refs.collect(p.ty, justCollect = true))
+      m.ret.foreach(t => refs.collect(t, justCollect = true))
     })
     i.methods.map(m => {
-      m.params.foreach(p => refs.collect(p.ty, false))
-      m.ret.foreach(t => refs.collect(t, false))
+      m.params.foreach(p => refs.collect(p.ty, justCollect = false))
+      m.ret.foreach(t => refs.collect(t, justCollect = false))
     })
     refs.python.add("from abc import ABCMeta, abstractmethod")
     refs.python.add("from future.utils import with_metaclass")
 
-    writePythonFile(ident, origin, refs.python, true, w => {
+    writePythonFile(ident, origin, refs.python, includeCffiLib = true, w => {
       // Asbtract Class Definition
       w.wl("class " + pythonClass + "(with_metaclass(ABCMeta)):").nested {
         val docConsts = if (!i.consts.exists(!_.doc.lines.isEmpty)) Seq() else Seq({
@@ -982,11 +982,11 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     val recordAsMethod = idPython.method(ident.name)
     val refs = new PythonRefs(ident, origin)
     refs.python.add("from djinni.pycffi_marshal import CPyRecord")
-    r.fields.foreach(f => refs.collect(f.ty, true))
-    r.fields.foreach(f => refs.collect(f.ty, false))
-    r.consts.foreach(c => refs.collect(c.ty, true))
+    r.fields.foreach(f => refs.collect(f.ty, justCollect = true))
+    r.fields.foreach(f => refs.collect(f.ty, justCollect = false))
+    r.consts.foreach(c => refs.collect(c.ty, justCollect = true))
 
-    writePythonFile(ident.name + (if(r.ext.py) "_base" else ""), origin, refs.python, true, w => {
+    writePythonFile(ident.name + (if(r.ext.py) "_base" else ""), origin, refs.python, includeCffiLib = true, w => {
       // Record Definition
       w.wl("class " + recordClassName + (if(r.ext.py) "Base" else "") + ":").nested {
         var docLists = mutable.ArrayBuffer[IndentWriter => Unit]()

@@ -83,11 +83,11 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
       val idlName = toPythonType(tm)
         tm.base match {
           case MOptional => {
-            tm.args(0).base match {
-              case m @ (MPrimitive(_,_,_,_,_,_,_,_) | MDate) => {
+            tm.args.head.base match {
+              case m @ (MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate) => {
                 refs.add("from djinni.pycffi_marshal import CPyBoxed" + idPython.className(m.asInstanceOf[MOpaque].idlName))
               }
-              case _ => getRef(tm.args(0))
+              case _ => getRef(tm.args.head)
             }
           }
           case MList => {
@@ -95,7 +95,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
             if (idPython.className(idlName) != idPython.className(exclude)) {
               refs.add("from " + spec.pyImportPrefix + dh + idlName + " import " + idPython.className(idlName) + "Helper")
             }
-            getRef(tm.args(0))
+            getRef(tm.args.head)
           }
           case MSet | MMap => {
             refs.add("from djinni.pycffi_marshal import CPyObject, CPyObjectProxy")
@@ -103,7 +103,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
               refs.add("from " + spec.pyImportPrefix + dh +idlName + " import " + idPython.className(idlName) + "Helper")
               refs.add("from " + spec.pyImportPrefix + dh + idlName + " import " + idPython.className(idlName) + "Proxy")
             }
-            getRef(tm.args(0))
+            getRef(tm.args.head)
             if (tm.base == MMap) getRef(tm.args(1))
           }
           case d: MDef => d.defType match {
@@ -139,8 +139,8 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
       case MList => "list"
       case MSet => "set"
       case MMap => "map"
-      case MOptional => tm.args(0).base match {
-        case MPrimitive(_,_,_,_,_,_,_,_) | MDate => "boxed"
+      case MOptional => tm.args.head.base match {
+        case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate => "boxed"
         case _ => "optional"
       }
       case d: MDef => d.defType match {
@@ -154,10 +154,10 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     def expr(tm: MExpr): String = {
       val baseTy = base(tm.base)
       baseTy match {
-        case "boxed" | "optional" => baseTy + "_" + toPythonType(tm.args(0))
+        case "boxed" | "optional" => baseTy + "_" + toPythonType(tm.args.head)
         // for list, set, map we return the name of the helper
-        case "list" | "set" => idPython.local(baseTy + (if (tm.args.isEmpty) "" else "_" + toPythonType(tm.args(0))))
-        case "map" => idPython.local(baseTy + (if (tm.args.isEmpty) "" else "_"+ toPythonType(tm.args(0))) + "_" + toPythonType(tm.args(1)))
+        case "list" | "set" => idPython.local(baseTy + (if (tm.args.isEmpty) "" else "_" + toPythonType(tm.args.head)))
+        case "map" => idPython.local(baseTy + (if (tm.args.isEmpty) "" else "_"+ toPythonType(tm.args.head)) + "_" + toPythonType(tm.args(1)))
         case  _ => baseTy + (if (tm.args.isEmpty) "" else tm.args.map(expr).mkString("<", ", ", ">"))
       }
     }
@@ -190,8 +190,8 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   }
   def isPacked(ty: TypeRef): Boolean = ty.resolved.base match {
     case MOptional =>
-      ty.resolved.args(0).base match {
-        case MPrimitive(_,_,_,_,_,_,_,_) | MDate => true
+      ty.resolved.args.head.base match {
+        case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate => true
         case MString | MBinary => true
         case _ => false
       }
@@ -211,15 +211,15 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   def getPacked(arg: Field, argName: String, pyArgName: String) : String = {
     arg.ty.resolved.base match {
       case MOptional => {
-        arg.ty.resolved.args(0).base match {
-          case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
-            val idlName = arg.ty.resolved.args(0).base.asInstanceOf[MOpaque].idlName
+        arg.ty.resolved.args.head.base match {
+          case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
+            val idlName = arg.ty.resolved.args.head.base.asInstanceOf[MOpaque].idlName
             "CPyBoxed" + idPython.className(idlName) + ".fromPyOpt" + p(argName) + " as " + pyArgName
-          case _ => getPacked(arg.ty.resolved.args(0), true, argName, pyArgName)
+          case _ => getPacked(arg.ty.resolved.args.head, isOpt = true, argName, pyArgName)
         }
       }
       case e: MExtern => argName // TODO: implement e: MExtern
-      case _ => getPacked(arg.ty.resolved, false, argName, pyArgName)
+      case _ => getPacked(arg.ty.resolved, isOpt = false, argName, pyArgName)
     }
   }
 
@@ -241,17 +241,17 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   }
   def fromRAII(name: String, ty: TypeRef): String = ty.resolved.base match {
     case MOptional => {
-      ty.resolved.args(0).base match {
-        case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
+      ty.resolved.args.head.base match {
+        case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
           idPython.method(name + ".get_djinni_boxed" + "()")
-        case _ => fromRAII(name, ty.resolved.args(0), true)
+        case _ => fromRAII(name, ty.resolved.args.head, isOpt = true)
       }
     }
     case e: MExtern => name // TODO: implement e: MExtern
-    case _ => fromRAII(name, ty.resolved, false)
+    case _ => fromRAII(name, ty.resolved, isOpt = false)
   }
 
-  def releaseRAII(name: String, ty: MExpr, isOpt: Boolean) ={
+  def releaseRAII(name: String, ty: MExpr, isOpt: Boolean): String ={
     ty.base match {
       case MString => idPython.method(name + ".release_djinni_string()")
       case MBinary => idPython.method(name + ".release_djinni_binary()")
@@ -262,13 +262,13 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   }
   def releaseRAII(name: String, ty: TypeRef): String = ty.resolved.base match {
     case MOptional =>
-      ty.resolved.args(0).base match {
-        case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
+      ty.resolved.args.head.base match {
+        case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
           idPython.method(name + ".release_djinni_boxed" + "()")
-        case _ => releaseRAII(name, ty.resolved.args(0), true)
+        case _ => releaseRAII(name, ty.resolved.args.head, isOpt = true)
       }
     case e: MExtern => name // TODO: implement e: MExtern
-    case _ => releaseRAII(name, ty.resolved, false)
+    case _ => releaseRAII(name, ty.resolved, isOpt = false)
   }
 
   // Get to data from within C structure
@@ -289,11 +289,11 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
         case DEnum => "CPyEnum.toPy" + opt_s + p(idPython.className(d.name) + ", " + name)
       }
       case MOptional => {
-        ty.args(0).base match {
-          case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
-            val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+        ty.args.head.base match {
+          case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
+            val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
             "CPyBoxed" + idPython.className(idlName) + ".toPyOpt" + p(local)
-          case _ => convertTo(name, ty.args(0), true)
+          case _ => convertTo(name, ty.args.head, isOpt = true)
         }
       }
       case e: MExtern => name // TODO: implement e: MExtern
@@ -308,19 +308,19 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     val idlName = idPython.className(getExprIdlName(ty))
     ty.base match {
       case MString | MBinary => "CPy" + idlName + ".toPyWithoutTakingOwnership" + p(local)
-      case MOptional => ty.args(0).base match {
-        case m @ (MPrimitive(_,_,_,_,_,_,_,_) | MDate) =>
+      case MOptional => ty.args.head.base match {
+        case m @ (MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate) =>
           val idlName = m.asInstanceOf[MOpaque].idlName
           "CPyBoxed" + idPython.className(idlName) + ".toPyOptWithoutTakingOwnership" + p(local)
-        case MString | MBinary => convertToRelease(name, ty.args(0))
-        case _ => convertTo(name, ty, false)
+        case MString | MBinary => convertToRelease(name, ty.args.head)
+        case _ => convertTo(name, ty, isOpt = false)
       }
       case e: MExtern => name // TODO: implement e: MExtern
-      case _ => convertTo(name, ty, false)
+      case _ => convertTo(name, ty, isOpt = false)
     }
   }
 
-  def convertFrom(name: String, ty: TypeRef): String =  convertFrom(name, ty.resolved, false)
+  def convertFrom(name: String, ty: TypeRef): String =  convertFrom(name, ty.resolved, isOpt = false)
     def convertFrom(name: String, ty: MExpr, isOpt: Boolean): String = {
     val local = idPython.local(name)
     val idlName = idPython.className(getExprIdlName(ty))
@@ -337,11 +337,11 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
         case DEnum => "CPyEnum.fromPy" + opt_s + p(local)
       }
       case MOptional => {
-        ty.args(0).base match {
-          case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
-            val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+        ty.args.head.base match {
+          case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
+            val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
             "CPyBoxed" + idPython.className(idlName) + ".fromPyOpt" + p(local)
-          case _ => convertFrom(name, ty.args(0), true)
+          case _ => convertFrom(name, ty.args.head, isOpt = true)
         }
       }
       case e: MExtern => name // TODO: implement e: MExtern
