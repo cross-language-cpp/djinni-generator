@@ -67,7 +67,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
         case d: Double => w.w(d.toString)
         case b: Boolean => w.w(if (b) "true" else "false")
         case s: String => w.w(s)
-        case e: EnumValue => w.w(s"${marshal.typename(ty)}.${idCs.enum(e)}")
+        case e: EnumValue => w.w(s"${marshal.typename(ty)}::${idCs.enum(e)}")
         case v: ConstRef => w.w(idCs.const(v))
         case z: Map[_, _] => { // Value is record
           val recordMdef = ty.resolved.base.asInstanceOf[MDef]
