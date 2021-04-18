@@ -86,6 +86,17 @@ object Main {
     var yamlOutFolder: Option[File] = None
     var yamlOutFile: Option[String] = None
     var yamlPrefix: String = ""
+    var pyOutFolder: Option[File] = None
+    var pyIdentStyle = IdentStyle.pythonDefault
+    var cWrapperOutFolder: Option[File] = None
+    var cWrapperHeaderOutFolderOptional: Option[File] = None
+    var cWrapperIncludePrefix: String = ""
+    var cWrapperIncludeCppPrefix: String = ""
+    var cWrapperBaseLibIncludePrefix: String = "djinni/cwrapper/"
+    var pycffiPackageName: String = ""
+    var pycffiDynamicLibList: String = ""
+    var pycffiOutFolder: Option[File] = None
+    var pyImportPrefix: String = ""
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -100,13 +111,14 @@ object Main {
 
       override def showUsageOnError = false
       head("djinni generator version", Main.getClass.getPackage.getImplementationVersion)
+      note("General")
       help("help")
       version("version")
       opt[File]("idl").valueName("<in-file>").required().foreach(idlFile = _)
         .text("The IDL file with the type definitions, typically with extension \".djinni\".")
       opt[String]("idl-include-path").valueName("<path> ...").optional().unbounded().foreach(x => idlIncludePaths = idlIncludePaths :+ x)
         .text("An include path to search for Djinni @import directives. Can specify multiple paths.")
-      note("")
+      note("\nJava")
       opt[File]("java-out").valueName("<out-folder>").foreach(x => javaOutFolder = Some(x))
         .text("The output for the Java files (Generator disabled if unspecified).")
       opt[String]("java-package").valueName("...").foreach(x => javaPackage = Some(x))
@@ -127,7 +139,7 @@ object Main {
         .text("all generated java classes will implement the interface android.os.Parcelable")
       opt[Boolean]("java-use-final-for-record").valueName("<use-final-for-record>").foreach(x => javaUseFinalForRecord = x)
         .text("Whether generated Java classes for records should be marked 'final' (default: true). ")
-      note("")
+      note("\nC++")
       opt[File]("cpp-out").valueName("<out-folder>").foreach(x => cppOutFolder = Some(x))
         .text("The output folder for C++ files (Generator disabled if unspecified).")
       opt[File]("cpp-header-out").valueName("<out-folder>").foreach(x => cppHeaderOutFolderOptional = Some(x))
@@ -154,7 +166,7 @@ object Main {
         .text("The expression to use for building non-nullable pointers")
       opt[Boolean]( "cpp-use-wide-strings").valueName("<true/false>").foreach(x => cppUseWideStrings = x)
         .text("Use wide strings in C++ code (default: false)")
-      note("")
+      note("\nJNI")
       opt[File]("jni-out").valueName("<out-folder>").foreach(x => jniOutFolder = Some(x))
         .text("The folder for the JNI C++ output files (Generator disabled if unspecified).")
       opt[File]("jni-header-out").valueName("<out-folder>").foreach(x => jniHeaderOutFolderOptional = Some(x))
@@ -167,7 +179,7 @@ object Main {
         .text("The namespace name to use for generated JNI C++ classes.")
       opt[String]("jni-base-lib-include-prefix").valueName("...").foreach(x => jniBaseLibIncludePrefix = x)
         .text("The JNI base support library's include path (default: djinni/jni/).")
-      note("")
+      note("\nObjective-C")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
       opt[File]("objc-header-out").valueName("<out-folder>").foreach(x => objcHeaderOutFolderOptional = Some(x))
@@ -182,7 +194,7 @@ object Main {
         .text("The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is --objc-header-out.")
       opt[Boolean]("objc-closed-enums").valueName("<true/false>").foreach(x => objcClosedEnums = x)
         .text("All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). ")
-      note("")
+      note("\nObjective-C++")
       opt[File]("objcpp-out").valueName("<out-folder>").foreach(x => objcppOutFolder = Some(x))
         .text("The output folder for private Objective-C++ files (Generator disabled if unspecified).")
       opt[String]("objcpp-ext").valueName("<ext>").foreach(objcppExt = _)
@@ -201,14 +213,35 @@ object Main {
         .text("The namespace name to use for generated Objective-C++ classes.")
       opt[String]("objc-base-lib-include-prefix").valueName("...").foreach(x => objcBaseLibIncludePrefix = x)
         .text("The Objective-C base support library's include path (default: djinni/objc/).")
-      note("")
+      note("\nPython")
+      opt[File]("py-out").valueName("<out-folder>").foreach(x => pyOutFolder = Some(x))
+        .text("The output folder for Python files (Generator disabled if unspecified).")
+      opt[File]("pycffi-out").valueName("<out-folder>").foreach(x => pycffiOutFolder = Some(x))
+        .text("The output folder for PyCFFI files (Generator disabled if unspecified).")
+      opt[String]("pycffi-package-name").valueName("...").foreach(x => pycffiPackageName= x)
+        .text("The package name to use for the generated PyCFFI classes.")
+      opt[String]("pycffi-dynamic-lib-list").valueName("...").foreach(x => pycffiDynamicLibList= x)
+        .text("The names of the dynamic libraries to be linked with PyCFFI.")
+      opt[File]("c-wrapper-out").valueName("<out-folder>").foreach(x => cWrapperOutFolder = Some(x))
+        .text("The output folder for C wrapper files (Generator disabled if unspecified).")
+      opt[File]("c-wrapper-header-out").valueName("<out-folder>").foreach(x => cWrapperHeaderOutFolderOptional = Some(x))
+        .text("The output folder for C wrapper header files (default: the same as --c-wrapper-out).")
+      opt[String]("c-wrapper-include-prefix").valueName("<prefix>").foreach(x => cWrapperIncludePrefix = x)
+        .text("The prefix for #includes of C wrapper header files from C wrapper C++ files.")
+      opt[String]("c-wrapper-include-cpp-prefix").valueName("<prefix>").foreach(x => cWrapperIncludeCppPrefix = x)
+        .text("The prefix for #includes of C++ header files from C wrapper C++ files.")
+      opt[String]("c-wrapper-base-lib-include-prefix").valueName("<prefix>").foreach(x => cWrapperBaseLibIncludePrefix = x)
+        .text("The C wrapper base support library's include path (default: djinni/cwrapper/).")
+      opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
+        .text("The import prefix used within python generated files (default: \"\")")
+      note("\nYaml Generation")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
       opt[String]("yaml-out-file").valueName("<out-file>").foreach(x => yamlOutFile = Some(x))
         .text("If specified all types are merged into a single YAML file instead of generating one file per type (relative to --yaml-out).")
       opt[String]("yaml-prefix").valueName("<pre>").foreach(yamlPrefix = _)
         .text("The prefix to add to type names stored in YAML files (default: \"\").")
-      note("")
+      note("\nOther")
       opt[File]("list-in-files").valueName("<list-in-files>").foreach(x => inFileListPath = Some(x))
         .text("Optional file in which to write the list of input files parsed.")
       opt[File]("list-out-files").valueName("<list-out-files>").foreach(x => outFileListPath = Some(x))
@@ -219,30 +252,40 @@ object Main {
       note("\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")")
 
       note("\nC++ options:")
-      identStyle("ident-cpp-enum",        "FOO_BAR" ,    c => { cppIdentStyle = cppIdentStyle.copy(enum = c) })
-      identStyle("ident-cpp-field",       "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(field = c) })
-      identStyle("ident-cpp-method",      "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(method = c) })
-      identStyle("ident-cpp-type",        "FooBar" ,    c => { cppIdentStyle = cppIdentStyle.copy(ty = c) })
-      identStyle("ident-cpp-enum-type",   "FooBar" , c => { cppTypeEnumIdentStyle = c })
-      identStyle("ident-cpp-type-param",  "FooBar" ,c => { cppIdentStyle = cppIdentStyle.copy(typeParam = c) })
-      identStyle("ident-cpp-local",       "foo_bar" ,   c => { cppIdentStyle = cppIdentStyle.copy(local = c) })
-      identStyle("ident-cpp-file",        "foo_bar" ,    c => { cppFileIdentStyle = c })
+      identStyle("ident-cpp-enum",        "FOO_BAR",  c => { cppIdentStyle = cppIdentStyle.copy(enum = c) })
+      identStyle("ident-cpp-field",       "foo_bar",  c => { cppIdentStyle = cppIdentStyle.copy(field = c) })
+      identStyle("ident-cpp-method",      "foo_bar",  c => { cppIdentStyle = cppIdentStyle.copy(method = c) })
+      identStyle("ident-cpp-type",        "FooBar",   c => { cppIdentStyle = cppIdentStyle.copy(ty = c) })
+      identStyle("ident-cpp-enum-type",   "FooBar",   c => { cppTypeEnumIdentStyle = c })
+      identStyle("ident-cpp-type-param",  "FooBar",   c => { cppIdentStyle = cppIdentStyle.copy(typeParam = c) })
+      identStyle("ident-cpp-local",       "foo_bar",  c => { cppIdentStyle = cppIdentStyle.copy(local = c) })
+      identStyle("ident-cpp-file",        "foo_bar",  c => { cppFileIdentStyle = c })
 
       note("\nJava and JNI options:")
-      identStyle("ident-java-enum",   "FOO_BAR" ,    c => { javaIdentStyle = javaIdentStyle.copy(enum = c) })
-      identStyle("ident-java-field",  "fooBar" ,   c => { javaIdentStyle = javaIdentStyle.copy(field = c) })
-      identStyle("ident-java-type",   "FooBar" ,   c => { javaIdentStyle = javaIdentStyle.copy(ty = c) })
-      identStyle("ident-jni-class",   "FooBar" ,    c => { jniClassIdentStyleOptional = Some(c)})
-      identStyle("ident-jni-file",    "foo_bar" ,    c => { jniFileIdentStyleOptional = Some(c)})
+      identStyle("ident-java-enum",    "FOO_BAR",  c => { javaIdentStyle = javaIdentStyle.copy(enum = c) })
+      identStyle("ident-java-field",   "fooBar",   c => { javaIdentStyle = javaIdentStyle.copy(field = c) })
+      identStyle("ident-java-type",    "FooBar",   c => { javaIdentStyle = javaIdentStyle.copy(ty = c) })
+      identStyle("ident-jni-class",    "FooBar",   c => { jniClassIdentStyleOptional = Some(c)})
+      identStyle("ident-jni-file",     "foo_bar",  c => { jniFileIdentStyleOptional = Some(c)})
 
       note("\nObjective-C options:")
-      identStyle("ident-objc-enum",       "FooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(enum = c) })
-      identStyle("ident-objc-field",      "fooBar" ,   c => { objcIdentStyle = objcIdentStyle.copy(field = c) })
-      identStyle("ident-objc-method",     "fooBar" ,   c => { objcIdentStyle = objcIdentStyle.copy(method = c) })
-      identStyle("ident-objc-type",       "FooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(ty = c) })
-      identStyle("ident-objc-type-param", "FooBar" , c => { objcIdentStyle = objcIdentStyle.copy(typeParam = c) })
-      identStyle("ident-objc-local",      "fooBar" ,    c => { objcIdentStyle = objcIdentStyle.copy(local = c) })
-      identStyle("ident-objc-file",       "FooBar" ,    c => { objcFileIdentStyleOptional = Some(c) })
+      identStyle("ident-objc-enum",        "FooBar",  c => { objcIdentStyle = objcIdentStyle.copy(enum = c) })
+      identStyle("ident-objc-field",       "fooBar",  c => { objcIdentStyle = objcIdentStyle.copy(field = c) })
+      identStyle("ident-objc-method",      "fooBar",  c => { objcIdentStyle = objcIdentStyle.copy(method = c) })
+      identStyle("ident-objc-type",        "FooBar",  c => { objcIdentStyle = objcIdentStyle.copy(ty = c) })
+      identStyle("ident-objc-type-param",  "FooBar",  c => { objcIdentStyle = objcIdentStyle.copy(typeParam = c) })
+      identStyle("ident-objc-local",       "fooBar",  c => { objcIdentStyle = objcIdentStyle.copy(local = c) })
+      identStyle("ident-objc-file",        "FooBar",  c => { objcFileIdentStyleOptional = Some(c) })
+
+      note("\nPython options:")
+      identStyle("ident-py-type",        "foo_bar",  c => { pyIdentStyle = pyIdentStyle.copy(ty = c) })
+      identStyle("ident-py-class-name",  "FooBar",   c => { pyIdentStyle = pyIdentStyle.copy(className = c) })
+      identStyle("ident-py-type-param",  "foo_bar",  c => { pyIdentStyle = pyIdentStyle.copy(typeParam = c) })
+      identStyle("ident-py-method",      "foo_bar",  c => { pyIdentStyle = pyIdentStyle.copy(method = c) })
+      identStyle("ident-py-field",       "foo_bar",  c => { pyIdentStyle = pyIdentStyle.copy(field = c) })
+      identStyle("ident-py-local",       "foo_bar",  c => { pyIdentStyle = pyIdentStyle.copy(local = c) })
+      identStyle("ident-py-enum",        "Foo_Bar",  c => { pyIdentStyle = pyIdentStyle.copy(enum = c) })
+      identStyle("ident-py-const",       "FOO_BAR",  c => { pyIdentStyle = pyIdentStyle.copy(const = c) })
 
     }
 
@@ -253,6 +296,7 @@ object Main {
     val cppHeaderOutFolder = if (cppHeaderOutFolderOptional.isDefined) cppHeaderOutFolderOptional else cppOutFolder
     val jniHeaderOutFolder = if (jniHeaderOutFolderOptional.isDefined) jniHeaderOutFolderOptional else jniOutFolder
     val objcHeaderOutFolder = if (objcHeaderOutFolderOptional.isDefined) objcHeaderOutFolderOptional else objcOutFolder
+    val cWrapperHeaderOutFolder = if (cWrapperHeaderOutFolderOptional.isDefined) cWrapperHeaderOutFolderOptional else cWrapperOutFolder
     val jniClassIdentStyle = jniClassIdentStyleOptional.getOrElse(cppIdentStyle.ty)
     val jniBaseLibClassIdentStyle = jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
     val jniFileIdentStyle = jniFileIdentStyleOptional.getOrElse(cppFileIdentStyle)
@@ -373,7 +417,19 @@ object Main {
       skipGeneration,
       yamlOutFolder,
       yamlOutFile,
-      yamlPrefix)
+      yamlPrefix,
+      pyOutFolder,
+      pyIdentStyle,
+      pycffiOutFolder,
+      pycffiPackageName,
+      pycffiDynamicLibList,
+      idlFile.getName(),
+      cWrapperOutFolder,
+      cWrapperHeaderOutFolder,
+      cWrapperIncludePrefix,
+      cWrapperIncludeCppPrefix,
+      cWrapperBaseLibIncludePrefix,
+      pyImportPrefix)
 
 
     try {

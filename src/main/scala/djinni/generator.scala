@@ -83,12 +83,26 @@ package object generatorTools {
                    skipGeneration: Boolean,
                    yamlOutFolder: Option[File],
                    yamlOutFile: Option[String],
-                   yamlPrefix: String)
+                   yamlPrefix: String,
+                   pyOutFolder: Option[File],
+                   pyIdentStyle: PythonIdentStyle,
+                   pycffiOutFolder: Option[File],
+                   pycffiPackageName: String,
+                   pycffiDynamicLibList: String,
+                   idlFileName: String,
+                   cWrapperOutFolder: Option[File],
+                   cWrapperHeaderOutFolder: Option[File],
+                   cWrapperIncludePrefix: String,
+                   cWrapperIncludeCppPrefix: String,
+                   cWrapperBaseLibIncludePrefix: String,
+                   pyImportPrefix: String)
 
   def preComma(s: String) = {
     if (s.isEmpty) s else ", " + s
   }
+  def p(s: String) = "(" + s + ")"
   def q(s: String) = '"' + s + '"'
+  def t(s: String) = "<" + s + ">"
   def firstUpper(token: String) = if (token.isEmpty()) token else token.charAt(0).toUpper + token.substring(1)
 
   type IdentConverter = String => String
@@ -105,6 +119,9 @@ package object generatorTools {
                             method: IdentConverter, field: IdentConverter, local: IdentConverter,
                             enum: IdentConverter, const: IdentConverter)
 
+  case class PythonIdentStyle(ty: IdentConverter, className: IdentConverter, typeParam: IdentConverter,
+                            method: IdentConverter, field: IdentConverter, local: IdentConverter,
+                            enum: IdentConverter, const: IdentConverter)
   object IdentStyle {
     val camelUpper = (s: String) => s.split('_').map(firstUpper).mkString
     val camelLower = (s: String) => {
@@ -125,6 +142,9 @@ package object generatorTools {
     val objcDefault = ObjcIdentStyle(ty = camelUpper, typeParam = camelUpper,
                                      method = camelLower, field = camelLower, local = camelLower,
                                      enum = camelUpper, const = camelUpper)
+    val pythonDefault = PythonIdentStyle(ty = underLower, className = camelUpper, typeParam = underLower,
+                                         method = underLower, field = underLower, local = underLower,
+                                         enum = underUpper, const = underCaps)
 
     val styles = Map(
       "FooBar" -> camelUpper,
@@ -134,7 +154,7 @@ package object generatorTools {
       "FOO_BAR" -> underCaps)
 
     def infer(input: String): Option[IdentConverter] = {
-      styles.foreach((e) => {
+      styles.foreach(e => {
         val (str, func) = e
         if (input endsWith str) {
           val diff = input.length - str.length
@@ -183,10 +203,10 @@ package object generatorTools {
     folder.mkdirs()
     if (folder.exists) {
       if (!folder.isDirectory) {
-        throw new GenerateException(s"Unable to create $name folder at ${q(folder.getPath)}, there's something in the way.")
+        throw GenerateException(s"Unable to create $name folder at ${q(folder.getPath)}, there's something in the way.")
       }
     } else {
-      throw new GenerateException(s"Unable to create $name folder at ${q(folder.getPath)}.")
+      throw GenerateException(s"Unable to create $name folder at ${q(folder.getPath)}.")
     }
   }
 
@@ -240,6 +260,25 @@ package object generatorTools {
         }
         new YamlGenerator(spec).generate(idl)
       }
+      if (spec.pyOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("Python", spec.pyOutFolder.get)
+        }
+        new PythonGenerator(spec).generate(idl)
+      }
+      if (spec.cWrapperOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("C", spec.cWrapperOutFolder.get)
+          createFolder("C header", spec.cWrapperHeaderOutFolder.get)
+        }
+        new CWrapperGenerator(spec).generate(idl)
+      }
+      if (spec.pycffiOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("Cffi", spec.pycffiOutFolder.get)
+        }
+        new CffiGenerator(spec).generate(idl)
+      }
       None
     }
     catch {
@@ -290,12 +329,57 @@ abstract class Generator(spec: Spec)
     }
   }
 
+  protected def appendToFile(folder: File, fileName: String, f: IndentWriter => Unit): Unit = {
+    if (spec.skipGeneration) {
+      return
+    }
+
+    val file = new File(folder, fileName)
+
+    val fout = new FileOutputStream(file, true)
+    try {
+      val out = new OutputStreamWriter(fout, "UTF-8")
+      f(new IndentWriter(out))
+      out.flush()
+    }
+    finally {
+      fout.close()
+    }
+  }
+
+  protected def createFileOnce(folder: File, fileName: String, f: IndentWriter => Unit) {
+    val file = new File(folder, fileName)
+    val cp = file.getCanonicalPath
+    Generator.writtenFiles.put(cp.toLowerCase, cp) match {
+      case Some(existing) => return
+      case _ =>
+    }
+
+    if (spec.outFileListWriter.isDefined) {
+      spec.outFileListWriter.get.write(new File(folder, fileName).getPath + "\n")
+    }
+    if (spec.skipGeneration) {
+      return
+    }
+
+    val fout = new FileOutputStream(file)
+    try {
+      val out = new OutputStreamWriter(fout, "UTF-8")
+      f(new IndentWriter(out))
+      out.flush()
+    }
+    finally {
+      fout.close()
+    }
+  }
+
   protected def createFile(folder: File, fileName: String, f: IndentWriter => Unit): Unit = createFile(folder, fileName, out => new IndentWriter(out), f)
 
   implicit def identToString(ident: Ident): String = ident.name
   val idCpp = spec.cppIdentStyle
   val idJava = spec.javaIdentStyle
   val idObjc = spec.objcIdentStyle
+  val idPython = spec.pyIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {
@@ -320,7 +404,7 @@ abstract class Generator(spec: Spec)
   def writeHppFileGeneric(folder: File, namespace: String, fileIdentStyle: IdentConverter)(name: String, origin: String, includes: Iterable[String], fwds: Iterable[String], f: IndentWriter => Unit, f2: IndentWriter => Unit) {
     createFile(folder, fileIdentStyle(name) + "." + spec.cppHeaderExt, (w: IndentWriter) => {
       w.wl("// AUTOGENERATED FILE - DO NOT MODIFY!")
-      w.wl("// This file generated by Djinni from " + origin)
+      w.wl("// This file was generated by Djinni from " + origin)
       w.wl
       w.wl("#pragma once")
       if (includes.nonEmpty) {
@@ -344,7 +428,7 @@ abstract class Generator(spec: Spec)
   def writeCppFileGeneric(folder: File, namespace: String, fileIdentStyle: IdentConverter, includePrefix: String)(name: String, origin: String, includes: Iterable[String], f: IndentWriter => Unit) {
     createFile(folder, fileIdentStyle(name) + "." + spec.cppExt, (w: IndentWriter) => {
       w.wl("// AUTOGENERATED FILE - DO NOT MODIFY!")
-      w.wl("// This file generated by Djinni from " + origin)
+      w.wl("// This file was generated by Djinni from " + origin)
       w.wl
       val myHeader = q(includePrefix + fileIdentStyle(name) + "." + spec.cppHeaderExt)
       w.wl(s"#include $myHeader  // my header")
@@ -405,10 +489,10 @@ abstract class Generator(spec: Spec)
     w.w(end)
   }
 
-  def normalEnumOptions(e: Enum) = e.options.filter(_.specialFlag == None)
+  def normalEnumOptions(e: Enum) = e.options.filter(_.specialFlag.isEmpty)
 
   def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter) {
-    for (o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.NoFlags))) {
+    for (o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))) {
       writeDoc(w, o.doc)
       w.wl(ident(o.ident.name) + " = 0,")
     }
@@ -424,7 +508,7 @@ abstract class Generator(spec: Spec)
   }
 
   def writeEnumOptionAll(w: IndentWriter, e: Enum, ident: IdentConverter) {
-    for (o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.AllFlags))) {
+    for (o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))) {
       writeDoc(w, o.doc)
       w.w(ident(o.ident.name) + " = ")
       w.w(normalEnumOptions(e).map(o => ident(o.ident.name)).fold("0")((acc, o) => acc + " | " + o))

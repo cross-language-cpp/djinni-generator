@@ -65,3 +65,64 @@ Generated files for Objective-C / C++ are as follows (assuming prefix is `DB`):
 Add all generated files to your build target, and link against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
 
 Note that `+Private` files can only be used with ObjC++ source (other headers are pure ObjC) and are not required by Objective-C users of your interface.
+
+
+## Python / C++ Project (Experimental)
+
+Python support in Djinni is experimental, but ready to try out.  It can generate code for bridging
+C++ with Python 3.
+
+For more information, you can check out the talk from CppCon 2015.
+[Slides](https://bit.ly/djinnitalk2) and [video](https://bit.ly/djinnivideo2) are available online.
+
+### Includes & Build Target
+
+When bridging to Python, Djinni generates 4 types of output:
+
+* `python` Generated Python classes and proxies for interacting with C++ via [CFFI](https://cffi.readthedocs.org/).
+* `cffi` Python code run at build time to create a Python extension out of the C++ code.
+* `cwrapper` A C interface implemented in C++ to allowing Python to interact with C++ classes.
+* `cpp` The same C++ classes generated for all other Djinni languages.
+
+Generated files for Python / C++ are as follows:
+
+| Type       | C++ header             | C++ source                   | Python files        | CFFI                | C Wrapper            |
+|------------|------------------------|------------------------------|---------------------|---------------------|----------------------|
+| Enum/Flags | my\_enum.hpp           |                              | my_enum.py          |                     | dh__my_enum.cpp      |
+|            |                        |                              |                     |                     | dh__my_enum.h        |
+|            |                        |                              |                     |                     | dh__my_enum.hpp      |
+| Record     | my\_record[\_base].hpp | my\_record[\_base].cpp :one: | my_record[_base].py |                     | dh__my_record.cpp    |
+|            |                        |                              |                     |                     | dh__my_record.h      |
+|            |                        |                              |                     |                     | dh__my_record.hpp    |
+| Interface  | my\_interface.hpp      | my\_interface.cpp :one:      | my_interface.py     | pycffi_lib_build.py | cw__my_interface.cpp |
+|            |                        |                              |                     |                     | cw__my_interface.h   |
+|            |                        |                              |                     |                     | cw__my_interface.hpp |
+
+- :one: Generated only for types that contain constants.
+
+Additional C Wrapper files are generated for data structures; their names are encoded as:
+
+    dh__{list,set,map}_{encoded_type(s)}.cpp
+    dh__{list,set,map}_{encoded_type(s)}.h
+    dh__{list,set,map}_{encoded_type(s)}.hpp
+
+See the in the table below a few examples:
+
+| Type                    | C Wrapper                              |
+|-------------------------|----------------------------------------|
+| `list<i32>`             | dh__list_int32_t.{cpp,h,hpp}           |
+| `set<string>`           | dh__set_string.{cpp,h,hpp}             |
+| `map<i32, set<string>>` | dh__map_int32_t_set_string.{cpp,h,hpp} |
+
+Add all generated C and C++ source files to your build target, and link it against the
+[djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
+
+Compile the Python extension module (CFFI) by executing `pycffi_lib_build.py` while providing all C
+Wrapper header files (`.h`) as arguments. The resulting shared library will enable Python to access
+your C++ library through the CFFI bridge.
+
+### Known limitations of the generator
+
+* External types defined in YAML are not yet supported.
+* Use of non-nullable pointers is not yet supported.
+
