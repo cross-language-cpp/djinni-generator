@@ -18,6 +18,10 @@ class IntegrationTest extends FunSpec {
   final val OBJC = "objc"
   final val OBJC_HEADERS = "objc-headers"
   final val OBJCPP = "objcpp"
+  final val PY = "python"
+  final val CFFI = "cffi"
+  final val CWRAPPER = "cwrapper"
+  final val CWRAPPER_HEADERS = "cwrapper-headers"
   final val CPPCLI = "cppcli"
 
   type Cpp = List[String]
@@ -36,6 +40,14 @@ class IntegrationTest extends FunSpec {
   def ObjCHeaders(params: String*) = List(params: _*)
   type ObjCpp = List[String]
   def ObjCpp(params: String*) = List(params: _*)
+  type Python = List[String]
+  def Python(params: String*) = List(params: _*)
+  type PyCffi = List[String]
+  def PyCffi(params: String*) = List(params: _*)
+  type CWrapper = List[String]
+  def CWrapper(params: String*) = List(params: _*)
+  type CWrapperHeaders = List[String]
+  def CWrapperHeaders(params: String*) = List(params: _*)
   type CppCli = List[String]
   def CppCli(params: String*) = List(params: _*)
 
@@ -66,6 +78,12 @@ class IntegrationTest extends FunSpec {
       "--objc-swift-bridging-header bridging-header " +
       "--objc-type-prefix IT " +
       s"--objcpp-out src/it/resources/result/$idl/objcpp " +
+      s"--py-out src/it/resources/result/$idl/python " +
+      s"--pycffi-out src/it/resources/result/$idl/cffi " +
+      s"--c-wrapper-out src/it/resources/result/$idl/cwrapper " +
+      s"--c-wrapper-header-out src/it/resources/result/$idl/cwrapper-headers " +
+      s"--c-wrapper-include-prefix ../cwrapper-headers/ " +
+      s"--c-wrapper-include-cpp-prefix ../cpp-headers/ " +
       s"--cppcli-out src/it/resources/result/$idl/cppcli " +
       s"--cppcli-include-cpp-prefix ../cpp-headers/ " +
       s"--idl src/it/resources/$idl.djinni")

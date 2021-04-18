@@ -85,6 +85,7 @@ private object IdlParser extends RegexParsers {
     var foundCpp = false
     var foundJava = false
     var foundObjc = false
+    var foundPy = false
     var foundCs = false
 
     for (part <- parts)
@@ -101,13 +102,17 @@ private object IdlParser extends RegexParsers {
           if (foundObjc) return err("Found multiple \"o\" modifiers.")
           foundObjc = true
         }
+        case "p" => {
+          if (foundPy) return err("Found multiple \"p\" modifiers.")
+          foundPy = true
+        }
         case "s" => {
           if (foundCs) return err("Found multiple \"s\" modifiers.")
           foundCs = true
         }
         case _ => return err("Invalid modifier \"" + part.name + "\"")
       }
-    success(Ext(foundJava, foundCpp, foundObjc, foundCs))
+    success(Ext(foundJava, foundCpp, foundObjc, foundPy, foundCs))
   }
 
   def typeDef: Parser[TypeDef] = record | enum | flags | interface

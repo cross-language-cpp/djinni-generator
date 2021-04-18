@@ -52,8 +52,8 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java, ObjC and C# and can be called from C++.
-my_client_interface = interface +j +o +s {
+# This interface will be implemented in Java, ObjC, Python and C# and can be called from C++.
+my_client_interface = interface +j +o +p +s {
     log_string(str: string): bool;
 }
 ```
@@ -78,17 +78,17 @@ The available data types for a record, argument, or return value are:
  - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
  - Strings (`string`)
  - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   `NSData` in Objective-C, and `array<System::Byte>` in C++/CLI.
+   `NSData` in Objective-C, an object supporting the `buffer` interface in Python, and `array<System::Byte>` in C++/CLI..
  - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
-   `NSDate` in Objective-C, and `System::DateTime` in C++/CLI.
+   `NSDate` in Objective-C, `datetime.datetime` in Python, and `System::DateTime` in C++/CLI.
  - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
-   in Objective-C, and `System::Collections::Generic::List` in C++/CLI.
+   in Objective-C, `List` in Python, and `System::Collections::Generic::List` in C++/CLI. 
    Primitives in a list will be boxed in Java and Objective-C.
  - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
-   Objective-C, and `System::Collections::Generic::HashSet` in C++/CLI.
+   Objective-C, `Set` in Python, and `System::Collections::Generic::HashSet` in C++/CLI. 
    Primitives in a set will be boxed in Java and Objective-C.
- - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java,
-   `NSDictionary` in Objective-C, and `System::Collections::Generic::Dictionary` in C++/CLI.
+ - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, 
+   `NSDictionary` in Objective-C, `Dictionary` in Python, and `System::Collections::Generic::Dictionary` in C++/CLI. 
    Primitives in a map will be boxed in Java and Objective-C.
  - Enumerations / Flags
  - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
@@ -101,12 +101,13 @@ The available data types for a record, argument, or return value are:
 
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
-* [**Enums**](#enums) become C++ enum classes, Java enums, or ObjC `NS_ENUM`s.
-* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, or ObjC `NS_OPTIONS`.
+* [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, or Python `IntEnum`s.
+* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, ObjC `NS_OPTIONS`, or Python `IntFlag`s.
   In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
-  produces code allowing an interface implemented in C++ to be transparently used from ObjC, Java or C#, and vice versa.
+  produces code allowing an interface implemented in C++ to be transparently used from ObjC,
+  Java, Python or C#, and vice versa.
 
 ### Enums
 
@@ -119,7 +120,7 @@ my_enum = enum {
 ```
 
 Enums are translated to C++ `enum class`es with underlying type `int`, ObjC `NS_ENUM`s with
-underlying type `NSInteger`, and Java enums.
+underlying type `NSInteger`, Java enums, and Python `IntEnum`s.
 
 ### Flags
 
@@ -133,16 +134,15 @@ my_flags = flags {
 }
 ```
 
-Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set
-of overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type
-`NSUInteger`, and Java `EnumSet<>`. In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
-Contrary to the above enums, the enumerants of flags represent
-single bits instead of integral values.
+Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set of
+overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type `NSUInteger`,
+Java `EnumSet<>`, and Python `IntFlag`. In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0). 
+Contrary to the above enums, the enumerants of flags represent single bits instead of integral values.
 
-In the above example the elements marked with `none` and `all` are given special meaning.
-In C++ and ObjC the `no_flags` option is generated with a value that has no bits set (i.e. `0`),
-and `all_flags` is generated as a bitwise-or combination of all other values. In Java these
-special options are not generated as one can just use `EnumSet.noneOf()` and `EnumSet.allOf()`.
+In the above example the elements marked with `none` and `all` are given special meaning.  In C++,
+ObjC, and Python the `no_flags` option is generated with a value that has no bits set (i.e. `0`),
+and `all_flags` is generated as a bitwise-or combination of all other values. In Java these special
+options are not generated as one can just use `EnumSet.noneOf()` and `EnumSet.allOf()`.
 
 ### Records
 
@@ -171,10 +171,10 @@ records (so a record cannot contain itself).
 
 #### Extensions
 
-To support extra fields and/or methods, a record can be "extended" in any language. To extend
-a record in a language, you can add a `+c` (C++), `+j` (Java), or `+o` (ObjC) flag after the
-record tag. The generated type will have a `Base` suffix, and you should create a derived type
-without the suffix that extends the record type.
+To support extra fields and/or methods, a record can be "extended" in any language. To extend a
+record in a language, you can add a `+c` (C++), `+j` (Java), `+o` (ObjC), or `+p` (Python) flag
+after the record tag. The generated type will have a `Base` suffix, and you should create a derived
+type without the suffix that extends the record type.
 
 The derived type must be constructible in the same way as the `Base` type. Interfaces will
 always use the derived type.
@@ -189,8 +189,8 @@ another_record = record {
 ```
 
 For record types, Haskell-style "deriving" declarations are supported to generate some common
-methods. Djinni is capable of generating equality and order comparators, implemented
-as operator overloading in C++ and standard comparison functions in Java / Objective-C.
+methods. Djinni is capable of generating equality and order comparators, implemented as operator
+overloading in C++ and standard comparison functions in Java, Objective-C, and Python.
 
 !!! note
 
@@ -213,15 +213,15 @@ my_cpp_interface = interface +c {
     const version: i32 = 1;
 }
 
-# This interface will be implemented in Java, ObjC and C# and can be called from C++.
-my_client_interface = interface +j +o +s {
+# This interface will be implemented in Java, ObjC, Python and C# and can be called from C++.
+my_client_interface = interface +j +o +p +s {
     log_string(str: string): bool;
 }
 ```
 
 Interfaces are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
-produces code allowing an interface implemented in C++ to be transparently used from ObjC or
-Java, and vice versa.
+produces code allowing an interface implemented in C++ to be transparently used from ObjC,
+Java or Python and vice versa.
 
 #### Special Methods for C++ Only
 `+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which have special effects in C++:
@@ -230,28 +230,28 @@ Java, and vice versa.
        const accessor_method();
        static factory_method();
    }
-   
+
 - `const` methods will be declared as const in C++, though this cannot be enforced on callers in other languages, which lack this feature.
 - `static` methods will become a static method of the C++ class, which can be called from other languages without an object.  This is often useful for factory methods to act as a cross-language constructor.
 
 #### Exception Handling
 When an interface implemented in C++ throws a `std::exception`, it will be translated to a
-`java.lang.RuntimeException` in Java or an `NSException` in Objective-C. The `what()` message
-will be translated as well.
+`java.lang.RuntimeException` in Java, an `NSException` in Objective-C or a `RuntimeError` in Python.
+The `what()` message will be translated as well.
 
 #### Constants
-Constants can be defined within interfaces and records. In Java and C++ they are part of the
+Constants can be defined within interfaces and records. In Java, Python and C++ they are part of the
 generated class; and in Objective-C, constant names are globals with the name of the
 interface/record prefixed. Example:
 
 ```
-record_with_const = record +c +j +o {
+record_with_const = record +c +j +o +p +s {
     const const_value: i32 = 8;
 }
 ```
 
-will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java, and
-`RecordWithConstConstValue` in Objective-C.
+will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java,
+`RecordWithConst.CONST_VALUE` in Python, and `RecordWithConstConstValue` in Objective-C.
 
 ## Comments
 
@@ -259,5 +259,6 @@ will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in 
 # This is a comment
 ```
 
-If comments are are placed **on top or inside a type definition**,
-they will be converted to **Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces.
+If comments are are placed **on top or inside a type definition**, they will be converted to
+**Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces, or a
+Python **docstring**.

@@ -90,12 +90,26 @@ package object generatorTools {
                    skipGeneration: Boolean,
                    yamlOutFolder: Option[File],
                    yamlOutFile: Option[String],
-                   yamlPrefix: String)
+                   yamlPrefix: String,
+                   pyOutFolder: Option[File],
+                   pyIdentStyle: PythonIdentStyle,
+                   pycffiOutFolder: Option[File],
+                   pycffiPackageName: String,
+                   pycffiDynamicLibList: String,
+                   idlFileName: String,
+                   cWrapperOutFolder: Option[File],
+                   cWrapperHeaderOutFolder: Option[File],
+                   cWrapperIncludePrefix: String,
+                   cWrapperIncludeCppPrefix: String,
+                   cWrapperBaseLibIncludePrefix: String,
+                   pyImportPrefix: String)
 
   def preComma(s: String) = {
     if (s.isEmpty) s else ", " + s
   }
+  def p(s: String) = "(" + s + ")"
   def q(s: String) = '"' + s + '"'
+  def t(s: String) = "<" + s + ">"
   def firstUpper(token: String) = if (token.isEmpty()) token else token.charAt(0).toUpper + token.substring(1)
 
   type IdentConverter = String => String
@@ -112,6 +126,9 @@ package object generatorTools {
                             method: IdentConverter, field: IdentConverter, local: IdentConverter,
                             enum: IdentConverter, const: IdentConverter)
 
+  case class PythonIdentStyle(ty: IdentConverter, className: IdentConverter, typeParam: IdentConverter,
+                            method: IdentConverter, field: IdentConverter, local: IdentConverter,
+                            enum: IdentConverter, const: IdentConverter)
   case class CppCliIdentStyle(ty: IdentConverter, typeParam: IdentConverter, property: IdentConverter,
                               method: IdentConverter, field: IdentConverter, local: IdentConverter,
                               enum: IdentConverter, const: IdentConverter, file: IdentConverter)
@@ -136,6 +153,9 @@ package object generatorTools {
     val objcDefault = ObjcIdentStyle(ty = camelUpper, typeParam = camelUpper,
                                      method = camelLower, field = camelLower, local = camelLower,
                                      enum = camelUpper, const = camelUpper)
+    val pythonDefault = PythonIdentStyle(ty = underLower, className = camelUpper, typeParam = underLower,
+                                         method = underLower, field = underLower, local = underLower,
+                                         enum = underUpper, const = underCaps)
 
     val csDefault = CppCliIdentStyle(ty = camelUpper, typeParam = camelUpper, property = camelUpper,
                                     method = camelUpper, field = prefix("_", camelLower), local = camelLower,
@@ -261,6 +281,25 @@ package object generatorTools {
         }
         new YamlGenerator(spec).generate(idl)
       }
+      if (spec.pyOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("Python", spec.pyOutFolder.get)
+        }
+        new PythonGenerator(spec).generate(idl)
+      }
+      if (spec.cWrapperOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("C", spec.cWrapperOutFolder.get)
+          createFolder("C header", spec.cWrapperHeaderOutFolder.get)
+        }
+        new CWrapperGenerator(spec).generate(idl)
+      }
+      if (spec.pycffiOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("Cffi", spec.pycffiOutFolder.get)
+        }
+        new CffiGenerator(spec).generate(idl)
+      }
       None
     }
     catch {
@@ -311,12 +350,57 @@ abstract class Generator(spec: Spec)
     }
   }
 
+  protected def appendToFile(folder: File, fileName: String, f: IndentWriter => Unit): Unit = {
+    if (spec.skipGeneration) {
+      return
+    }
+
+    val file = new File(folder, fileName)
+
+    val fout = new FileOutputStream(file, true)
+    try {
+      val out = new OutputStreamWriter(fout, "UTF-8")
+      f(new IndentWriter(out))
+      out.flush()
+    }
+    finally {
+      fout.close()
+    }
+  }
+
+  protected def createFileOnce(folder: File, fileName: String, f: IndentWriter => Unit) {
+    val file = new File(folder, fileName)
+    val cp = file.getCanonicalPath
+    Generator.writtenFiles.put(cp.toLowerCase, cp) match {
+      case Some(existing) => return
+      case _ =>
+    }
+
+    if (spec.outFileListWriter.isDefined) {
+      spec.outFileListWriter.get.write(new File(folder, fileName).getPath + "\n")
+    }
+    if (spec.skipGeneration) {
+      return
+    }
+
+    val fout = new FileOutputStream(file)
+    try {
+      val out = new OutputStreamWriter(fout, "UTF-8")
+      f(new IndentWriter(out))
+      out.flush()
+    }
+    finally {
+      fout.close()
+    }
+  }
+
   protected def createFile(folder: File, fileName: String, f: IndentWriter => Unit): Unit = createFile(folder, fileName, out => new IndentWriter(out), f)
 
   implicit def identToString(ident: Ident): String = ident.name
   val idCpp = spec.cppIdentStyle
   val idJava = spec.javaIdentStyle
   val idObjc = spec.objcIdentStyle
+  val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
