@@ -68,7 +68,7 @@ object MExtern {
     typeSignature: String // The mangled Java type signature (e.g. "Ljava/lang/String;")
   )
   case class Cs(
-    translator: String, // C++ typename containing ToCpp/TromCpp methods
+    translator: String, // C++ typename containing ToCpp/FromCpp methods
     header: String, // Where to find the translator class
     typename: String,
     reference: Boolean

@@ -240,7 +240,6 @@ object Main {
         .text("The C wrapper base support library's include path (default: djinni/cwrapper/).")
       opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
         .text("The import prefix used within python generated files (default: \"\")")
-      note("\nYaml Generation")
       note("\nC++/CLI")
       opt[File]("cppcli-out").valueName("<out-folder>").foreach(x => cppCliOutFolder = Some(x))
         .text("The output folder for C++/CLI files (Generator disabled if unspecified).")
