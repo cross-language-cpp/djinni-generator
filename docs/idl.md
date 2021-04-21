@@ -78,17 +78,17 @@ The available data types for a record, argument, or return value are:
  - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
  - Strings (`string`)
  - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   `NSData` in Objective-C, an object supporting the `buffer` interface in Python, and `array<System::Byte>` in C++/CLI..
+   `NSData` in Objective-C, an object supporting the `buffer` interface in Python, and `System.Array<System.Byte>` in C#.
  - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
-   `NSDate` in Objective-C, `datetime.datetime` in Python, and `System::DateTime` in C++/CLI.
+   `NSDate` in Objective-C, `datetime.datetime` in Python, and `System.DateTime` in C#.
  - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
-   in Objective-C, `List` in Python, and `System::Collections::Generic::List` in C++/CLI. 
+   in Objective-C, `List` in Python, and `System.Collections.Generic.List` in C#. 
    Primitives in a list will be boxed in Java and Objective-C.
  - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
-   Objective-C, `Set` in Python, and `System::Collections::Generic::HashSet` in C++/CLI. 
+   Objective-C, `Set` in Python, and `System.Collections.Generic.HashSet` in C#. 
    Primitives in a set will be boxed in Java and Objective-C.
  - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, 
-   `NSDictionary` in Objective-C, `Dictionary` in Python, and `System::Collections::Generic::Dictionary` in C++/CLI. 
+   `NSDictionary` in Objective-C, `Dictionary` in Python, and `System.Collections.Generic.Dictionary` in C#. 
    Primitives in a map will be boxed in Java and Objective-C.
  - Enumerations / Flags
  - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
@@ -101,9 +101,9 @@ The available data types for a record, argument, or return value are:
 
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
-* [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, or Python `IntEnum`s.
-* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, ObjC `NS_OPTIONS`, or Python `IntFlag`s.
-  In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
+* [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, Python `IntEnum`s, or C# `System.Enum`s.
+* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, 
+  ObjC `NS_OPTIONS`, Python `IntFlag`s, or C# `System.Enum`s with the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
   produces code allowing an interface implemented in C++ to be transparently used from ObjC,
@@ -120,7 +120,7 @@ my_enum = enum {
 ```
 
 Enums are translated to C++ `enum class`es with underlying type `int`, ObjC `NS_ENUM`s with
-underlying type `NSInteger`, Java enums, and Python `IntEnum`s.
+underlying type `NSInteger`, Java enums, Python `IntEnum`s, and C# `System.Enum`s.
 
 ### Flags
 
@@ -136,7 +136,7 @@ my_flags = flags {
 
 Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set of
 overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type `NSUInteger`,
-Java `EnumSet<>`, and Python `IntFlag`. In C++/CLI the enum has the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0). 
+Java `EnumSet<>`, Python `IntFlag`, and C# `System.Enum`s with the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0). 
 Contrary to the above enums, the enumerants of flags represent single bits instead of integral values.
 
 In the above example the elements marked with `none` and `all` are given special meaning.  In C++,
@@ -172,7 +172,7 @@ records (so a record cannot contain itself).
 #### Extensions
 
 To support extra fields and/or methods, a record can be "extended" in any language. To extend a
-record in a language, you can add a `+c` (C++), `+j` (Java), `+o` (ObjC), or `+p` (Python) flag
+record in a language, you can add a `+c` (C++), `+j` (Java), `+o` (ObjC), `+p` (Python), or `+s` (C#) flag
 after the record tag. The generated type will have a `Base` suffix, and you should create a derived
 type without the suffix that extends the record type.
 
@@ -190,7 +190,7 @@ another_record = record {
 
 For record types, Haskell-style "deriving" declarations are supported to generate some common
 methods. Djinni is capable of generating equality and order comparators, implemented as operator
-overloading in C++ and standard comparison functions in Java, Objective-C, and Python.
+overloading in C++ and standard comparison functions in Java, Objective-C, Python and C#.
 
 !!! note
 
@@ -221,10 +221,11 @@ my_client_interface = interface +j +o +p +s {
 
 Interfaces are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
 produces code allowing an interface implemented in C++ to be transparently used from ObjC,
-Java or Python and vice versa.
+Java Python or C# and vice versa.
 
 #### Special Methods for C++ Only
-`+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which have special effects in C++:
+`+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which 
+have special effects in C++:
 
    special_methods = interface +c {
        const accessor_method();
@@ -232,15 +233,17 @@ Java or Python and vice versa.
    }
 
 - `const` methods will be declared as const in C++, though this cannot be enforced on callers in other languages, which lack this feature.
-- `static` methods will become a static method of the C++ class, which can be called from other languages without an object.  This is often useful for factory methods to act as a cross-language constructor.
+- `static` methods will become a static method of the C++ class, which can be called from other languages without an object.  
+  This is often useful for factory methods to act as a cross-language constructor.
 
 #### Exception Handling
 When an interface implemented in C++ throws a `std::exception`, it will be translated to a
-`java.lang.RuntimeException` in Java, an `NSException` in Objective-C or a `RuntimeError` in Python.
+`java.lang.RuntimeException` in Java, an `NSException` in Objective-C, a `RuntimeError` in Python, 
+or a `System.Exception` in C#.
 The `what()` message will be translated as well.
 
 #### Constants
-Constants can be defined within interfaces and records. In Java, Python and C++ they are part of the
+Constants can be defined within interfaces and records. In Java, Python, C# and C++ they are part of the
 generated class; and in Objective-C, constant names are globals with the name of the
 interface/record prefixed. Example:
 
@@ -251,7 +254,7 @@ record_with_const = record +c +j +o +p +s {
 ```
 
 will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in Java,
-`RecordWithConst.CONST_VALUE` in Python, and `RecordWithConstConstValue` in Objective-C.
+`RecordWithConst.CONST_VALUE` in Python, `RecordWithConst.ConstValue` in C#, and `RecordWithConstConstValue` in Objective-C.
 
 ## Comments
 
@@ -259,6 +262,6 @@ will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in 
 # This is a comment
 ```
 
-If comments are are placed **on top or inside a type definition**, they will be converted to
+If comments are placed **on top or inside a type definition**, they will be converted to
 **Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces, or a
-Python **docstring**.
+Python **docstring**. Comments are currently not available in C#.

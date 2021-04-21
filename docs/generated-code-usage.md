@@ -129,6 +129,12 @@ your C++ library through the CFFI bridge.
 
 ## C++/CLI / C++ Project
 
+C++/CLI is a technology by Microsoft that provides interoperability of C++ with Microsoft .NET languages such as C#.
+It is only supported on Windows.
+
+Djinni generates a shallow C++/CLI wrapper around the C++ interfaces. Once compiled to a shared library, the resulting `dll`
+just needs to be added to your C# project as reference, and you can call your Djinni interfaces from C# like any other .NET library.
+
 ### Includes & Build target
 
 The following code will be generated for each defined type:
@@ -141,8 +147,5 @@ The following code will be generated for each defined type:
 
 Add all generated files to your build target, and link against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
 
-C++/CLI sources have to be compiled with [`/clr` (Common Language Runtime Compilation)](https://docs.microsoft.com/en-us/cpp/build/reference/clr-common-language-runtime-compilation?view=msvc-160)
+C++/CLI sources have to be compiled with MSVC and the [`/clr` (Common Language Runtime Compilation)](https://docs.microsoft.com/en-us/cpp/build/reference/clr-common-language-runtime-compilation?view=msvc-160) option.
 
-!!! bug
-
-    TODO add more information about C++/CLI generator output
