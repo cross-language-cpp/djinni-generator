@@ -22,6 +22,7 @@ class IntegrationTest extends FunSpec {
   final val CFFI = "cffi"
   final val CWRAPPER = "cwrapper"
   final val CWRAPPER_HEADERS = "cwrapper-headers"
+  final val CPPCLI = "cppcli"
 
   type Cpp = List[String]
   def Cpp(params: String*) = List(params: _*)
@@ -47,6 +48,8 @@ class IntegrationTest extends FunSpec {
   def CWrapper(params: String*) = List(params: _*)
   type CWrapperHeaders = List[String]
   def CWrapperHeaders(params: String*) = List(params: _*)
+  type CppCli = List[String]
+  def CppCli(params: String*) = List(params: _*)
 
   /**
     * Executes the djinni generator with the given parameters
@@ -81,6 +84,8 @@ class IntegrationTest extends FunSpec {
       s"--c-wrapper-header-out src/it/resources/result/$idl/cwrapper-headers " +
       s"--c-wrapper-include-prefix ../cwrapper-headers/ " +
       s"--c-wrapper-include-cpp-prefix ../cpp-headers/ " +
+      s"--cppcli-out src/it/resources/result/$idl/cppcli " +
+      s"--cppcli-include-cpp-prefix ../cpp-headers/ " +
       s"--idl src/it/resources/$idl.djinni")
   }
 

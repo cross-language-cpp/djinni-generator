@@ -129,6 +129,16 @@ djinni \
 | `--c-wrapper-base-lib-include-prefix <prefix>` | The C wrapper base support library's include path (default: `djinni/cwrapper/`). |
 | `--py-import-prefix <import-prefix>` | The import prefix used within python generated files (default: "") |
 
+### C++/CLI
+
+| Argument | Description |
+| -------- | ----------- |
+| `--cppcli-out <out-folder>` | The output folder for C++/CLI files (Generator disabled if unspecified). |
+| `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
+| `--cppcli-include-cpp-prefix` | The prefix for #include of the main C++ header files from C++/CLI files. |
+| `--cppcli-base-lib-include-prefix ...` | The C++/CLI base support library's include path (default: `djinni/cppcli/`). |
+
+
 ### Yaml Generation
 
 | Argument | Description |
@@ -177,7 +187,7 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 
 #### Objective C
 
-| Argument | Default      |
+| Argument | Default  |
 | -------- | -------- |
 | `--ident-objc-enum` | `FooBar` |
 | `--ident-objc-field` | `fooBar` |
@@ -200,6 +210,18 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 | `--ident-py-enum` | `Foo_Bar` |
 | `--ident-py-const` | `FOO_BAR` |
 
+#### C++/CLI
+
+| Argument | Default  |
+| -------- | -------- |
+| `--ident-cppcli-type` | `FooBar` |
+| `--ident-cppcli-type-param` | `FooBar` |
+| `--ident-cppcli-property` | `FooBar` |
+| `--ident-cppcli-method` | `FooBar` |
+| `--ident-cppcli-local` | `fooBar` |
+| `--ident-cppcli-enum` | `FooBar` |
+| `--ident-cppcli-const` | `FooBar` |
+| `--ident-cppcli-file` | `FooBar` |
 
 Example:
 

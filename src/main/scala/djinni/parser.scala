@@ -1,5 +1,6 @@
 /**
   * Copyright 2014 Dropbox, Inc.
+  * Copyright 2021 cross-language-cpp
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -16,12 +17,12 @@
 
 package djinni
 
-import java.io.{File, FileNotFoundException, InputStreamReader, FileInputStream, Writer}
-
+import java.io.{File, FileInputStream, FileNotFoundException, InputStreamReader, Writer}
 import djinni.ast.Interface.Method
 import djinni.ast.Record.DerivingType.DerivingType
 import djinni.syntax._
 import djinni.ast._
+import org.apache.commons.io.FilenameUtils
 import java.util.{Map => JMap}
 import org.yaml.snakeyaml.Yaml
 import scala.collection.JavaConversions._
@@ -41,12 +42,8 @@ private object IdlParser extends RegexParsers {
 
   def importFileRef(): Parser[FileRef] = {
     ("@" ~> directive) ~ ("\"" ~> filePath <~ "\"") ^^ {
-      case "import" ~ x => {
-        new IdlFileRef(importFile(x))
-      }
-      case "extern" ~ x => {
-        new ExternFileRef(importFile(x))
-      }
+      case "import" ~ x => IdlFileRef(importFile(x))
+      case "extern" ~ x => ExternFileRef(importFile(x))
     }
   }
 
@@ -63,7 +60,7 @@ private object IdlParser extends RegexParsers {
 
     if (file.isEmpty) throw new FileNotFoundException("Unable to find file \"" + fileName + "\" at " + fileStack.top.getCanonicalPath)
 
-    return file.get
+    file.get
   }
 
   def filePath = "[^\"]*".r
@@ -77,14 +74,15 @@ private object IdlParser extends RegexParsers {
   }
 
   def ext(default: Ext) = (rep1("+" ~> ident) >> checkExts) | success(default)
-  def extRecord = ext(Ext(false, false, false, false))
-  def extInterface = ext(Ext(true, true, true, true))
+  def extRecord = ext(Ext(java = false, cpp = false, objc = false, py = false, cppcli = false))
+  def extInterface = ext(Ext(java = true, cpp = true, objc = true, py = true, cppcli = true))
 
   def checkExts(parts: List[Ident]): Parser[Ext] = {
     var foundCpp = false
     var foundJava = false
     var foundObjc = false
     var foundPy = false
+    var foundCs = false
 
     for (part <- parts)
       part.name match {
@@ -104,9 +102,13 @@ private object IdlParser extends RegexParsers {
           if (foundPy) return err("Found multiple \"p\" modifiers.")
           foundPy = true
         }
+        case "s" => {
+          if (foundCs) return err("Found multiple \"s\" modifiers.")
+          foundCs = true
+        }
         case _ => return err("Invalid modifier \"" + part.name + "\"")
       }
-    success(Ext(foundJava, foundCpp, foundObjc, foundPy))
+    success(Ext(foundJava, foundCpp, foundObjc, foundPy, foundCs))
   }
 
   def typeDef: Parser[TypeDef] = record | enum | flags | interface
@@ -138,10 +140,10 @@ private object IdlParser extends RegexParsers {
   def enumHeader = "enum".r
   def flagsHeader = "flags".r
   def enum: Parser[Enum] = enumHeader ~> bracesList(enumOption) ^^ {
-    case items => Enum(items, false)
+    case items => Enum(items, flags = false)
   }
   def flags: Parser[Enum] = flagsHeader ~> bracesList(flagsOption) ^^ {
-    case items => Enum(items, true)
+    case items => Enum(items, flags = true)
   }
 
   def enumOption: Parser[Enum.Option] = doc ~ ident ^^ {
@@ -163,8 +165,8 @@ private object IdlParser extends RegexParsers {
   }
 
   def externTypeDecl: Parser[TypeDef] = externEnum | externFlags | externInterface | externRecord
-  def externEnum: Parser[Enum] = enumHeader ^^ { case _ => Enum(List(), false) }
-  def externFlags: Parser[Enum] = flagsHeader ^^ { case _ => Enum(List(), true) }
+  def externEnum: Parser[Enum] = enumHeader ^^ { case _ => Enum(List(), flags = false) }
+  def externFlags: Parser[Enum] = flagsHeader ^^ { case _ => Enum(List(), flags = true) }
   def externRecord: Parser[Record] = recordHeader ~ opt(deriving) ^^ { case ext~deriving => Record(ext, List(), List(), deriving.getOrElse(Set[DerivingType]())) }
   def externInterface: Parser[Interface] = interfaceHeader ^^ { case ext => Interface(ext, List(), List()) }
 
@@ -284,7 +286,7 @@ def parseExtern(origin: String, in: java.io.Reader): Either[Error, Seq[TypeDecl]
 
 def parseExternFile(externFile: File, inFileListWriter: Option[Writer]) : Seq[TypeDecl] = {
   if (inFileListWriter.isDefined) {
-    inFileListWriter.get.write(externFile + "\n")
+    inFileListWriter.get.write(FilenameUtils.separatorsToUnix(externFile.getPath) + "\n")
   }
 
   visitedFiles.add(externFile)
@@ -303,7 +305,7 @@ def parseExternFile(externFile: File, inFileListWriter: Option[Writer]) : Seq[Ty
 }
 
 def normalizePath(path: File) : File = {
-  return new File(java.nio.file.Paths.get(path.toString()).normalize().toString())
+  new File(java.nio.file.Paths.get(path.toString()).normalize().toString())
 }
 
 def parseFile(idlFile: File, inFileListWriter: Option[Writer]): Seq[TypeDecl] = {
@@ -319,7 +321,7 @@ def parseFile(idlFile: File, inFileListWriter: Option[Writer]): Seq[TypeDecl] = 
     parse(normalizedIdlFile.getName, new InputStreamReader(fin, "UTF-8")) match {
       case Left(err) =>
         System.err.println(err)
-        System.exit(1); return null;
+        System.exit(1); null;
       case Right(idl) => {
         var types = idl.typeDecls
         idl.imports.foreach(x => {

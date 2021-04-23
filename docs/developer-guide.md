@@ -38,7 +38,8 @@ sbt "run
     --objc-out out/objc
     --py-out out/python
     --pycffi-out out/cffi
-    --c-wrapper-out out/cwrapper"
+    --c-wrapper-out out/cwrapper
+    --cppcli-out out/cppcli"
 ```
 
 ```bash

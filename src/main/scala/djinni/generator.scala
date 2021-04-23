@@ -1,5 +1,6 @@
 /**
   * Copyright 2014 Dropbox, Inc.
+  * Copyright 2021 cross-language-cpp
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -20,6 +21,7 @@ import djinni.ast._
 import java.io._
 import djinni.generatorTools._
 import djinni.writer.IndentWriter
+import org.apache.commons.io.FilenameUtils
 import scala.language.implicitConversions
 import scala.collection.mutable
 import scala.util.matching.Regex
@@ -77,6 +79,11 @@ package object generatorTools {
                    objcppNamespace: String,
                    objcBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderWriter: Option[Writer],
+                   cppCliOutFolder: Option[File],
+                   cppCliIdentStyle: CppCliIdentStyle,
+                   cppCliNamespace: String,
+                   cppCliIncludeCppPrefix: String,
+                   cppCliBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderName: Option[String],
                    objcClosedEnums: Boolean,
                    outFileListWriter: Option[Writer],
@@ -122,6 +129,10 @@ package object generatorTools {
   case class PythonIdentStyle(ty: IdentConverter, className: IdentConverter, typeParam: IdentConverter,
                             method: IdentConverter, field: IdentConverter, local: IdentConverter,
                             enum: IdentConverter, const: IdentConverter)
+  case class CppCliIdentStyle(ty: IdentConverter, typeParam: IdentConverter, property: IdentConverter,
+                              method: IdentConverter, field: IdentConverter, local: IdentConverter,
+                              enum: IdentConverter, const: IdentConverter, file: IdentConverter)
+
   object IdentStyle {
     val camelUpper = (s: String) => s.split('_').map(firstUpper).mkString
     val camelLower = (s: String) => {
@@ -145,6 +156,10 @@ package object generatorTools {
     val pythonDefault = PythonIdentStyle(ty = underLower, className = camelUpper, typeParam = underLower,
                                          method = underLower, field = underLower, local = underLower,
                                          enum = underUpper, const = underCaps)
+
+    val csDefault = CppCliIdentStyle(ty = camelUpper, typeParam = camelUpper, property = camelUpper,
+                                    method = camelUpper, field = prefix("_", camelLower), local = camelLower,
+                                    enum = camelUpper, const = camelUpper, file = camelUpper)
 
     val styles = Map(
       "FooBar" -> camelUpper,
@@ -254,6 +269,12 @@ package object generatorTools {
           new SwiftBridgingHeaderGenerator(spec).generate(idl)
         }
       }
+      if (spec.cppCliOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("C++/CLI", spec.cppCliOutFolder.get)
+        }
+        new CppCliGenerator(spec).generate(idl)
+      }
       if (spec.yamlOutFolder.isDefined) {
         if (!spec.skipGeneration) {
           createFolder("YAML", spec.yamlOutFolder.get)
@@ -300,7 +321,7 @@ abstract class Generator(spec: Spec)
 
   protected def createFile(folder: File, fileName: String, makeWriter: OutputStreamWriter => IndentWriter, f: IndentWriter => Unit): Unit = {
     if (spec.outFileListWriter.isDefined) {
-      spec.outFileListWriter.get.write(new File(folder, fileName).getPath + "\n")
+      spec.outFileListWriter.get.write(FilenameUtils.separatorsToUnix(new File(folder, fileName).getPath) + "\n")
     }
     if (spec.skipGeneration) {
       return
@@ -380,6 +401,7 @@ abstract class Generator(spec: Spec)
   val idJava = spec.javaIdentStyle
   val idObjc = spec.objcIdentStyle
   val idPython = spec.pyIdentStyle
+  val idCs = spec.cppCliIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {

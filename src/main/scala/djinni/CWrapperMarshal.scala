@@ -91,10 +91,10 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
       case DInterface => true
       case DEnum => false // we pass as ints
     }
-    case MOptional => tm.args(0).base match {
+    case MOptional => tm.args.head.base match {
       case mp: MPrimitive => true
       case MDate => true
-      case _ => needsRAII(tm.args(0))
+      case _ => needsRAII(tm.args.head)
     }
    case e: MExtern => throw new NotImplementedError()
    case _ => false
@@ -102,7 +102,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
 
   def canRAIIUseStandardUniquePtr(tm: MExpr): Boolean = tm.base match {
     case MString | MBinary => true
-    case MOptional => tm.args(0).base match {
+    case MOptional => tm.args.head.base match {
       case mp: MPrimitive => true
       case MString | MBinary => true
       case MDate => true
@@ -124,17 +124,17 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
           val idlName = idCpp.ty(m.asInstanceOf[MOpaque].idlName)
           structPrefix + "Djinni" + idlName + " *"
         case MList | MSet | MMap => structPrefix + djinniObjectHandle + " *"
-        case MOptional => tm.args(0).base match  {
-          case m @ (MPrimitive(_,_,_,_,_,_,_,_) | MDate) =>
+        case MOptional => tm.args.head.base match  {
+          case m @ (MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate) =>
             val idlName = m.asInstanceOf[MOpaque].idlName
             structPrefix + "DjinniBoxed" + idCpp.ty(idlName) + " *"
           case MList | MSet | MMap => structPrefix + "DjinniOptionalObjectHandle *"
           case d: MDef =>
             d.defType match {
               case DRecord => structPrefix + "DjinniOptionalRecordHandle *"
-              case _ => base(tm.args(0).base)
+              case _ => base(tm.args.head.base)
             }
-          case _ => base(tm.args(0).base)
+          case _ => base(tm.args.head.base)
         }
         case d: MDef =>
           d.defType match {
@@ -164,15 +164,15 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
       case DInterface => idCpp.method(d.name) + "___wrapper_dec_ref"
       case _ => idCpp.method(d.name) + "___delete"
     }
-    case MOptional => tm.args(0).base match {
-      case MString | MBinary => getReleaseMethodName(tm.args(0))
+    case MOptional => tm.args.head.base match {
+      case MString | MBinary => getReleaseMethodName(tm.args.head)
       case mp: MPrimitive => "delete_djinni_boxed_" + idCpp.method(mp.asInstanceOf[MOpaque].idlName)
       case MDate => "delete_djinni_boxed_date"
       case d: MDef => d.defType match {
-        case DInterface => getReleaseMethodName(tm.args(0))
-        case _ => "optional_" + getReleaseMethodName(tm.args(0))
+        case DInterface => getReleaseMethodName(tm.args.head)
+        case _ => "optional_" + getReleaseMethodName(tm.args.head)
       }
-      case _ => "optional_" + getReleaseMethodName(tm.args(0))
+      case _ => "optional_" + getReleaseMethodName(tm.args.head)
     }
     case _ => throw new NotImplementedError()
   }
@@ -190,7 +190,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
         }
       case p: MParam => idCpp.typeParam(p.name)
       case e: MExtern => "extern"
-      case MOptional => tm.args(0).base match {
+      case MOptional => tm.args.head.base match {
         case mp: MPrimitive => "boxed"
         case _ => "optional"
       }
@@ -200,10 +200,10 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     def exprIdlName(tm: MExpr): String = {
       val baseTy = baseToIdl(tm.base)
       baseTy match {
-        case "boxed" | "optional" => baseTy + "_" + toCIdlType(tm.args(0))
+        case "boxed" | "optional" => baseTy + "_" + toCIdlType(tm.args.head)
         // for list, set, map we return the name of the helper
-        case "list" | "set" => idCpp.local(baseTy + (if (tm.args.isEmpty) "" else "_" + toCIdlType(tm.args(0))))
-        case "map" =>  idCpp.local(baseTy + (if (tm.args.isEmpty) "" else "_"+ toCIdlType(tm.args(0))) + "_" + toCIdlType(tm.args(1)))
+        case "list" | "set" => idCpp.local(baseTy + (if (tm.args.isEmpty) "" else "_" + toCIdlType(tm.args.head)))
+        case "map" =>  idCpp.local(baseTy + (if (tm.args.isEmpty) "" else "_"+ toCIdlType(tm.args.head)) + "_" + toCIdlType(tm.args(1)))
         case _ => baseTy
       }
     }
@@ -256,20 +256,20 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     val exprArg = if (tempExpr) { cppExpr } else { "std::move" + p(cppExpr) } // Move only when it wouldn't be pessimizing
     ty.base match {
       case MOptional => {
-        ty.args(0).base match {
-          case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
-            val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+        ty.args.head.base match {
+          case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
+            val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
             "DjinniBoxed" + idCpp.ty(idlName) + "::toCpp" + p(exprArg)
           case MString | MBinary =>
-            val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+            val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
             "DjinniOptional" + idCpp.ty(idlName) + "::toCpp" + p(exprArg)
-          case MList | MMap | MSet => "Djinni" + idCpp.ty(toCIdlType(ty.args(0))) + "::toCpp" + p(exprArg)
+          case MList | MMap | MSet => "Djinni" + idCpp.ty(toCIdlType(ty.args.head)) + "::toCpp" + p(exprArg)
           case d: MDef => d.defType match {
             case DRecord => "Djinni" + idCpp.ty(d.name) + "::toCpp"+ p(exprArg)
             case DEnum => "get_boxed_enum_" + idCpp.method(d.name) + "_from_int32" + p(cppExpr)
-            case _ => convertTo(cppExpr, ty.args(0), tempExpr)
+            case _ => convertTo(cppExpr, ty.args.head, tempExpr)
           }
-          case _ => convertTo(cppExpr, ty.args(0), tempExpr)
+          case _ => convertTo(cppExpr, ty.args.head, tempExpr)
         }
       }
       case MDate => "DjinniDate::toCpp" + p(cppExpr)
@@ -289,15 +289,15 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
   def convertFrom(cppExpr:String, ty: MExpr, tempExpr:Boolean): String = {
       ty.base match  {
         case MOptional => {
-          ty.args(0).base match {
-            case MPrimitive(_,_,_,_,_,_,_,_) | MDate =>
-              val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+          ty.args.head.base match {
+            case MPrimitive(_,_,_,_,_,_,_,_,_,_) | MDate =>
+              val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
               "DjinniBoxed" + idCpp.ty(idlName) + "::fromCpp" + p(cppExpr)
             case MString | MBinary  =>
-              val idlName = ty.args(0).base.asInstanceOf[MOpaque].idlName
+              val idlName = ty.args.head.base.asInstanceOf[MOpaque].idlName
               "DjinniOptional" + idCpp.ty(idlName) + "::fromCpp" + p(cppExpr)
-            case MList | MMap | MSet => "Djinni" + idCpp.ty(toCIdlType(ty.args(0))) + "::fromCpp" + p(cppExpr)
-            case _ => convertFrom(cppExpr, ty.args(0), tempExpr)
+            case MList | MMap | MSet => "Djinni" + idCpp.ty(toCIdlType(ty.args.head)) + "::fromCpp" + p(cppExpr)
+            case _ => convertFrom(cppExpr, ty.args.head, tempExpr)
           }
         }
         case MString | MBinary | MDate | MList | MSet | MMap =>
@@ -317,7 +317,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
   def checkForException(s: String) = "lib.check_for_exception" + p(s)
 
   def cArgDecl(args: Seq[String]) = {
-    if (args.length == 0) {
+    if (args.isEmpty) {
       // CWrapper headers need to be parsed as C.  `()` in C means "unspecified args" and triggers
       // -Wstrict-prototypes.  `(void)` means no args in C.  In C++ the two forms are equivalent.
       "(void)"

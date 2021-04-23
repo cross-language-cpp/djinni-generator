@@ -41,6 +41,7 @@ abstract class Marshal(spec: Spec) {
   protected val idJava = spec.javaIdentStyle
   protected val idObjc = spec.objcIdentStyle
   protected val idPython = spec.pyIdentStyle
+  protected val idCs = spec.cppCliIdentStyle
 
   protected def withNs(namespace: Option[String], t: String) = namespace match {
       case None => t

@@ -205,7 +205,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         for (c <- r.consts if marshal.canBeConstVariable(c)) {
           writeDoc(w, c.doc)
           w.w(s"extern ")
-          writeObjcConstVariableDecl(w, c, noBaseSelf);
+          writeObjcConstVariableDecl(w, c, noBaseSelf)
           w.wl(s";")
         }
       }
