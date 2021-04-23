@@ -71,7 +71,7 @@ std::unordered_set<bool> DjinniSetBool::toCpp(djinni::Handle<DjinniObjectHandle>
 }
 
 djinni::Handle<DjinniOptionalObjectHandle> DjinniSetBool::fromCpp(std::optional<std::unordered_set<bool>> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniSetBool::fromCpp(std::move(* dc)), optional_set_bool___delete);
@@ -81,6 +81,6 @@ std::optional<std::unordered_set<bool>>DjinniSetBool::toCpp(djinni::Handle<Djinn
      if (dh) {
         return std::optional<std::unordered_set<bool>>(DjinniSetBool::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), set_bool___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

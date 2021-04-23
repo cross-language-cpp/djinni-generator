@@ -72,7 +72,7 @@ std::vector<bool> DjinniListBool::toCpp(djinni::Handle<DjinniObjectHandle> dh) {
 }
 
 djinni::Handle<DjinniOptionalObjectHandle> DjinniListBool::fromCpp(std::optional<std::vector<bool>> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniListBool::fromCpp(std::move(* dc)), optional_list_bool___delete);
@@ -82,6 +82,6 @@ std::optional<std::vector<bool>>DjinniListBool::toCpp(djinni::Handle<DjinniOptio
      if (dh) {
         return std::optional<std::vector<bool>>(DjinniListBool::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), list_bool___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

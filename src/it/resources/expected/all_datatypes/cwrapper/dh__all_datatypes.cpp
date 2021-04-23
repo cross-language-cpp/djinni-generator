@@ -170,7 +170,7 @@ djinni::Handle<DjinniRecordHandle> DjinniAllDatatypes::fromCpp(const ::AllDataty
 }
 
 djinni::Handle<DjinniOptionalRecordHandle> DjinniAllDatatypes::fromCpp(std::optional<::AllDatatypes> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniAllDatatypes::fromCpp(std::move(* dc)), optional_all_datatypes___delete);
@@ -180,6 +180,6 @@ std::optional<::AllDatatypes>DjinniAllDatatypes::toCpp(djinni::Handle<DjinniOpti
      if (dh) {
         return std::optional<::AllDatatypes>(DjinniAllDatatypes::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), all_datatypes___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

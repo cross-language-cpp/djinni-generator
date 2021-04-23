@@ -68,7 +68,7 @@ std::unordered_set<std::string> DjinniSetString::toCpp(djinni::Handle<DjinniObje
 }
 
 djinni::Handle<DjinniOptionalObjectHandle> DjinniSetString::fromCpp(std::optional<std::unordered_set<std::string>> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniSetString::fromCpp(std::move(* dc)), optional_set_string___delete);
@@ -78,6 +78,6 @@ std::optional<std::unordered_set<std::string>>DjinniSetString::toCpp(djinni::Han
      if (dh) {
         return std::optional<std::unordered_set<std::string>>(DjinniSetString::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), set_string___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

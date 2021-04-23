@@ -18,7 +18,7 @@ int32_t int32_from_enum_my_enum(::MyEnum e) {
 }
 std::optional<::MyEnum> get_boxed_enum_my_enum_from_int32(int32_t e) {
     if (e == -1) { // to signal null enum
-        return std::experimental::nullopt;
+        return {};
     }
     return std::optional<::MyEnum>(static_cast<::MyEnum>(e));
 }

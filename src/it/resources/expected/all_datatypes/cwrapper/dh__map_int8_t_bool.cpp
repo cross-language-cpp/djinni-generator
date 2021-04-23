@@ -80,7 +80,7 @@ std::unordered_map<int8_t, bool> DjinniMapInt8TBool::toCpp(djinni::Handle<Djinni
 }
 
 djinni::Handle<DjinniOptionalObjectHandle> DjinniMapInt8TBool::fromCpp(std::optional<std::unordered_map<int8_t, bool>> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniMapInt8TBool::fromCpp(std::move(* dc)), optional_map_int8_t_bool___delete);
@@ -90,6 +90,6 @@ std::optional<std::unordered_map<int8_t, bool>>DjinniMapInt8TBool::toCpp(djinni:
      if (dh) {
         return std::optional<std::unordered_map<int8_t, bool>>(DjinniMapInt8TBool::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), map_int8_t_bool___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

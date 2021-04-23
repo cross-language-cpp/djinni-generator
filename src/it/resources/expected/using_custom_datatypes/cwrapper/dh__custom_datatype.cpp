@@ -50,7 +50,7 @@ djinni::Handle<DjinniRecordHandle> DjinniCustomDatatype::fromCpp(const ::CustomD
 }
 
 djinni::Handle<DjinniOptionalRecordHandle> DjinniCustomDatatype::fromCpp(std::optional<::CustomDatatype> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniCustomDatatype::fromCpp(std::move(* dc)), optional_custom_datatype___delete);
@@ -60,6 +60,6 @@ std::optional<::CustomDatatype>DjinniCustomDatatype::toCpp(djinni::Handle<Djinni
      if (dh) {
         return std::optional<::CustomDatatype>(DjinniCustomDatatype::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), custom_datatype___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 

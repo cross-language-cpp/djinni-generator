@@ -80,7 +80,7 @@ djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr)
 }
 
 djinni::Handle<DjinniOptionalRecordHandle> DjinniMyRecord::fromCpp(std::optional<::MyRecord> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniMyRecord::fromCpp(std::move(* dc)), optional_my_record___delete);
@@ -90,6 +90,6 @@ std::optional<::MyRecord>DjinniMyRecord::toCpp(djinni::Handle<DjinniOptionalReco
      if (dh) {
         return std::optional<::MyRecord>(DjinniMyRecord::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), my_record___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 
