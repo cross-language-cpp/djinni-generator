@@ -18,7 +18,7 @@ int32_t int32_from_enum_my_flags(::MyFlags e) {
 }
 std::optional<::MyFlags> get_boxed_enum_my_flags_from_int32(int32_t e) {
     if (e == -1) { // to signal null enum
-        return std::experimental::nullopt;
+        return {};
     }
     return std::optional<::MyFlags>(static_cast<::MyFlags>(e));
 }

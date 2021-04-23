@@ -77,7 +77,7 @@ std::unordered_map<std::string, int32_t> DjinniMapStringInt32T::toCpp(djinni::Ha
 }
 
 djinni::Handle<DjinniOptionalObjectHandle> DjinniMapStringInt32T::fromCpp(std::optional<std::unordered_map<std::string, int32_t>> dc) {
-    if (dc == std::experimental::nullopt) {
+    if (!dc) {
         return nullptr;
     }
     return djinni::optionals::toOptionalHandle(DjinniMapStringInt32T::fromCpp(std::move(* dc)), optional_map_string_int32_t___delete);
@@ -87,6 +87,6 @@ std::optional<std::unordered_map<std::string, int32_t>>DjinniMapStringInt32T::to
      if (dh) {
         return std::optional<std::unordered_map<std::string, int32_t>>(DjinniMapStringInt32T::toCpp(djinni::optionals::fromOptionalHandle(std::move(dh), map_string_int32_t___delete)));
     }
-    return std::experimental::nullopt;
+    return {};
 }
 
