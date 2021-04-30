@@ -43,7 +43,7 @@ djinni \
 | `--help` | Print help  |
 | `--version` | Print version |
 | `--idl <in-file>` | The IDL file with the type definitions, typically with extension `.djinni`. |
-| `--idl-include-path <path> ...` | An include path to search for Djinni `@import` directives. Can specify multiple paths. |
+| `--idl-include-path <path> ...` | An include path to search for Djinni `@import` and `@extern` directives. Can specify multiple paths. |
 
 ### Java
 | Argument | Description |
