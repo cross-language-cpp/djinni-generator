@@ -47,9 +47,8 @@ Djinni uses these functions to initialize & cleanup internal structures.
 The generated file `djinni_jni_main.cpp` includes a default implementation of `JNI_Onload` and `JNI_OnUnload` functions 
 provided by the support library.
 
-If you are building a shared library that does not use JNI except through Djinni, this default should work well for you.
-If you are building a static library, or you want to provide your own implementation
-of `JNI_Onload` and `JNI_OnUnload`, the generation of `djinni_jni_main.cpp` can be disabled by setting `--jni-generate-main=false`.
+If you are building a library that does not use JNI except through Djinni, this default should work well for you.
+If want to provide your own implementation of `JNI_Onload` and `JNI_OnUnload`, the generation of `djinni_jni_main.cpp` can be disabled by setting `--jni-generate-main=false`.
 
 ## Objective-C / C++ Project
 
