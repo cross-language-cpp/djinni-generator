@@ -1,0 +1,15 @@
+src/it/resources/result/my_client_interface/cpp-headers/my_client_interface.hpp
+src/it/resources/result/my_client_interface/java/MyClientInterface.java
+src/it/resources/result/my_client_interface/jni/djinni_jni_main.cpp
+src/it/resources/result/my_client_interface/jni-headers/my_client_interface.hpp
+src/it/resources/result/my_client_interface/jni/my_client_interface.cpp
+src/it/resources/result/my_client_interface/objc-headers/ITMyClientInterface.h
+src/it/resources/result/my_client_interface/objcpp/ITMyClientInterface+Private.h
+src/it/resources/result/my_client_interface/objcpp/ITMyClientInterface+Private.mm
+src/it/resources/result/my_client_interface/cppcli/MyClientInterface.hpp
+src/it/resources/result/my_client_interface/cppcli/MyClientInterface.cpp
+src/it/resources/result/my_client_interface/python/my_client_interface.py
+src/it/resources/result/my_client_interface/cwrapper-headers/cw__my_client_interface.h
+src/it/resources/result/my_client_interface/cwrapper/cw__my_client_interface.hpp
+src/it/resources/result/my_client_interface/cwrapper/cw__my_client_interface.cpp
+src/it/resources/result/my_client_interface/cffi/pycffi_lib_build.py

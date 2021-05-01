@@ -58,6 +58,7 @@ object Main {
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibIncludePrefix: String = "djinni/jni/"
+    var jniGenerateMain: Boolean = true
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
     var cppHeaderExt: String = "hpp"
@@ -185,6 +186,8 @@ object Main {
         .text("The namespace name to use for generated JNI C++ classes.")
       opt[String]("jni-base-lib-include-prefix").valueName("...").foreach(x => jniBaseLibIncludePrefix = x)
         .text("The JNI base support library's include path (default: djinni/jni/).")
+      opt[Boolean]("jni-generate-main").valueName("<true/false>").foreach(x => jniGenerateMain = x)
+        .text("Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)")
       note("\nObjective-C")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
@@ -418,6 +421,7 @@ object Main {
       jniClassIdentStyle,
       jniFileIdentStyle,
       jniBaseLibIncludePrefix,
+      jniGenerateMain,
       cppExt,
       cppHeaderExt,
       objcOutFolder,
