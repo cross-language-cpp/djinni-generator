@@ -86,6 +86,7 @@ class IntegrationTest extends FunSpec {
       s"--c-wrapper-include-cpp-prefix ../cpp-headers/ " +
       s"--cppcli-out src/it/resources/result/$idl/cppcli " +
       s"--cppcli-include-cpp-prefix ../cpp-headers/ " +
+      s"--list-out-files src/it/resources/result/$idl/generated-files.txt " +
       s"--idl src/it/resources/$idl.djinni")
   }
 

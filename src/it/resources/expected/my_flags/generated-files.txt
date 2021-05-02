@@ -1,0 +1,11 @@
+src/it/resources/result/my_flags/cpp-headers/my_flags.hpp
+src/it/resources/result/my_flags/java/MyFlags.java
+src/it/resources/result/my_flags/jni-headers/my_flags.hpp
+src/it/resources/result/my_flags/objc-headers/ITMyFlags.h
+src/it/resources/result/my_flags/objcpp/ITMyFlags+Private.h
+src/it/resources/result/my_flags/cppcli/MyFlags.hpp
+src/it/resources/result/my_flags/cppcli/MyFlags.cpp
+src/it/resources/result/my_flags/python/my_flags.py
+src/it/resources/result/my_flags/cwrapper-headers/dh__my_flags.h
+src/it/resources/result/my_flags/cwrapper/dh__my_flags.hpp
+src/it/resources/result/my_flags/cwrapper/dh__my_flags.cpp
