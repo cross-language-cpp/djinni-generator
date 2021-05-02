@@ -127,7 +127,7 @@ You can preview how the docs will look like:
 
 ```sh
 # install required dependencies
-pip install -r requirements.txt
+pip install -r mkdocs-requirements.txt
 # render a live preview of the docs under http://127.0.0.1:8000
 mkdocs serve 
 ```
