@@ -46,7 +46,7 @@ jni:
 cs:
   translator: '::djinni::Record1_h'
   header: '"Record1-cs.hpp"'
-  typename: 'Record1'
+  typename: '::mylib::cs::Record1'
   reference: false
 ---
 name: mylib_interface1
