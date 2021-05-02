@@ -52,3 +52,17 @@ Add the generator as a build requirement in `conanfile.txt`:
 [build_requires]
 djinni-generator/0.3.1
 ```
+
+## Credits
+
+[Thanks goes to these contributors!](https://github.com/cross-language-cpp/djinni-generator/graphs/contributors)
+
+The code in this repository is in large portions copied from [dropbox/djinni](https://github.com/dropbox/djinni) which was created by
+
+- Kannan Goundan
+- Tony Grue
+- Derek He
+- Steven Kabbes
+- Jacob Potter
+- Iulia Tamas
+- Andrew Twyman
