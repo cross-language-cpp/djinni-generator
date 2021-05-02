@@ -46,7 +46,7 @@ jni:
 cs:
   translator: '::djinni::Record1_h'
   header: '"Record1-cs.hpp"'
-  typename: '::mylib::cs::Record1'
+  typename: 'Record1^'
   reference: false
 ---
 name: mylib_interface1
@@ -129,13 +129,17 @@ struct Record1
 
 ```cpp
 // For C++ <-> C++/CLI
-struct Record1 {
+public ref class Record1 {
+public:
+    // Record1 public properties
+internal:
     using CppType = ::mylib::Record1;
-    using CsType = ::mylib::cs::Record1;
-
-    static CppType ToCpp(CsType dt) { return /* your magic here */; }
-    static CsType FromCpp(CppType dt) { return /* your magic here */; }
-};
+    using CsType = Record1^;
+    static CppType ToCpp(CsType cs) { return /* your magic here */; }
+    static CsType FromCpp(const CppType& cs) { return /* your magic here */; }
+private:
+    // Record1 properties' backing fields
+}
 ```
 
 For `interface` classes the `CppType` alias is expected to be a `std::shared_ptr<T>`.

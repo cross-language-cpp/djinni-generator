@@ -46,6 +46,7 @@ djinni \
 | `--idl-include-path <path> ...` | An include path to search for Djinni `@import` and `@extern` directives. Can specify multiple paths. |
 
 ### Java
+
 | Argument | Description |
 | -------- | ----------- |
 | `--java-out <out-folder>` | The output for the Java files (Generator disabled if unspecified). |
@@ -135,8 +136,8 @@ djinni \
 | -------- | ----------- |
 | `--cppcli-out <out-folder>` | The output folder for C++/CLI files (Generator disabled if unspecified). |
 | `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
-| `--cppcli-include-cpp-prefix` | The prefix for #include of the main C++ header files from C++/CLI files. |
-| `--cppcli-base-lib-include-prefix ...` | The C++/CLI base support library's include path (default: `djinni/cppcli/`). |
+| `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
+| `--cppcli-base-lib-include-prefix <prefix>` | The C++/CLI base support library's include path (default: `djinni/cppcli/`). |
 
 
 ### Yaml Generation
