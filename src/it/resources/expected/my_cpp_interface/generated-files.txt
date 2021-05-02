@@ -1,0 +1,16 @@
+src/it/resources/result/my_cpp_interface/cpp-headers/my_cpp_interface.hpp
+src/it/resources/result/my_cpp_interface/cpp/my_cpp_interface.cpp
+src/it/resources/result/my_cpp_interface/java/MyCppInterface.java
+src/it/resources/result/my_cpp_interface/jni-headers/my_cpp_interface.hpp
+src/it/resources/result/my_cpp_interface/jni/my_cpp_interface.cpp
+src/it/resources/result/my_cpp_interface/objc-headers/ITMyCppInterface.h
+src/it/resources/result/my_cpp_interface/objc/ITMyCppInterface.mm
+src/it/resources/result/my_cpp_interface/objcpp/ITMyCppInterface+Private.h
+src/it/resources/result/my_cpp_interface/objcpp/ITMyCppInterface+Private.mm
+src/it/resources/result/my_cpp_interface/cppcli/MyCppInterface.hpp
+src/it/resources/result/my_cpp_interface/cppcli/MyCppInterface.cpp
+src/it/resources/result/my_cpp_interface/python/my_cpp_interface.py
+src/it/resources/result/my_cpp_interface/cwrapper-headers/cw__my_cpp_interface.h
+src/it/resources/result/my_cpp_interface/cwrapper/cw__my_cpp_interface.hpp
+src/it/resources/result/my_cpp_interface/cwrapper/cw__my_cpp_interface.cpp
+src/it/resources/result/my_cpp_interface/cffi/pycffi_lib_build.py

@@ -167,6 +167,9 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
         Then(s"the expected files should be created for C++/CLI: ${cppcliFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
+
+        Then("the file `generated-files.txt` should contain all generated files")
+        assertFileContentEquals(idlFile, "", List("generated-files.txt"))
       }
     }
 
