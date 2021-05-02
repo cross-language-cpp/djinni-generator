@@ -127,9 +127,15 @@ struct Record1
 };
 ```
 
-```
+```cpp
 // For C++ <-> C++/CLI
-// TODO
+struct Record1 {
+    using CppType = ::mylib::Record1;
+    using CsType = ::mylib::cs::Record1;
+
+    static CppType ToCpp(CsType dt) { return /* your magic here */; }
+    static CsType FromCpp(CppType dt) { return /* your magic here */; }
+};
 ```
 
 For `interface` classes the `CppType` alias is expected to be a `std::shared_ptr<T>`.
