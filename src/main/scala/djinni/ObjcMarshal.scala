@@ -30,7 +30,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
       case e: MExtern => e.defType match {
         case DEnum => None
         case DInterface => interfaceNullity
-        case DRecord => if(e.objc.pointer) nonnull else None
+        case DRecord => if(e.objc.pointer.get) nonnull else None
       }
       case _ => nonnull
     }
@@ -69,7 +69,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
         val prefix = if (r.ext.objc) spec.objcExtendedRecordIncludePrefix else spec.objcIncludePrefix
         List(ImportRef(q(prefix + headerName(d.name))))
     }
-    case e: MExtern => List(ImportRef(e.objc.header))
+    case e: MExtern => List(ImportRef(e.objc.header.get))
     case p: MParam => List()
   }
 
@@ -125,8 +125,8 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
                   (s"id<${idObjc.ty(d.name)}>", false)
             }
             case e: MExtern => e.body match {
-              case i: Interface => if(i.ext.objc) (s"id<${e.objc.typename}>", false) else (e.objc.typename, true)
-              case _ => if(needRef) (e.objc.boxed, true) else (e.objc.typename, e.objc.pointer)
+              case i: Interface => if(i.ext.objc) (s"id<${e.objc.typename.get}>", false) else (e.objc.typename.get, true)
+              case _ => if(needRef) (e.objc.boxed.get, true) else (e.objc.typename.get, e.objc.pointer.get)
             }
             case p: MParam => throw new AssertionError("Parameter should not happen at Obj-C top level")
           }

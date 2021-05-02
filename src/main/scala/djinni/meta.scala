@@ -37,41 +37,41 @@ object MExtern {
   // All typenames are fully qualified in their respective language.
   // TODO: names of enum values and record fields as written in code for use in constants (do not use IdentStyle)
   case class Cpp(
-    typename: String,
-    header: String,
-    byValue: Boolean // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
+    typename: Option[String],
+    header: Option[String],
+    byValue: Option[Boolean] // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
   )
   case class Objc(
-    typename: String,
-    header: String,
-    boxed: String, // Fully qualified Objective-C typename, must be an object. Only used for "record" types.
-    pointer: Boolean, // True to construct pointer types and make it eligible for "nonnull" qualifier. Only used for "record" types.
-    hash: String // A well-formed expression to get the hash value. Must be a format string with a single "%s" placeholder. Only used for "record" types with "eq" deriving when needed.
+    typename: Option[String],
+    header: Option[String],
+    boxed: Option[String], // Fully qualified Objective-C typename, must be an object. Only used for "record" types.
+    pointer: Option[Boolean], // True to construct pointer types and make it eligible for "nonnull" qualifier. Only used for "record" types.
+    hash: Option[String] // A well-formed expression to get the hash value. Must be a format string with a single "%s" placeholder. Only used for "record" types with "eq" deriving when needed.
   )
   case class Objcpp(
-    translator: String, // C++ typename containing toCpp/fromCpp methods
-    header: String // Where to find the translator class
+    translator: Option[String], // C++ typename containing toCpp/fromCpp methods
+    header: Option[String] // Where to find the translator class
   )
   case class Java(
-    typename: String,
-    boxed: String, // Java typename used if boxing is required, must be an object.
-    reference: Boolean, // True if the unboxed type is an object reference and qualifies for any kind of "nonnull" annotation in Java. Only used for "record" types.
-    generic: Boolean, // Set to false to exclude type arguments from the Java class. This is should be true by default. Useful if template arguments are only used in C++.
-    hash: String, // A well-formed expression to get the hash value. Must be a format string with a single "%s" placeholder. Only used for "record" types types with "eq" deriving when needed.
+    typename: Option[String],
+    boxed: Option[String], // Java typename used if boxing is required, must be an object.
+    reference: Option[Boolean], // True if the unboxed type is an object reference and qualifies for any kind of "nonnull" annotation in Java. Only used for "record" types.
+    generic: Option[Boolean], // Set to false to exclude type arguments from the Java class. This is should be true by default. Useful if template arguments are only used in C++.
+    hash: Option[String], // A well-formed expression to get the hash value. Must be a format string with a single "%s" placeholder. Only used for "record" types types with "eq" deriving when needed.
     writeToParcel: String, // A well-formed expression to write value into android.os.Parcel. Must be a format string with a single "%s" placeholder. Only used for "record" types types
     readFromParcel: String // A well-formed expression to read value from android.os.Parcel. Must be a format string with a single "%s" placeholder. Only used for "record" types types
   )
   case class Jni(
-    translator: String, // C++ typename containing toCpp/fromCpp methods
-    header: String, // Where to find the translator class
-    typename: String, // The JNI type to use (e.g. jobject, jstring)
-    typeSignature: String // The mangled Java type signature (e.g. "Ljava/lang/String;")
+    translator: Option[String], // C++ typename containing toCpp/fromCpp methods
+    header: Option[String], // Where to find the translator class
+    typename: Option[String], // The JNI type to use (e.g. jobject, jstring)
+    typeSignature: Option[String] // The mangled Java type signature (e.g. "Ljava/lang/String;")
   )
   case class Cs(
-    translator: String, // C++ typename containing ToCpp/FromCpp methods
-    header: String, // Where to find the translator class
-    typename: String,
-    reference: Boolean
+    translator: Option[String], // C++ typename containing ToCpp/FromCpp methods
+    header: Option[String], // Where to find the translator class
+    typename: Option[String],
+    reference: Option[Boolean]
   )
 }
 

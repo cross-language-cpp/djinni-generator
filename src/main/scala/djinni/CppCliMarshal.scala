@@ -73,7 +73,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
       } else {
         List()
       }
-    case e: MExtern => List(ImportRef(e.cs.header))
+    case e: MExtern => List(ImportRef(e.cs.header.get))
     case _ => List()
   }
 
@@ -103,7 +103,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
             }
           case MOptional => ""
           case MDate => ""
-          case e: MExtern => if (e.cs.reference) "^" else ""
+          case e: MExtern => if (e.cs.reference.get) "^" else ""
           case _ => "^"
         }
       } else ""
@@ -123,14 +123,14 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
                 case _ => expr(arg)
               }
             case e: MExtern =>
-              if (e.cs.reference) {
+              if (e.cs.reference.get) {
                 expr(arg)
               } else {
                 "System::Nullable" + args
               }
             case _ => expr(arg)
           }
-        case e: MExtern => withNamespace(e.cs.typename)
+        case e: MExtern => withNamespace(e.cs.typename.get)
         case o =>
           val base = o match {
             case p: MPrimitive => p.cppCliName
@@ -156,7 +156,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
       case DEnum => withNs(Some("djinni"), s"Enum<${cppMarshal.fqTypename(tm)}, ${fqTypename(tm)}>")
       case _ => withNs(Some(spec.cppCliNamespace.replace(".", "::")), helperClass(d.name))
     }
-    case e: MExtern => e.cs.translator
+    case e: MExtern => e.cs.translator.get
     case o => withNs(Some("djinni"), o match {
       case p: MPrimitive => p.idlName match {
         case "i8" => "I8"

@@ -36,7 +36,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
   def references(m: Meta, exclude: String = ""): Seq[SymbolReference] = m match {
     case o: MOpaque => List(ImportRef(q(spec.jniBaseLibIncludePrefix + "Marshal.hpp")))
     case d: MDef => List(ImportRef(include(d.name)))
-    case e: MExtern => List(ImportRef(e.jni.header))
+    case e: MExtern => List(ImportRef(e.jni.header.get))
     case _ => List()
   }
 
@@ -74,7 +74,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
       case MSet => "Ljava/util/HashSet;"
       case MMap => "Ljava/util/HashMap;"
     }
-    case e: MExtern => e.jni.typeSignature
+    case e: MExtern => e.jni.typeSignature.get
     case MParam(_) => "Ljava/lang/Object;"
     case d: MDef => d.body match {
       case e: Enum if e.flags => "Ljava/util/EnumSet;"
@@ -88,7 +88,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
 
   def helperName(tm: MExpr): String = tm.base match {
     case d: MDef => withNs(Some(spec.jniNamespace), helperClass(d.name))
-    case e: MExtern => e.jni.translator
+    case e: MExtern => e.jni.translator.get
     case o => withNs(Some("djinni"), o match {
       case p: MPrimitive => p.idlName match {
         case "i8" => "I8"

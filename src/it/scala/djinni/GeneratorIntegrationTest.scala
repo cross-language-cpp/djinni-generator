@@ -1,7 +1,7 @@
 package djinni
 
 import org.scalatest.GivenWhenThen
-import org.scalatest.Matchers.{convertToAnyShouldWrapper, equal}
+import org.scalatest.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
@@ -219,6 +219,14 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileExists(s"$outputPath/dh__list_bool.py")
       assertFileExists(s"$outputPath/dh__map_int8_t_bool.py")
       assertFileExists(s"$outputPath/dh__set_bool.py")
+    }
+
+    it("should be able to parse yaml files without all languages defined") {
+      val outputPath = "src/it/resources/result/only_yaml_out"
+      When("calling the generator with ")
+      noException should be thrownBy {
+        djinni(s"--idl src/it/resources/date_no_cs.djinni --yaml-out $outputPath")
+      }
     }
   }
 }

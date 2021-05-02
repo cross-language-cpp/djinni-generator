@@ -362,7 +362,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     case _ => throw new AssertionError("Unreachable")
                   }
                   case e: MExtern => e.defType match {
-                    case DRecord => if(e.java.reference) {
+                    case DRecord => if(e.java.reference.get) {
                       w.w(s"this.${idJava.field(f.ident)}.equals(other.${idJava.field(f.ident)})")
                     } else {
                       w.w(s"this.${idJava.field(f.ident)} == other.${idJava.field(f.ident)}")
@@ -403,7 +403,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   case _ => throw new AssertionError("Unreachable")
                 }
                 case e: MExtern => e.defType match {
-                  case DRecord => "(" + e.java.hash.format(idJava.field(f.ident)) + ")"
+                  case DRecord => "(" + e.java.hash.get.format(idJava.field(f.ident)) + ")"
                   case DEnum => s"${idJava.field(f.ident)}.hashCode()"
                   case _ => throw new AssertionError("Unreachable")
                 }
@@ -462,7 +462,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   case _ => throw new AssertionError("Unreachable")
                 }
                 case e: MExtern => e.defType match {
-                  case DRecord => if(e.java.reference) w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava.field(f.ident)});") else primitiveCompare(f.ident)
+                  case DRecord => if(e.java.reference.get) w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava.field(f.ident)});") else primitiveCompare(f.ident)
                   case DEnum => w.w(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava.field(f.ident)});")
                   case _ => throw new AssertionError("Unreachable")
                 }

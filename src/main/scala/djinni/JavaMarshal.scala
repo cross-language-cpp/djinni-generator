@@ -71,7 +71,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
         }
       case e: MExtern => e.defType match {
         case DInterface => interfaceNullityAnnotation
-        case DRecord => if(e.java.reference) javaNonnullAnnotation else None
+        case DRecord => if(e.java.reference.get) javaNonnullAnnotation else None
         case DEnum => javaNonnullAnnotation
       }
       case _ => javaNonnullAnnotation
@@ -112,7 +112,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
             case MOptional => throw new AssertionError("nested optional?")
             case m => f(arg, true)
           }
-        case e: MExtern => (if(needRef) e.java.boxed else e.java.typename) + (if(e.java.generic) args(tm) else "")
+        case e: MExtern => (if(needRef) e.java.boxed else e.java.typename) + (if(e.java.generic.get) args(tm) else "")
         case o =>
           val base = o match {
             case p: MPrimitive => if (needRef) p.jBoxed else p.jName
