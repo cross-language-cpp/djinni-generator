@@ -119,6 +119,19 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 13. Folder containing the integration testing code.
 14. djinni-generator source code.
 
+## Preview Documentation
+
+The documentation in `docs` will be rendered as a part of [djinni.xlcpp.dev](https://djinni.xlcpp.dev/).
+
+You can preview how the docs will look like:
+
+```sh
+# install required dependencies
+pip install -r mkdocs-requirements.txt
+# render a live preview of the docs under http://127.0.0.1:8000
+mkdocs serve 
+```
+
 ## Release process
 
 To release a new version of the generator, the following steps must be followed:

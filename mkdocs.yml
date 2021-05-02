@@ -1,7 +1,16 @@
 site_name: djinni-generator
+markdown_extensions:
+  - pymdownx.tabbed
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - admonition
+theme:
+  name: material
 nav:
   - setup.md
   - idl.md
   - cli-usage.md
   - generated-code-usage.md
+  - modularization.md
   - developer-guide.md
