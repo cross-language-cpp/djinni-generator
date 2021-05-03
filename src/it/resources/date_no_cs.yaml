@@ -9,7 +9,7 @@ cpp:
   header: '<chrono>'
   byValue: true
 objc:
-  typename: 'NSDate'
+  # Key 'typename' missing
   header: '<Foundation/Foundation.h>'
   boxed: 'NSDate'
   pointer: true

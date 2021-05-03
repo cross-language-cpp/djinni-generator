@@ -112,7 +112,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
             case MOptional => throw new AssertionError("nested optional?")
             case m => f(arg, true)
           }
-        case e: MExtern => (if(needRef) e.java.boxed else e.java.typename) + (if(e.java.generic.get) args(tm) else "")
+        case e: MExtern => (if(needRef) e.java.boxed.get else e.java.typename.get) + (if(e.java.generic.get) args(tm) else "")
         case o =>
           val base = o match {
             case p: MPrimitive => if (needRef) p.jBoxed else p.jName

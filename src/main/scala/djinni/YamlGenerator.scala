@@ -235,10 +235,12 @@ object YamlGenerator {
     td.properties.get(key).collect { case m: JMap[_, _] => m.collect { case (k: String, v: Any) => (k, v) } }
   }
   private def nested[T](td: ExternTypeDecl, isRequired: Boolean, lang: String, key: String, convert: Any => T): Option[T] = {
-    nested(td, lang).map(m => m(key)).map(v => convert(v)) match {
-      case Some(v) => Some(v)
-      case None => if (isRequired) throw Error(td.ident.loc, s"missing '$lang' definitions").toException else None
-    }
+    nested(td, lang)
+      .map(m => m.get(key)).flatten
+      .map(v => convert(v)) match {
+        case None if isRequired => throw Error(td.ident.loc, s"missing '$lang' definitions").toException
+        case other => other
+      }
   }
 
   private def defType(td: ExternTypeDecl) = td.body match {

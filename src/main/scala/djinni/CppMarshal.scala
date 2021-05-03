@@ -163,7 +163,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
           case DInterface => s"std::shared_ptr<${withNamespace(idCpp.ty(d.name))}>"
         }
       case e: MExtern => e.defType match {
-        case DInterface => s"std::shared_ptr<${e.cpp.typename}>"
+        case DInterface => s"std::shared_ptr<${e.cpp.typename.get}>"
         case _ => e.cpp.typename.get
       }
       case p: MParam => idCpp.typeParam(p.name)
