@@ -358,16 +358,7 @@ object Main {
       }
     }
 
-    // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
-    resolver.resolve(meta.defaults, idl) match {
-      case Some(err) =>
-        System.err.println(err)
-        System.exit(1); return
-      case _ =>
-    }
-
-    System.out.println("Generating...")
     val outFileListWriter = if (outFileListPath.isDefined) {
       if (outFileListPath.get.getParentFile != null)
         createFolder("output file list", outFileListPath.get.getParentFile)
@@ -460,8 +451,16 @@ object Main {
       cWrapperBaseLibIncludePrefix,
       pyImportPrefix)
 
-
+    // Resolve names in IDL file, check types.
     try {
+      resolver.resolve(meta.defaults, idl, outSpec) match {
+        case Some(err) =>
+          System.err.println(err)
+          System.exit(1); return
+        case _ =>
+      }
+
+      System.out.println("Generating...")
       val r = generate(idl, outSpec)
       r.foreach(e => System.err.println("Error generating output: " + e))
     }

@@ -17,9 +17,10 @@
 package djinni
 
 import djinni.ast.Record.DerivingType
-import djinni.syntax._
 import djinni.ast._
+import djinni.generatorTools._
 import djinni.meta._
+import djinni.syntax._
 import scala.collection.immutable
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -28,7 +29,7 @@ package object resolver {
 
 type Scope = immutable.Map[String,Meta]
 
-def resolve(metas: Scope, idl: Seq[TypeDecl]): Option[Error] = {
+def resolve(metas: Scope, idl: Seq[TypeDecl], spec: Spec): Option[Error] = {
 
   try {
     var topScope = metas
@@ -49,7 +50,7 @@ def resolve(metas: Scope, idl: Seq[TypeDecl]): Option[Error] = {
       }
       topScope = topScope.updated(typeDecl.ident.name, typeDecl match {
         case td: InternTypeDecl => MDef(typeDecl.ident.name, typeDecl.params.length, defType, typeDecl.body)
-        case td: ExternTypeDecl => YamlGenerator.metaFromYaml(td)
+        case td: ExternTypeDecl => YamlGenerator.metaFromYaml(td, spec)
       })
     }
 

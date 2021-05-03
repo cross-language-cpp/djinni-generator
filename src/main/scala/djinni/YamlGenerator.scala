@@ -3,6 +3,7 @@ package djinni
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
+import djinni.syntax._
 import djinni.writer.IndentWriter
 import java.util.{Map => JMap}
 import scala.collection.JavaConversions._
@@ -192,49 +193,52 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
 }
 
 object YamlGenerator {
-  def metaFromYaml(td: ExternTypeDecl) = MExtern(
+  def metaFromYaml(td: ExternTypeDecl, spec: Spec) = MExtern(
     td.ident.name.stripPrefix(td.properties("prefix").toString), // Make sure the generator uses this type with its original name for all intents and purposes
     td.params.size,
     defType(td),
     td.body,
     MExtern.Cpp(
-      nested(td, "cpp", "typename", _.toString),
-      nested(td, "cpp", "header", _.toString),
-      nested(td, "cpp", "byValue", _.asInstanceOf[Boolean])),
+      nested(td, spec.cppOutFolder.isDefined, "cpp", "typename", _.toString),
+      nested(td, spec.cppOutFolder.isDefined, "cpp", "header", _.toString),
+      nested(td, spec.cppOutFolder.isDefined, "cpp", "byValue", _.asInstanceOf[Boolean])),
     MExtern.Objc(
-      nested(td, "objc", "typename", _.toString),
-      nested(td, "objc", "header", _.toString),
-      nested(td, "objc", "boxed", _.toString),
-      nested(td, "objc", "pointer", _.asInstanceOf[Boolean]),
-      nested(td, "objc", "hash", _.toString)),
+      nested(td, spec.objcOutFolder.isDefined, "objc", "typename", _.toString),
+      nested(td, spec.objcOutFolder.isDefined, "objc", "header", _.toString),
+      nested(td, spec.objcOutFolder.isDefined, "objc", "boxed", _.toString),
+      nested(td, spec.objcOutFolder.isDefined, "objc", "pointer", _.asInstanceOf[Boolean]),
+      nested(td, spec.objcOutFolder.isDefined, "objc", "hash", _.toString)),
     MExtern.Objcpp(
-      nested(td, "objcpp", "translator", _.toString),
-      nested(td, "objcpp", "header", _.toString)),
+      nested(td, spec.objcppOutFolder.isDefined, "objcpp", "translator", _.toString),
+      nested(td, spec.objcppOutFolder.isDefined, "objcpp", "header", _.toString)),
     MExtern.Java(
-      nested(td, "java", "typename", _.toString),
-      nested(td, "java", "boxed", _.toString),
-      nested(td, "java", "reference", _.asInstanceOf[Boolean]),
-      nested(td, "java", "generic", _.asInstanceOf[Boolean]),
-      nested(td, "java", "hash", _.toString),
-      nested(td, "java", "writeToParcel", _.toString) getOrElse "%s.writeToParcel(out, flags)",
-      nested(td, "java", "readFromParcel", _.toString) getOrElse "new %s(in)"),
+      nested(td, spec.javaOutFolder.isDefined, "java", "typename", _.toString),
+      nested(td, spec.javaOutFolder.isDefined, "java", "boxed", _.toString),
+      nested(td, spec.javaOutFolder.isDefined, "java", "reference", _.asInstanceOf[Boolean]),
+      nested(td, spec.javaOutFolder.isDefined, "java", "generic", _.asInstanceOf[Boolean]),
+      nested(td, spec.javaOutFolder.isDefined, "java", "hash", _.toString),
+      nested(td, false, "java", "writeToParcel", _.toString) getOrElse "%s.writeToParcel(out, flags)",
+      nested(td, false, "java", "readFromParcel", _.toString) getOrElse "new %s(in)"),
     MExtern.Jni(
-      nested(td, "jni", "translator", _.toString),
-      nested(td, "jni", "header", _.toString),
-      nested(td, "jni", "typename", _.toString),
-      nested(td, "jni", "typeSignature", _.toString)),
+      nested(td, spec.jniOutFolder.isDefined, "jni", "translator", _.toString),
+      nested(td, spec.jniOutFolder.isDefined, "jni", "header", _.toString),
+      nested(td, spec.jniOutFolder.isDefined, "jni", "typename", _.toString),
+      nested(td, spec.jniOutFolder.isDefined, "jni", "typeSignature", _.toString)),
     MExtern.Cs(
-      nested(td, "cs", "translator", _.toString),
-      nested(td, "cs", "header", _.toString),
-      nested(td, "cs", "typename", _.toString),
-      nested(td, "cs", "reference", _.asInstanceOf[Boolean]))
+      nested(td, spec.cppCliOutFolder.isDefined, "cs", "translator", _.toString),
+      nested(td, spec.cppCliOutFolder.isDefined, "cs", "header", _.toString),
+      nested(td, spec.cppCliOutFolder.isDefined, "cs", "typename", _.toString),
+      nested(td, spec.cppCliOutFolder.isDefined, "cs", "reference", _.asInstanceOf[Boolean]))
   )
 
   private def nested(td: ExternTypeDecl, key: String) = {
     td.properties.get(key).collect { case m: JMap[_, _] => m.collect { case (k: String, v: Any) => (k, v) } }
   }
-  private def nested[T](td: ExternTypeDecl, lang: String, key: String, convert: Any => T): Option[T] = {
-    nested(td, lang).map(m => m(key)).map(v => convert(v))
+  private def nested[T](td: ExternTypeDecl, isRequired: Boolean, lang: String, key: String, convert: Any => T): Option[T] = {
+    nested(td, lang).map(m => m(key)).map(v => convert(v)) match {
+      case Some(v) => Some(v)
+      case None => if (isRequired) throw Error(td.ident.loc, s"missing '$lang' definitions").toException else None
+    }
   }
 
   private def defType(td: ExternTypeDecl) = td.body match {

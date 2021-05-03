@@ -224,8 +224,11 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     it("should be able to parse yaml files without all languages defined") {
       val outputPath = "src/it/resources/result/only_yaml_out"
       When("calling the generator with ")
+      a [RuntimeException] should be thrownBy {
+        djinni(s"--idl src/it/resources/date_no_cs.djinni --cppcli-out $outputPath")
+      }
       noException should be thrownBy {
-        djinni(s"--idl src/it/resources/date_no_cs.djinni --yaml-out $outputPath")
+        djinni(s"--idl src/it/resources/date_no_cs.djinni --java-out $outputPath")
       }
     }
   }
