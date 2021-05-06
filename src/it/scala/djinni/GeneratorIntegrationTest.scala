@@ -234,7 +234,9 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
     it("should gracefully fail when a required language definition is incomplete") {
       val outputPath = "src/it/resources/result/only_yaml_out"
-      When("calling the generator with ")
+      Given("an IDL file that depends on a YAML type definition that misses a required key in the `objc` definition")
+      When("calling the generator")
+      Then("the generation should fail gracefully if code for Objective-C is generated")
       a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --objc-out $outputPath")
     }
   }
