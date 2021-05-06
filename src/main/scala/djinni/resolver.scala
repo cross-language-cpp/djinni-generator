@@ -29,7 +29,16 @@ package object resolver {
 
 type Scope = immutable.Map[String,Meta]
 
-def resolve(metas: Scope, idl: Seq[TypeDecl], spec: Spec): Option[Error] = {
+def resolve(
+    metas: Scope,
+    idl: Seq[TypeDecl],
+    cppOutRequired: Boolean,
+    objcOutRequired: Boolean,
+    objcppOutRequired: Boolean,
+    javaOutRequired: Boolean,
+    jniOutRequired: Boolean,
+    cppCliOutRequired: Boolean
+): Option[Error] = {
 
   try {
     var topScope = metas
@@ -50,7 +59,15 @@ def resolve(metas: Scope, idl: Seq[TypeDecl], spec: Spec): Option[Error] = {
       }
       topScope = topScope.updated(typeDecl.ident.name, typeDecl match {
         case td: InternTypeDecl => MDef(typeDecl.ident.name, typeDecl.params.length, defType, typeDecl.body)
-        case td: ExternTypeDecl => YamlGenerator.metaFromYaml(td, spec)
+        case td: ExternTypeDecl => YamlGenerator.metaFromYaml(
+          td,
+          cppOutRequired = cppOutRequired,
+          objcOutRequired = objcOutRequired,
+          objcppOutRequired = objcppOutRequired,
+          javaOutRequired = javaOutRequired,
+          jniOutRequired = jniOutRequired,
+          cppCliOutRequired = cppCliOutRequired
+        )
       })
     }
 

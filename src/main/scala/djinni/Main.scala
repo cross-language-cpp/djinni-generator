@@ -34,7 +34,7 @@ object Main {
     var cppFileIdentStyle: IdentConverter = IdentStyle.underLower
     var cppOptionalTemplate: String = "std::optional"
     var cppOptionalHeader: String = "<optional>"
-    var cppEnumHashWorkaround : Boolean = true
+    var cppEnumHashWorkaround: Boolean = true
     var cppNnHeader: Option[String] = None
     var cppNnType: Option[String] = None
     var cppNnCheckExpression: Option[String] = None
@@ -47,7 +47,7 @@ object Main {
     var javaGenerateInterfaces: Boolean = false
     var javaNullableAnnotation: Option[String] = None
     var javaNonnullAnnotation: Option[String] = None
-    var javaImplementAndroidOsParcelable : Boolean = false
+    var javaImplementAndroidOsParcelable: Boolean = false
     var javaUseFinalForRecord: Boolean = true
     var jniOutFolder: Option[File] = None
     var jniHeaderOutFolderOptional: Option[File] = None
@@ -358,7 +358,25 @@ object Main {
       }
     }
 
+    // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
+    resolver.resolve(
+      meta.defaults,
+      idl,
+      cppOutRequired = cppOutFolder.isDefined,
+      objcOutRequired = objcOutFolder.isDefined,
+      objcppOutRequired = objcppOutFolder.isDefined,
+      javaOutRequired = javaOutFolder.isDefined,
+      jniOutRequired = jniOutFolder.isDefined,
+      cppCliOutRequired = cppCliOutFolder.isDefined
+    ) match {
+      case Some(err) =>
+        System.err.println(err)
+        System.exit(1); return
+      case _ =>
+    }
+
+    System.out.println("Generating...")
     val outFileListWriter = if (outFileListPath.isDefined) {
       if (outFileListPath.get.getParentFile != null)
         createFolder("output file list", outFileListPath.get.getParentFile)
@@ -451,20 +469,10 @@ object Main {
       cWrapperBaseLibIncludePrefix,
       pyImportPrefix)
 
-    // Resolve names in IDL file, check types.
     try {
-      resolver.resolve(meta.defaults, idl, outSpec) match {
-        case Some(err) =>
-          System.err.println(err)
-          System.exit(1); return
-        case _ =>
-      }
-
-      System.out.println("Generating...")
       val r = generate(idl, outSpec)
       r.foreach(e => System.err.println("Error generating output: " + e))
-    }
-    finally {
+    } finally {
       if (outFileListWriter.isDefined) {
         outFileListWriter.get.close()
       }
