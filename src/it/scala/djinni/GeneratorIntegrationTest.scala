@@ -223,8 +223,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
     it("should be able to parse yaml files without all languages defined") {
       val outputPath = "src/it/resources/result/only_yaml_out"
-      When("calling the generator with ")
+      Given("an IDL that depends on a YAML type definition that misses the `cs` key")
+      When("calling the generator  with `--cppcli-out` to generate C# gluecode")
+      Then("the generation should fail gracefully")
       a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --cppcli-out $outputPath")
+      When("calling the generator with `--java-out` to generate just Java gluecode")
+      Then("the generator should not fail, because the `cs` type definition is not needed")
       noException should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --java-out $outputPath")
     }
 
