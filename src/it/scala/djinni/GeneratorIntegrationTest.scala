@@ -225,8 +225,13 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       val outputPath = "src/it/resources/result/only_yaml_out"
       When("calling the generator with ")
       a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --cppcli-out $outputPath")
-      a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --objc-out $outputPath")
       noException should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --java-out $outputPath")
+    }
+
+    it("should gracefully fail when a required language definition is incomplete") {
+      val outputPath = "src/it/resources/result/only_yaml_out"
+      When("calling the generator with ")
+      a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --objc-out $outputPath")
     }
   }
 }
