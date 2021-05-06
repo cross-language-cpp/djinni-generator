@@ -283,7 +283,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                   case _ => throw new AssertionError("Unreachable")
                 }
                 case e: MExtern => e.defType match {
-                  case DRecord => if(e.objc.pointer) {
+                  case DRecord => if(e.objc.pointer.get) {
                       w.w(s"[self.${idObjc.field(f.ident)} isEqual:typedOther.${idObjc.field(f.ident)}]")
                     } else {
                       w.w(s"self.${idObjc.field(f.ident)} == typedOther.${idObjc.field(f.ident)}")
@@ -319,7 +319,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 }
                 case e: MExtern => e.defType match {
                   case DEnum => w.w(s"(NSUInteger)self.${idObjc.field(f.ident)}")
-                  case DRecord => w.w("(" + e.objc.hash.format("self." + idObjc.field(f.ident)) + ")")
+                  case DRecord => w.w("(" + e.objc.hash.get.format("self." + idObjc.field(f.ident)) + ")")
                   case _ => throw new AssertionError("Unreachable")
                 }
                 case _ => w.w(s"self.${idObjc.field(f.ident)}.hash")
@@ -357,7 +357,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 case _ => throw new AssertionError("Unreachable")
               }
               case e: MExtern => e.defType match {
-                case DRecord => if(e.objc.pointer) w.wl(s"tempResult = [self.${idObjc.field(f.ident)} compare:other.${idObjc.field(f.ident)}];") else generatePrimitiveOrder(f.ident, w)
+                case DRecord => if(e.objc.pointer.get) w.wl(s"tempResult = [self.${idObjc.field(f.ident)} compare:other.${idObjc.field(f.ident)}];") else generatePrimitiveOrder(f.ident, w)
                 case DEnum => generatePrimitiveOrder(f.ident, w)
                 case _ => throw new AssertionError("Unreachable")
               }
@@ -390,7 +390,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 case _ => w.w(s"self.${idObjc.field(f.ident)}")
               }
               case e: MExtern =>
-                if (e.objc.pointer) {
+                if (e.objc.pointer.get) {
                   w.w(s"self.${idObjc.field(f.ident)}")
                 } else {
                   w.w(s"@(self.${idObjc.field(f.ident)})")

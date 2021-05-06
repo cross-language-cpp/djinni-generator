@@ -34,7 +34,7 @@ object Main {
     var cppFileIdentStyle: IdentConverter = IdentStyle.underLower
     var cppOptionalTemplate: String = "std::optional"
     var cppOptionalHeader: String = "<optional>"
-    var cppEnumHashWorkaround : Boolean = true
+    var cppEnumHashWorkaround: Boolean = true
     var cppNnHeader: Option[String] = None
     var cppNnType: Option[String] = None
     var cppNnCheckExpression: Option[String] = None
@@ -47,7 +47,7 @@ object Main {
     var javaGenerateInterfaces: Boolean = false
     var javaNullableAnnotation: Option[String] = None
     var javaNonnullAnnotation: Option[String] = None
-    var javaImplementAndroidOsParcelable : Boolean = false
+    var javaImplementAndroidOsParcelable: Boolean = false
     var javaUseFinalForRecord: Boolean = true
     var jniOutFolder: Option[File] = None
     var jniHeaderOutFolderOptional: Option[File] = None
@@ -360,7 +360,16 @@ object Main {
 
     // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
-    resolver.resolve(meta.defaults, idl) match {
+    resolver.resolve(
+      meta.defaults,
+      idl,
+      cppOutRequired = cppOutFolder.isDefined,
+      objcOutRequired = objcOutFolder.isDefined,
+      objcppOutRequired = objcppOutFolder.isDefined,
+      javaOutRequired = javaOutFolder.isDefined,
+      jniOutRequired = jniOutFolder.isDefined,
+      cppCliOutRequired = cppCliOutFolder.isDefined
+    ) match {
       case Some(err) =>
         System.err.println(err)
         System.exit(1); return
@@ -460,12 +469,10 @@ object Main {
       cWrapperBaseLibIncludePrefix,
       pyImportPrefix)
 
-
     try {
       val r = generate(idl, outSpec)
       r.foreach(e => System.err.println("Error generating output: " + e))
-    }
-    finally {
+    } finally {
       if (outFileListWriter.isDefined) {
         outFileListWriter.get.close()
       }

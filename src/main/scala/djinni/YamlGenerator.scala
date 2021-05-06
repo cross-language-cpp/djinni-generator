@@ -3,6 +3,7 @@ package djinni
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
+import djinni.syntax._
 import djinni.writer.IndentWriter
 import java.util.{Map => JMap}
 import scala.collection.JavaConversions._
@@ -192,46 +193,62 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
 }
 
 object YamlGenerator {
-  def metaFromYaml(td: ExternTypeDecl) = MExtern(
+  def metaFromYaml(
+      td: ExternTypeDecl,
+      cppOutRequired: Boolean,
+      objcOutRequired: Boolean,
+      objcppOutRequired: Boolean,
+      javaOutRequired: Boolean,
+      jniOutRequired: Boolean,
+      cppCliOutRequired: Boolean
+  ) = MExtern(
     td.ident.name.stripPrefix(td.properties("prefix").toString), // Make sure the generator uses this type with its original name for all intents and purposes
     td.params.size,
     defType(td),
     td.body,
     MExtern.Cpp(
-      nested(td, "cpp")("typename").toString,
-      nested(td, "cpp")("header").toString,
-      nested(td, "cpp")("byValue").asInstanceOf[Boolean]),
+      nested(td, isRequired = cppOutRequired, "cpp", "typename", _.toString),
+      nested(td, isRequired = cppOutRequired, "cpp", "header", _.toString),
+      nested(td, isRequired = cppOutRequired, "cpp", "byValue", _.asInstanceOf[Boolean])),
     MExtern.Objc(
-      nested(td, "objc")("typename").toString,
-      nested(td, "objc")("header").toString,
-      nested(td, "objc")("boxed").toString,
-      nested(td, "objc")("pointer").asInstanceOf[Boolean],
-      nested(td, "objc")("hash").toString),
+      nested(td, isRequired = objcOutRequired, "objc", "typename", _.toString),
+      nested(td, isRequired = objcOutRequired, "objc", "header", _.toString),
+      nested(td, isRequired = objcOutRequired, "objc", "boxed", _.toString),
+      nested(td, isRequired = objcOutRequired, "objc", "pointer", _.asInstanceOf[Boolean]),
+      nested(td, isRequired = objcOutRequired, "objc", "hash", _.toString)),
     MExtern.Objcpp(
-      nested(td, "objcpp")("translator").toString,
-      nested(td, "objcpp")("header").toString),
+      nested(td, isRequired = objcppOutRequired, "objcpp", "translator", _.toString),
+      nested(td, isRequired = objcppOutRequired, "objcpp", "header", _.toString)),
     MExtern.Java(
-      nested(td, "java")("typename").toString,
-      nested(td, "java")("boxed").toString,
-      nested(td, "java")("reference").asInstanceOf[Boolean],
-      nested(td, "java")("generic").asInstanceOf[Boolean],
-      nested(td, "java")("hash").toString,
-      if (nested(td, "java") contains "writeToParcel") nested(td, "java")("writeToParcel").toString else "%s.writeToParcel(out, flags)",
-      if (nested(td, "java") contains "readFromParcel") nested(td, "java")("readFromParcel").toString else "new %s(in)"),
+      nested(td, isRequired = javaOutRequired, "java", "typename", _.toString),
+      nested(td, isRequired = javaOutRequired, "java", "boxed", _.toString),
+      nested(td, isRequired = javaOutRequired, "java", "reference", _.asInstanceOf[Boolean]),
+      nested(td, isRequired = javaOutRequired, "java", "generic", _.asInstanceOf[Boolean]),
+      nested(td, isRequired = javaOutRequired, "java", "hash", _.toString),
+      nested(td, false, "java", "writeToParcel", _.toString) getOrElse "%s.writeToParcel(out, flags)",
+      nested(td, false, "java", "readFromParcel", _.toString) getOrElse "new %s(in)"),
     MExtern.Jni(
-      nested(td, "jni")("translator").toString,
-      nested(td, "jni")("header").toString,
-      nested(td, "jni")("typename").toString,
-      nested(td, "jni")("typeSignature").toString),
+      nested(td, isRequired = jniOutRequired, "jni", "translator", _.toString),
+      nested(td, isRequired = jniOutRequired, "jni", "header", _.toString),
+      nested(td, isRequired = jniOutRequired, "jni", "typename", _.toString),
+      nested(td, isRequired = jniOutRequired, "jni", "typeSignature", _.toString)),
     MExtern.Cs(
-      nested(td, "cs")("translator").toString,
-      nested(td, "cs")("header").toString,
-      nested(td, "cs")("typename").toString,
-      nested(td, "cs")("reference").asInstanceOf[Boolean])
+      nested(td, isRequired = cppCliOutRequired, "cs", "translator", _.toString),
+      nested(td, isRequired = cppCliOutRequired, "cs", "header", _.toString),
+      nested(td, isRequired = cppCliOutRequired, "cs", "typename", _.toString),
+      nested(td, isRequired = cppCliOutRequired, "cs", "reference", _.asInstanceOf[Boolean]))
   )
 
   private def nested(td: ExternTypeDecl, key: String) = {
-    td.properties.get(key).collect { case m: JMap[_, _] => m.collect { case (k: String, v: Any) => (k, v) } } getOrElse(Map[String, Any]())
+    td.properties.get(key).collect { case m: JMap[_, _] => m.collect { case (k: String, v: Any) => (k, v) } }
+  }
+  private def nested[T](td: ExternTypeDecl, isRequired: Boolean, lang: String, key: String, convert: Any => T): Option[T] = {
+    nested(td, lang)
+      .map(m => m.get(key)).flatten
+      .map(v => convert(v)) match {
+        case None if isRequired => throw Error(td.ident.loc, s"missing '$lang' definitions").toException
+        case other => other
+      }
   }
 
   private def defType(td: ExternTypeDecl) = td.body match {

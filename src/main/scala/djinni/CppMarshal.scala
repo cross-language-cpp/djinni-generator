@@ -95,8 +95,8 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
     case e: MExtern => e.defType match {
       // Do not forward declare extern types, they might be in arbitrary namespaces.
       // This isn't a problem as extern types cannot cause dependency cycles with types being generated here
-      case DInterface => List(ImportRef("<memory>"), ImportRef(e.cpp.header))
-      case _ => List(ImportRef(e.cpp.header))
+      case DInterface => List(ImportRef("<memory>"), ImportRef(e.cpp.header.get))
+      case _ => List(ImportRef(e.cpp.header.get))
     }
     case p: MParam => List()
   }
@@ -163,8 +163,8 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
           case DInterface => s"std::shared_ptr<${withNamespace(idCpp.ty(d.name))}>"
         }
       case e: MExtern => e.defType match {
-        case DInterface => s"std::shared_ptr<${e.cpp.typename}>"
-        case _ => e.cpp.typename
+        case DInterface => s"std::shared_ptr<${e.cpp.typename.get}>"
+        case _ => e.cpp.typename.get
       }
       case p: MParam => idCpp.typeParam(p.name)
     }
@@ -214,7 +214,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
     case e: MExtern => e.defType match {
       case DInterface => false
       case DEnum => true
-      case DRecord => e.cpp.byValue
+      case DRecord => e.cpp.byValue.get
     }
     case MOptional => byValue(tm.args.head)
     case _ => false

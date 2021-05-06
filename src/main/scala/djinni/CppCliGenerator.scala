@@ -158,7 +158,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
         case p: MPrimitive => "."
         case MOptional => "."
         case MDate => "."
-        case e: MExtern => if (e.cs.reference) "->" else "."
+        case e: MExtern => if (e.cs.reference.get) "->" else "."
         case _ => "->"
       }
     }
@@ -581,11 +581,11 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
               case _ => "nullptr"
             }
           case e: MExtern =>
-            if (e.cs.reference) "nullptr" else typeStr + "()"
+            if (e.cs.reference.get) "nullptr" else typeStr + "()"
           case _ => "nullptr"
         }
       case e: MExtern =>
-        if (e.cs.reference) "nullptr" else typeStr + "()"
+        if (e.cs.reference.get) "nullptr" else typeStr + "()"
       case _ => "nullptr"
     }
   }

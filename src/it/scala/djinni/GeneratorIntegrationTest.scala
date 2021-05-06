@@ -1,7 +1,7 @@
 package djinni
 
 import org.scalatest.GivenWhenThen
-import org.scalatest.Matchers.{convertToAnyShouldWrapper, equal}
+import org.scalatest.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
@@ -222,6 +222,25 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileExists(s"$outputPath/dh__list_bool.py")
       assertFileExists(s"$outputPath/dh__map_int8_t_bool.py")
       assertFileExists(s"$outputPath/dh__set_bool.py")
+    }
+
+    it("should be able to parse yaml files without all languages defined") {
+      val outputPath = "src/it/resources/result/only_yaml_out"
+      Given("an IDL that depends on a YAML type definition that misses the `cs` key")
+      When("calling the generator  with `--cppcli-out` to generate C# gluecode")
+      Then("the generation should fail gracefully")
+      a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --cppcli-out $outputPath")
+      When("calling the generator with `--java-out` to generate just Java gluecode")
+      Then("the generator should not fail, because the `cs` type definition is not needed")
+      noException should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --java-out $outputPath")
+    }
+
+    it("should gracefully fail when a required language definition is incomplete") {
+      val outputPath = "src/it/resources/result/only_yaml_out"
+      Given("an IDL file that depends on a YAML type definition that misses a required key in the `objc` definition")
+      When("calling the generator")
+      Then("the generation should fail gracefully if code for Objective-C is generated")
+      a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --objc-out $outputPath")
     }
   }
 }
