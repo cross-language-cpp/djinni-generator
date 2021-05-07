@@ -2,6 +2,7 @@ src/it/resources/result/using_custom_datatypes/cpp-headers/custom_datatype.hpp
 src/it/resources/result/using_custom_datatypes/cpp-headers/other_record.hpp
 src/it/resources/result/using_custom_datatypes/java/CustomDatatype.java
 src/it/resources/result/using_custom_datatypes/java/OtherRecord.java
+src/it/resources/result/using_custom_datatypes/jni/djinni_jni_main.cpp
 src/it/resources/result/using_custom_datatypes/jni-headers/custom_datatype.hpp
 src/it/resources/result/using_custom_datatypes/jni/custom_datatype.cpp
 src/it/resources/result/using_custom_datatypes/jni-headers/other_record.hpp

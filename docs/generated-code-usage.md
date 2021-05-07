@@ -13,12 +13,13 @@ The following headers / code will be generated for each defined type:
 
 (+) Generated only for types that contain constants.
 
+Additionally `djinni_jni_main.cpp` is generated to provide a default implementation for `JNI_OnLoad` and `JNI_OnUnload`, if `--jni-generate-main=true`.
+
 Add all generated source files to your build target, and link the C++ code against the [djinni-support-lib](https://github.com/cross-language-cpp/djinni-support-lib).
 
 ### Our JNI approach
 JNI stands for [Java Native Interface](http://docs.oracle.com/javase/6/docs/technotes/guides/jni/spec/jniTOC.html), an extension of the Java language to allow interop with
 native (C/C++) code or libraries.
-
 
 For each type, built-in (`list`, `string`, etc.) or user-defined, Djinni produces a translator
 class with a `toJava` and `fromJava` function to translate back and forth.
@@ -39,12 +40,15 @@ class Main {
 If you package your native library in a jar, you can also use the [`NativeLibLoader`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/java/com/dropbox/djinni/NativeLibLoader.java)
 to help unpack and load your lib(s).
 
-When a native library is called, JNI calls a special function called [`JNI_OnLoad`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/djinni/jni/djinni_main.cpp#L23).
+Any library loaded from Java should provide the functions `JNI_OnLoad` and `JNI_OnUnload`.
+They are called by JNI when the library is loaded/unloaded.
 
-If your app doesn't use JNI except through Djinni, include [`djinni/jni/djinni_main.cpp`](https://github.com/cross-language-cpp/djinni-support-lib/blob/main/djinni/jni/djinni_main.cpp). 
-It defines default `JNI_Onload` and `JNI_OnUnload` functions for Djinni.
+Djinni uses these functions to initialize & cleanup internal structures.
+The generated file `djinni_jni_main.cpp` includes a default implementation of `JNI_Onload` and `JNI_OnUnload` functions 
+provided by the support library.
 
-If your app also includes a non-Djinni JNI interface, you'll need to define your own `JNI_OnLoad` and `JNI_OnUnload` functions.
+If you are building a library that does not use JNI except through Djinni, this default should work well for you.
+If want to provide your own implementation of `JNI_Onload` and `JNI_OnUnload`, the generation of `djinni_jni_main.cpp` can be disabled by setting `--jni-generate-main=false`.
 
 ## Objective-C / C++ Project
 

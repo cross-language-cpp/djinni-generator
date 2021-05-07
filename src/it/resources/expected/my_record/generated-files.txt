@@ -1,6 +1,7 @@
 src/it/resources/result/my_record/cpp-headers/my_record.hpp
 src/it/resources/result/my_record/cpp/my_record.cpp
 src/it/resources/result/my_record/java/MyRecord.java
+src/it/resources/result/my_record/jni/djinni_jni_main.cpp
 src/it/resources/result/my_record/jni-headers/my_record.hpp
 src/it/resources/result/my_record/jni/my_record.cpp
 src/it/resources/result/my_record/objc-headers/ITMyRecord.h
