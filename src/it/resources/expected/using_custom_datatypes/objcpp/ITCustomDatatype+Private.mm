@@ -15,7 +15,7 @@ auto CustomDatatype::toCpp(ObjcType obj) -> CppType
 
 auto CustomDatatype::fromCpp(const CppType& cpp) -> ObjcType
 {
-    return [[ITCustomDatatype alloc] initWithRecordData:(::djinni::String::fromCpp(cpp.recordData))];
+    return [[::ITCustomDatatype alloc] initWithRecordData:(::djinni::String::fromCpp(cpp.recordData))];
 }
 
 }  // namespace djinni_generated

@@ -28,20 +28,20 @@ auto AllDatatypes::toCpp(ObjcType obj) -> CppType
 
 auto AllDatatypes::fromCpp(const CppType& cpp) -> ObjcType
 {
-    return [[ITAllDatatypes alloc] initWithBooleanData:(::djinni::Bool::fromCpp(cpp.booleanData))
-                                          integer8Data:(::djinni::I8::fromCpp(cpp.integer8Data))
-                                         integer16Data:(::djinni::I16::fromCpp(cpp.integer16Data))
-                                         integer32Data:(::djinni::I32::fromCpp(cpp.integer32Data))
-                                         integer64Data:(::djinni::I64::fromCpp(cpp.integer64Data))
-                                           float32Data:(::djinni::F32::fromCpp(cpp.float32Data))
-                                           float64Data:(::djinni::F64::fromCpp(cpp.float64Data))
-                                            stringData:(::djinni::String::fromCpp(cpp.stringData))
-                                            binaryData:(::djinni::Binary::fromCpp(cpp.binaryData))
-                                              dateData:(::djinni::Date::fromCpp(cpp.dateData))
-                                              listData:(::djinni::List<::djinni::Bool>::fromCpp(cpp.listData))
-                                               setData:(::djinni::Set<::djinni::Bool>::fromCpp(cpp.setData))
-                                               mapData:(::djinni::Map<::djinni::I8, ::djinni::Bool>::fromCpp(cpp.mapData))
-                                          optionalData:(::djinni::Optional<std::optional, ::djinni::Bool>::fromCpp(cpp.optionalData))];
+    return [[::ITAllDatatypes alloc] initWithBooleanData:(::djinni::Bool::fromCpp(cpp.booleanData))
+                                            integer8Data:(::djinni::I8::fromCpp(cpp.integer8Data))
+                                           integer16Data:(::djinni::I16::fromCpp(cpp.integer16Data))
+                                           integer32Data:(::djinni::I32::fromCpp(cpp.integer32Data))
+                                           integer64Data:(::djinni::I64::fromCpp(cpp.integer64Data))
+                                             float32Data:(::djinni::F32::fromCpp(cpp.float32Data))
+                                             float64Data:(::djinni::F64::fromCpp(cpp.float64Data))
+                                              stringData:(::djinni::String::fromCpp(cpp.stringData))
+                                              binaryData:(::djinni::Binary::fromCpp(cpp.binaryData))
+                                                dateData:(::djinni::Date::fromCpp(cpp.dateData))
+                                                listData:(::djinni::List<::djinni::Bool>::fromCpp(cpp.listData))
+                                                 setData:(::djinni::Set<::djinni::Bool>::fromCpp(cpp.setData))
+                                                 mapData:(::djinni::Map<::djinni::I8, ::djinni::Bool>::fromCpp(cpp.mapData))
+                                            optionalData:(::djinni::Optional<std::optional, ::djinni::Bool>::fromCpp(cpp.optionalData))];
 }
 
 }  // namespace djinni_generated

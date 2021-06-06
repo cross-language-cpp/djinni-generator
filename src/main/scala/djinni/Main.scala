@@ -361,6 +361,20 @@ object Main {
       }
     }
 
+    // Ensure either --cpp-namespace , --objc-type-prefix are given when Objective C is generated
+    // This is kind of a workaround, to not be triggered when --version of --help is used ...
+    // assuming when a idl file is given, --help or --version are not given
+    // TODO: Better way of solving that, please do!
+
+    val help_or_version : Boolean = args.contains("--help") || args.contains("--version")
+
+    if(objcOutFolder.isDefined && !help_or_version) {
+      if (cppNamespace.isEmpty() && objcTypePrefix.isEmpty()) {
+          System.err.println("Error: At least one of [--cpp-namespace, --objc-type-prefix] needs to be set when generating Objective-C code.")
+          System.exit(1); return
+      }
+    }
+
     // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
     resolver.resolve(
