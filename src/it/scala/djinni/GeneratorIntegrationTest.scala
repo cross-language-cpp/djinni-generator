@@ -188,8 +188,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-type-prefix Cpp --objc-out $outputPath")
       Then("the generator should successfully generate just objc output")
       output should equal ("Parsing...\nResolving...\nGenerating...\n")
-      assertFileExists(s"$outputPath/AllDatatypes.h")
-      assertFileExists(s"$outputPath/AllDatatypes.mm")
+      assertFileExists(s"$outputPath/CppAllDatatypes.h")
+      assertFileExists(s"$outputPath/CppAllDatatypes.mm")
     }
 
     it("should be able to only generate Obj-C output when using --cpp-namespace") {
