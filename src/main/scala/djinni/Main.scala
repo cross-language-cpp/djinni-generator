@@ -362,7 +362,7 @@ object Main {
     }
 
     // Ensure either --cpp-namespace , --objc-type-prefix are given when Objective C is generated
-    if(!objcOutFolder.isEmpty) {
+    if(objcOutFolder.isDefined) {
       if (cppNamespace.isEmpty() && objcTypePrefix.isEmpty()) {
           System.err.println("Error: At least one of [--cpp-namespace, --objc-type-prefix] needs to be set when generating Objective-C code.")
           System.exit(1); return
