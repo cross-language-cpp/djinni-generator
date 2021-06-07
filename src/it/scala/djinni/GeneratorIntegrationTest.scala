@@ -202,7 +202,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileExists(s"$outputPath/AllDatatypes.mm")
     }
 
-    it("should not be able to generate Obj-C output when either a namespace of prefix is missing") {
+    it("should not be able to generate Obj-C output when either a namespace or prefix is missing") {
       val outputPath = "src/it/resources/result/only_objc_out"
       When("calling the generator with just `--objc-out`")
       Then("the generator should fail")
