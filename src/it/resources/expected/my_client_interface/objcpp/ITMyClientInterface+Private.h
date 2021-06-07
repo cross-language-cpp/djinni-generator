@@ -15,7 +15,7 @@ class MyClientInterface
 public:
     using CppType = std::shared_ptr<::MyClientInterface>;
     using CppOptType = std::shared_ptr<::MyClientInterface>;
-    using ObjcType = ::id<ITMyClientInterface>;
+    using ObjcType = id<ITMyClientInterface>;
 
     using Boxed = MyClientInterface;
 

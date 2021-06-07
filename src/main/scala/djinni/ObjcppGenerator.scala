@@ -109,7 +109,8 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
               w.wl(s"using CppType = std::shared_ptr<$cppSelf>;")
               w.wl(s"using CppOptType = std::shared_ptr<$cppSelf>;")
           }
-          w.wl("using ObjcType = ::" + (if(i.ext.objc) s"id<$self>" else s"$self*") + ";");
+
+          w.wl("using ObjcType = " + (if(i.ext.objc) s"id<$self>" else s"::$self*") + ";");
           w.wl
           w.wl(s"using Boxed = $helperClass;")
           w.wl
