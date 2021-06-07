@@ -104,7 +104,6 @@ object Main {
     var pycffiDynamicLibList: String = ""
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
-    val help_or_version : Boolean = args.contains("--help") || args.contains("--version")
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
