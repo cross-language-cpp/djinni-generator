@@ -104,6 +104,12 @@ object Main {
     var pycffiDynamicLibList: String = ""
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
+    var nodePackage = ""
+    var nodeIncludeCpp = ""
+    var nodeIdentStyle = IdentStyle.nodeDefault
+    var nodeOutFolder: Option[File] = None
+    var nodeTypePrefix: String = ""
+    var nodeFileIdentStyleOptional: Option[IdentConverter] = None
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -266,6 +272,14 @@ object Main {
         .text("Optional file in which to write the list of output files produced.")
       opt[Boolean]("skip-generation").valueName("<true/false>").foreach(x => skipGeneration = x)
         .text("Way of specifying if file generation should be skipped (default: false)")
+      opt[File]("node-out").valueName("<out-folder>").foreach(x => nodeOutFolder = Some(x))
+        .text("The output folder for NodeJS files (Generator disabled if unspecified)")
+      opt[String]("node-package").valueName("<package-name>").foreach(nodePackage = _)
+        .text("The name of packaged node module")
+      opt[String]("node-include-cpp").valueName("<prefix>").foreach(nodeIncludeCpp = _)
+        .text("The relative path from node-out to cpp-out")
+      opt[String]("node-type-prefix").valueName("<pre>").foreach(nodeTypePrefix = _)
+        .text("The prefix for Node data types (usually two or three letters)")
 
       note("\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")")
 
@@ -314,6 +328,15 @@ object Main {
       identStyle("ident-cppcli-enum", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(enum = c) })
       identStyle("ident-cppcli-const", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(const = c) })
       identStyle("ident-cppcli-file", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(file = c) })
+
+      note("\nC++/Node options:")
+      identStyle("ident-node-enum",       "FooBar",  c => { nodeIdentStyle = nodeIdentStyle.copy(enum = c) })
+      identStyle("ident-node-field",      "fooBar", c => { nodeIdentStyle = nodeIdentStyle.copy(field = c) })
+      identStyle("ident-node-method",     "fooBar", c => { nodeIdentStyle = nodeIdentStyle.copy(method = c) })
+      identStyle("ident-node-type",       "FooBar", c => { nodeIdentStyle = nodeIdentStyle.copy(ty = c) })
+      identStyle("ident-node-type-param", "FooBar", c => { nodeIdentStyle = nodeIdentStyle.copy(typeParam = c) })
+      identStyle("ident-node-local",      "fooBar", c => { nodeIdentStyle = nodeIdentStyle.copy(local = c) })
+      identStyle("ident-node-file",       "FooBar", c => { nodeFileIdentStyleOptional = Some(c) })
     }
 
     if (!argParser.parse(args)) {
@@ -329,6 +352,7 @@ object Main {
     val jniFileIdentStyle = jniFileIdentStyleOptional.getOrElse(cppFileIdentStyle)
     var objcFileIdentStyle = objcFileIdentStyleOptional.getOrElse(objcIdentStyle.ty)
     val objcppIncludeObjcPrefix = objcppIncludeObjcPrefixOptional.getOrElse(objcppIncludePrefix)
+    var nodeFileIdentStyle = nodeFileIdentStyleOptional.getOrElse(nodeIdentStyle.ty)
 
     // Add ObjC prefix to identstyle
     objcIdentStyle = objcIdentStyle.copy(ty = IdentStyle.prefix(objcTypePrefix,objcIdentStyle.ty))
@@ -337,6 +361,10 @@ object Main {
     if (cppTypeEnumIdentStyle != null) {
       cppIdentStyle = cppIdentStyle.copy(enumType = cppTypeEnumIdentStyle)
     }
+
+    // Add Node prefix to identstyle
+    nodeIdentStyle = nodeIdentStyle.copy(ty = IdentStyle.prefix(nodeTypePrefix,nodeIdentStyle.ty))
+    nodeFileIdentStyle = IdentStyle.prefix(nodeTypePrefix, nodeFileIdentStyle)
 
     // Parse IDL file.
     System.out.println("Parsing...")
@@ -471,7 +499,12 @@ object Main {
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
       cWrapperBaseLibIncludePrefix,
-      pyImportPrefix)
+      pyImportPrefix,
+      nodeOutFolder,
+      nodePackage,
+      nodeIncludeCpp,
+      nodeIdentStyle,
+      nodeFileIdentStyle)
 
     try {
       val r = generate(idl, outSpec)

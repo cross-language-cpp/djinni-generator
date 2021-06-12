@@ -82,7 +82,7 @@ case object DEnum extends DefType
 case object DInterface extends DefType
 case object DRecord extends DefType
 
-case class MPrimitive(_idlName: String, jName: String, jniName: String, cName: String, jBoxed: String, jSig: String, objcName: String, objcBoxed: String, csName: String, cppCliName: String) extends MOpaque { val numParams = 0; val idlName = _idlName }
+case class MPrimitive(_idlName: String, jName: String, jniName: String, cName: String, jBoxed: String, jSig: String, objcName: String, objcBoxed: String, csName: String, cppCliName: String, nodeJSName: String, jsName: String) extends MOpaque { val numParams = 0; val idlName = _idlName }
 case object MString extends MOpaque { val numParams = 0; val idlName = "string" }
 case object MDate extends MOpaque { val numParams = 0; val idlName = "date" }
 case object MBinary extends MOpaque { val numParams = 0; val idlName = "binary" }
@@ -92,13 +92,13 @@ case object MSet extends MOpaque { val numParams = 1; val idlName = "set" }
 case object MMap extends MOpaque { val numParams = 2; val idlName = "map" }
 
 val defaults: Map[String,MOpaque] = immutable.HashMap(
-  ("i8",   MPrimitive("i8",   "byte",    "jbyte",    "int8_t",  "Byte",    "B", "int8_t",  "NSNumber", "sbyte",  "char")),
-  ("i16",  MPrimitive("i16",  "short",   "jshort",   "int16_t", "Short",   "S", "int16_t", "NSNumber", "short",  "short")),
-  ("i32",  MPrimitive("i32",  "int",     "jint",     "int32_t", "Integer", "I", "int32_t", "NSNumber", "int",    "int")),
-  ("i64",  MPrimitive("i64",  "long",    "jlong",    "int64_t", "Long",    "J", "int64_t", "NSNumber", "long",   "__int64")),
-  ("f32",  MPrimitive("f32",  "float",   "jfloat",   "float",   "Float",   "F", "float",   "NSNumber", "float",  "float")),
-  ("f64",  MPrimitive("f64",  "double",  "jdouble",  "double",  "Double",  "D", "double",  "NSNumber", "double", "double")),
-  ("bool", MPrimitive("bool", "boolean", "jboolean", "bool",    "Boolean", "Z", "BOOL",    "NSNumber", "bool",   "bool")),
+  ("i8",   MPrimitive("i8",   "byte",    "jbyte",    "int8_t",  "Byte",    "B", "int8_t",  "NSNumber", "sbyte",  "char",    "Int32",   "number")),
+  ("i16",  MPrimitive("i16",  "short",   "jshort",   "int16_t", "Short",   "S", "int16_t", "NSNumber", "short",  "short",   "Int32",   "number")),
+  ("i32",  MPrimitive("i32",  "int",     "jint",     "int32_t", "Integer", "I", "int32_t", "NSNumber", "int",    "int",     "Int32",   "number")),
+  ("i64",  MPrimitive("i64",  "long",    "jlong",    "int64_t", "Long",    "J", "int64_t", "NSNumber", "long",   "__int64", "Number",  "number")),
+  ("f32",  MPrimitive("f32",  "float",   "jfloat",   "float",   "Float",   "F", "float",   "NSNumber", "float",  "float",   "Number",  "number")),
+  ("f64",  MPrimitive("f64",  "double",  "jdouble",  "double",  "Double",  "D", "double",  "NSNumber", "double", "double",  "Number",  "number")),
+  ("bool", MPrimitive("bool", "boolean", "jboolean", "bool",    "Boolean", "Z", "BOOL",    "NSNumber", "bool",   "bool",    "Boolean", "boolean")),
   ("string", MString),
   ("binary", MBinary),
   ("optional", MOptional),
@@ -117,5 +117,19 @@ def isInterface(ty: MExpr): Boolean = {
 
 def isOptionalInterface(ty: MExpr): Boolean = {
   ty.base == MOptional && ty.args.length == 1 && isInterface(ty.args.head)
+}
+
+def isRecord(ty: MExpr): Boolean = {
+  ty.base match {
+  case d: MDef => d.defType == DRecord
+  case _ => false
+  }
+}
+
+def isEnum(ty: MExpr): Boolean = {
+  ty.base match {
+    case d: MDef => d.defType == DEnum
+    case _ => false
+  }
 }
 }

@@ -103,7 +103,12 @@ package object generatorTools {
                    cWrapperIncludePrefix: String,
                    cWrapperIncludeCppPrefix: String,
                    cWrapperBaseLibIncludePrefix: String,
-                   pyImportPrefix: String)
+                   pyImportPrefix: String,
+                   nodeOutFolder: Option[File],
+                   nodePackage: String,
+                   nodeIncludeCpp: String,
+                   nodeIdentStyle: NodeIdentStyle,
+                   nodeFileIdentStyle: IdentConverter)
 
   def preComma(s: String) = {
     if (s.isEmpty) s else ", " + s
@@ -130,9 +135,14 @@ package object generatorTools {
   case class PythonIdentStyle(ty: IdentConverter, className: IdentConverter, typeParam: IdentConverter,
                             method: IdentConverter, field: IdentConverter, local: IdentConverter,
                             enum: IdentConverter, const: IdentConverter)
+
   case class CppCliIdentStyle(ty: IdentConverter, typeParam: IdentConverter, property: IdentConverter,
                               method: IdentConverter, field: IdentConverter, local: IdentConverter,
                               enum: IdentConverter, const: IdentConverter, file: IdentConverter)
+
+  case class NodeIdentStyle(ty: IdentConverter, enumType: IdentConverter, typeParam: IdentConverter,
+                           method: IdentConverter, field: IdentConverter, local: IdentConverter,
+                           enum: IdentConverter, const: IdentConverter)
 
   object IdentStyle {
     val camelUpper = (s: String) => s.split('_').map(firstUpper).mkString
@@ -161,6 +171,10 @@ package object generatorTools {
     val csDefault = CppCliIdentStyle(ty = camelUpper, typeParam = camelUpper, property = camelUpper,
                                     method = camelUpper, field = prefix("_", camelLower), local = camelLower,
                                     enum = camelUpper, const = camelUpper, file = camelUpper)
+
+    val nodeDefault = NodeIdentStyle(ty = camelUpper, enumType = camelUpper, typeParam = camelUpper,
+                                   method = underLower, field = underLower, local = underLower,
+                                   enum = underCaps, const = underCaps)
 
     val styles = Map(
       "FooBar" -> camelUpper,
@@ -301,6 +315,17 @@ package object generatorTools {
         }
         new CffiGenerator(spec).generate(idl)
       }
+      if (spec.nodeOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("NodeJS", spec.nodeOutFolder.get)
+          createFolder("NodeJSCpp", spec.nodeOutFolder.get)
+        }
+        val helperFileDescriptor = new NodeJsHelperFilesDescriptor(spec)
+
+        new NodeJsHelperFilesGenerator(spec, helperFileDescriptor).generate(idl)
+        new NodeJsGenerator(spec, helperFileDescriptor).generate(idl)
+        new NodeJsCppGenerator(spec, helperFileDescriptor).generate(idl)
+      }
       None
     }
     catch {
@@ -403,6 +428,7 @@ abstract class Generator(spec: Spec)
   val idObjc = spec.objcIdentStyle
   val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
+  val idNode = spec.nodeIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {
