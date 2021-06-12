@@ -68,6 +68,7 @@ object Main {
     var objcOutFolder: Option[File] = None
     var objcHeaderOutFolderOptional: Option[File] = None
     var objcppOutFolder: Option[File] = None
+    var objcppHeaderOutFolderOptional: Option[File] = None
     var objcppExt: String = "mm"
     var objcHeaderExt: String = "h"
     var objcIdentStyle = IdentStyle.objcDefault
@@ -206,6 +207,8 @@ object Main {
       note("\nObjective-C++")
       opt[File]("objcpp-out").valueName("<out-folder>").foreach(x => objcppOutFolder = Some(x))
         .text("The output folder for private Objective-C++ files (Generator disabled if unspecified).")
+      opt[File]("objcpp-header-out").valueName("<out-folder>").foreach(x => objcppHeaderOutFolderOptional = Some(x))
+        .text("The folder for the Objective-C++ header files (default: the same as --objcpp-out).")
       opt[String]("objcpp-ext").valueName("<ext>").foreach(objcppExt = _)
         .text("The filename extension for Objective-C++ files (default: \"mm\")")
       opt[String]("objcpp-include-prefix").valueName("<prefix>").foreach(objcppIncludePrefix = _)
@@ -323,6 +326,7 @@ object Main {
     val cppHeaderOutFolder = if (cppHeaderOutFolderOptional.isDefined) cppHeaderOutFolderOptional else cppOutFolder
     val jniHeaderOutFolder = if (jniHeaderOutFolderOptional.isDefined) jniHeaderOutFolderOptional else jniOutFolder
     val objcHeaderOutFolder = if (objcHeaderOutFolderOptional.isDefined) objcHeaderOutFolderOptional else objcOutFolder
+    val objcppHeaderOutFolder = if (objcppHeaderOutFolderOptional.isDefined) objcppHeaderOutFolderOptional else objcppOutFolder
     val cWrapperHeaderOutFolder = if (cWrapperHeaderOutFolderOptional.isDefined) cWrapperHeaderOutFolderOptional else cWrapperOutFolder
     val jniClassIdentStyle = jniClassIdentStyleOptional.getOrElse(cppIdentStyle.ty)
     val jniBaseLibClassIdentStyle = jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
@@ -436,6 +440,7 @@ object Main {
       objcOutFolder,
       objcHeaderOutFolder,
       objcppOutFolder,
+      objcppHeaderOutFolder,
       objcIdentStyle,
       objcFileIdentStyle,
       objcppExt,

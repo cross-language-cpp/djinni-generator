@@ -6,7 +6,7 @@ src/it/resources/result/my_record/jni-headers/my_record.hpp
 src/it/resources/result/my_record/jni/my_record.cpp
 src/it/resources/result/my_record/objc-headers/ITMyRecord.h
 src/it/resources/result/my_record/objc/ITMyRecord.mm
-src/it/resources/result/my_record/objcpp/ITMyRecord+Private.h
+src/it/resources/result/my_record/objcpp-headers/ITMyRecord+Private.h
 src/it/resources/result/my_record/objcpp/ITMyRecord+Private.mm
 src/it/resources/result/my_record/cppcli/MyRecord.hpp
 src/it/resources/result/my_record/cppcli/MyRecord.cpp
