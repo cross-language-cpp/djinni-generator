@@ -18,10 +18,10 @@ auto MyRecord::toCpp(ObjcType obj) -> CppType
 
 auto MyRecord::fromCpp(const CppType& cpp) -> ObjcType
 {
-    return [[ITMyRecord alloc] initWithId:(::djinni::I32::fromCpp(cpp.id))
-                                     info:(::djinni::String::fromCpp(cpp.info))
-                                    store:(::djinni::Set<::djinni::String>::fromCpp(cpp.store))
-                                     hash:(::djinni::Map<::djinni::String, ::djinni::I32>::fromCpp(cpp.hash))];
+    return [[::ITMyRecord alloc] initWithId:(::djinni::I32::fromCpp(cpp.id))
+                                       info:(::djinni::String::fromCpp(cpp.info))
+                                      store:(::djinni::Set<::djinni::String>::fromCpp(cpp.store))
+                                       hash:(::djinni::Map<::djinni::String, ::djinni::I32>::fromCpp(cpp.hash))];
 }
 
 }  // namespace djinni_generated

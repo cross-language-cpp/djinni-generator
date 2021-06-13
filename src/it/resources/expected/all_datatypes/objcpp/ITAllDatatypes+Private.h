@@ -13,7 +13,7 @@ namespace djinni_generated {
 struct AllDatatypes
 {
     using CppType = ::AllDatatypes;
-    using ObjcType = ITAllDatatypes*;
+    using ObjcType = ::ITAllDatatypes*;
 
     using Boxed = AllDatatypes;
 

@@ -13,7 +13,7 @@ namespace djinni_generated {
 struct OtherRecord
 {
     using CppType = ::OtherRecord;
-    using ObjcType = ITOtherRecord*;
+    using ObjcType = ::ITOtherRecord*;
 
     using Boxed = OtherRecord;
 

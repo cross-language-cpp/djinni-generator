@@ -73,7 +73,7 @@ auto MyCppInterface::fromCppOpt(const CppOptType& cpp) -> ObjcType
     if (!cpp) {
         return nil;
     }
-    return ::djinni::get_cpp_proxy<ITMyCppInterface>(cpp);
+    return ::djinni::get_cpp_proxy<::ITMyCppInterface>(cpp);
 }
 
 }  // namespace djinni_generated

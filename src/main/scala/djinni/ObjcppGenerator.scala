@@ -109,7 +109,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
               w.wl(s"using CppType = std::shared_ptr<$cppSelf>;")
               w.wl(s"using CppOptType = std::shared_ptr<$cppSelf>;")
           }
-          w.wl("using ObjcType = " + (if(i.ext.objc) s"id<$self>" else s"$self*") + ";");
+          w.wl("using ObjcType = " + (if(i.ext.objc) s"id<$self>" else s"::$self*") + ";");
           w.wl
           w.wl(s"using Boxed = $helperClass;")
           w.wl
@@ -294,7 +294,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 w.wl("return cppPtr->djinni_private_get_proxied_objc_object();")
               }
             }
-            w.wl(s"return ::djinni::get_cpp_proxy<$objcSelf>(cpp);")
+            w.wl(s"return ::djinni::get_cpp_proxy<::$objcSelf>(cpp);")
           } else {
             // Neither ObjC nor C++.  Unusable, but generate compilable code.
             w.wl("DJINNI_UNIMPLEMENTED(@\"Interface not implementable in any language.\");")
@@ -344,7 +344,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         w.wl(s"struct $helperClass")
         w.bracedSemi {
           w.wl(s"using CppType = $cppSelf;")
-          w.wl(s"using ObjcType = $noBaseSelf*;")
+          w.wl(s"using ObjcType = ::$noBaseSelf*;")
           w.wl
           w.wl(s"using Boxed = $helperClass;")
           w.wl
@@ -369,7 +369,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         w.braced {
           if(r.fields.isEmpty) w.wl("(void)cpp; // Suppress warnings in relase builds for empty records")
           val first = if(r.fields.isEmpty) "" else IdentStyle.camelUpper("with_" + r.fields.head.ident.name)
-          val call = s"return [[$noBaseSelf alloc] init$first"
+          val call = s"return [[::$noBaseSelf alloc] init$first"
           writeAlignedObjcCall(w, call, r.fields, "]", f => (idObjc.field(f.ident), s"(${objcppMarshal.fromCpp(f.ty, "cpp." + idCpp.field(f.ident))})"))
           w.wl(";")
         }
