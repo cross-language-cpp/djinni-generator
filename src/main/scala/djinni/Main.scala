@@ -365,6 +365,14 @@ object Main {
       }
     }
 
+    // Ensure either --cpp-namespace or --objc-type-prefix are given when Objective-C is generated
+    if(objcOutFolder.isDefined) {
+      if (cppNamespace.isEmpty() && objcTypePrefix.isEmpty()) {
+          System.err.println("Error: At least one of [--cpp-namespace, --objc-type-prefix] needs to be set when generating Objective-C code.")
+          System.exit(1); return
+      }
+    }
+
     // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
     resolver.resolve(

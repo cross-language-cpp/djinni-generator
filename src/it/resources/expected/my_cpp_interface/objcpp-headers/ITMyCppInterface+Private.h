@@ -15,7 +15,7 @@ class MyCppInterface
 public:
     using CppType = std::shared_ptr<::MyCppInterface>;
     using CppOptType = std::shared_ptr<::MyCppInterface>;
-    using ObjcType = ITMyCppInterface*;
+    using ObjcType = ::ITMyCppInterface*;
 
     using Boxed = MyCppInterface;
 

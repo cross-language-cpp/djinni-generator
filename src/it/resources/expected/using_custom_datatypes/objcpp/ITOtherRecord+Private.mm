@@ -15,7 +15,7 @@ auto OtherRecord::toCpp(ObjcType obj) -> CppType
 
 auto OtherRecord::fromCpp(const CppType& cpp) -> ObjcType
 {
-    return [[ITOtherRecord alloc] initWithCustomDatatypeData:(::djinni_generated::CustomDatatype::fromCpp(cpp.customDatatypeData))];
+    return [[::ITOtherRecord alloc] initWithCustomDatatypeData:(::djinni_generated::CustomDatatype::fromCpp(cpp.customDatatypeData))];
 }
 
 }  // namespace djinni_generated

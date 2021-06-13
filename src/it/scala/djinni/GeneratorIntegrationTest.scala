@@ -193,15 +193,33 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileExists(s"$outputPath/AllDatatypes.java")
     }
 
-    it("should be able to only generate Obj-C output") {
+    it("should be able to only generate Obj-C output with --objc-type-prefix") {
       val outputPath = "src/it/resources/result/only_objc_out"
-      When("calling the generator with just `--objc-out`")
-      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-out $outputPath")
+      When("calling the generator with just `--objc-out and --objc-type-prefix Cpp`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-type-prefix Cpp --objc-out $outputPath")
+      Then("the generator should successfully generate just objc output")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/CppAllDatatypes.h")
+      assertFileExists(s"$outputPath/CppAllDatatypes.mm")
+    }
+
+    it("should be able to only generate Obj-C output when using --cpp-namespace") {
+      val outputPath = "src/it/resources/result/only_objc_out"
+      When("calling the generator with just `--objc-out and --cpp-namespace Cpp`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --cpp-namespace Cpp --objc-out $outputPath")
       Then("the generator should successfully generate just objc output and write all generate files to the given path, including headers")
       output should equal ("Parsing...\nResolving...\nGenerating...\n")
       assertFileExists(s"$outputPath/AllDatatypes.h")
       assertFileExists(s"$outputPath/AllDatatypes.mm")
     }
+
+    it("should not be able to generate Obj-C output when either a namespace or prefix is missing") {
+      val outputPath = "src/it/resources/result/only_objc_out"
+      When("calling the generator with just `--objc-out`")
+      Then("the generator should fail")
+      a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-out $outputPath")
+    }
+
 
     it("should be able to only generate Obj-C++ output") {
       val outputPath = "src/it/resources/result/only_objcpp_out"

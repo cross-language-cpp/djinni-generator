@@ -13,7 +13,7 @@ namespace djinni_generated {
 struct CustomDatatype
 {
     using CppType = ::CustomDatatype;
-    using ObjcType = ITCustomDatatype*;
+    using ObjcType = ::ITCustomDatatype*;
 
     using Boxed = CustomDatatype;
 
