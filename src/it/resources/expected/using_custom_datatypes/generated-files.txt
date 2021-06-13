@@ -11,9 +11,9 @@ src/it/resources/result/using_custom_datatypes/objc-headers/ITCustomDatatype.h
 src/it/resources/result/using_custom_datatypes/objc/ITCustomDatatype.mm
 src/it/resources/result/using_custom_datatypes/objc-headers/ITOtherRecord.h
 src/it/resources/result/using_custom_datatypes/objc/ITOtherRecord.mm
-src/it/resources/result/using_custom_datatypes/objcpp/ITCustomDatatype+Private.h
+src/it/resources/result/using_custom_datatypes/objcpp-headers/ITCustomDatatype+Private.h
 src/it/resources/result/using_custom_datatypes/objcpp/ITCustomDatatype+Private.mm
-src/it/resources/result/using_custom_datatypes/objcpp/ITOtherRecord+Private.h
+src/it/resources/result/using_custom_datatypes/objcpp-headers/ITOtherRecord+Private.h
 src/it/resources/result/using_custom_datatypes/objcpp/ITOtherRecord+Private.mm
 src/it/resources/result/using_custom_datatypes/cppcli/CustomDatatype.hpp
 src/it/resources/result/using_custom_datatypes/cppcli/CustomDatatype.cpp

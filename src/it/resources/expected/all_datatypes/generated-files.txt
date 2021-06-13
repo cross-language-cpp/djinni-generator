@@ -5,7 +5,7 @@ src/it/resources/result/all_datatypes/jni-headers/all_datatypes.hpp
 src/it/resources/result/all_datatypes/jni/all_datatypes.cpp
 src/it/resources/result/all_datatypes/objc-headers/ITAllDatatypes.h
 src/it/resources/result/all_datatypes/objc/ITAllDatatypes.mm
-src/it/resources/result/all_datatypes/objcpp/ITAllDatatypes+Private.h
+src/it/resources/result/all_datatypes/objcpp-headers/ITAllDatatypes+Private.h
 src/it/resources/result/all_datatypes/objcpp/ITAllDatatypes+Private.mm
 src/it/resources/result/all_datatypes/cppcli/AllDatatypes.hpp
 src/it/resources/result/all_datatypes/cppcli/AllDatatypes.cpp

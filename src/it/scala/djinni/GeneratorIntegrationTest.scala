@@ -17,6 +17,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         "objcFilenames",
         "objcHeaderFilenames",
         "objcppFilenames",
+        "objcppHeaderFilenames",
         "pythonFilenames",
         "pyCffiFilenames",
         "cWrapperFilenames",
@@ -30,7 +31,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_enum.hpp"),
         ObjC(),
         ObjCHeaders("ITMyEnum.h", "bridging-header.h"),
-        ObjCpp("ITMyEnum+Private.h"),
+        ObjCpp(),
+        ObjCppHeaders("ITMyEnum+Private.h"),
         Python("my_enum.py"),
         PyCffi(),
         CWrapper("dh__my_enum.cpp", "dh__my_enum.hpp"),
@@ -44,7 +46,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_flags.hpp"),
         ObjC(),
         ObjCHeaders("ITMyFlags.h"),
-        ObjCpp("ITMyFlags+Private.h"),
+        ObjCpp(),
+        ObjCppHeaders("ITMyFlags+Private.h"),
         Python("my_flags.py"),
         PyCffi(),
         CWrapper("dh__my_flags.cpp", "dh__my_flags.hpp"),
@@ -58,7 +61,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_record.hpp"),
         ObjC("ITMyRecord.mm"),
         ObjCHeaders("ITMyRecord.h", "bridging-header.h"),
-        ObjCpp("ITMyRecord+Private.h", "ITMyRecord+Private.mm"),
+        ObjCpp("ITMyRecord+Private.mm"),
+        ObjCppHeaders("ITMyRecord+Private.h"),
         Python("dh__map_string_int32_t.py", "dh__set_string.py", "my_record.py", "my_record_helper.py"),
         PyCffi(),
         CWrapper("dh__map_string_int32_t.cpp", "dh__map_string_int32_t.hpp", "dh__my_record.cpp",
@@ -73,7 +77,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_cpp_interface.hpp"),
         ObjC("ITMyCppInterface.mm"),
         ObjCHeaders("ITMyCppInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyCppInterface+Private.h", "ITMyCppInterface+Private.mm"),
+        ObjCpp("ITMyCppInterface+Private.mm"),
+        ObjCppHeaders("ITMyCppInterface+Private.h"),
         Python("my_cpp_interface.py"),
         PyCffi("pycffi_lib_build.py"),
         CWrapper("cw__my_cpp_interface.cpp", "cw__my_cpp_interface.hpp"),
@@ -87,7 +92,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("my_client_interface.hpp"),
         ObjC(),
         ObjCHeaders("ITMyClientInterface.h", "bridging-header.h"),
-        ObjCpp("ITMyClientInterface+Private.h", "ITMyClientInterface+Private.mm"),
+        ObjCpp("ITMyClientInterface+Private.mm"),
+        ObjCppHeaders("ITMyClientInterface+Private.h"),
         Python("my_client_interface.py"),
         PyCffi("pycffi_lib_build.py"),
         CWrapper("cw__my_client_interface.cpp", "cw__my_client_interface.hpp"),
@@ -101,7 +107,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("all_datatypes.hpp"),
         ObjC("ITAllDatatypes.mm"),
         ObjCHeaders("ITAllDatatypes.h", "bridging-header.h"),
-        ObjCpp("ITAllDatatypes+Private.h", "ITAllDatatypes+Private.mm"),
+        ObjCpp("ITAllDatatypes+Private.mm"),
+        ObjCppHeaders("ITAllDatatypes+Private.h"),
         Python("all_datatypes.py", "all_datatypes_helper.py", "dh__list_bool.py", "dh__map_int8_t_bool.py", "dh__set_bool.py"),
         PyCffi(),
         CWrapper("dh__all_datatypes.cpp", "dh__all_datatypes.hpp", "dh__list_bool.cpp",
@@ -116,14 +123,15 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         JniHeaders("custom_datatype.hpp", "other_record.hpp"),
         ObjC("ITCustomDatatype.mm", "ITOtherRecord.mm"),
         ObjCHeaders("ITCustomDatatype.h","ITOtherRecord.h", "bridging-header.h"),
-        ObjCpp("ITCustomDatatype+Private.h", "ITCustomDatatype+Private.mm", "ITOtherRecord+Private.h", "ITOtherRecord+Private.mm"),
+        ObjCpp("ITCustomDatatype+Private.mm", "ITOtherRecord+Private.mm"),
+        ObjCppHeaders("ITCustomDatatype+Private.h", "ITOtherRecord+Private.h"),
         Python("custom_datatype.py", "custom_datatype_helper.py", "other_record.py", "other_record_helper.py"),
         PyCffi(),
         CWrapper("dh__custom_datatype.cpp", "dh__custom_datatype.hpp", "dh__other_record.cpp", "dh__other_record.hpp"),
         CWrapperHeaders("dh__custom_datatype.h", "dh__other_record.h"),
         CppCli("CustomDatatype.hpp", "CustomDatatype.cpp"))
       )
-    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp, pythonFilenames: Python, pyCffiFilenames: PyCffi, cWrapperFilenames: CWrapper, cWrapperHeaderFilenames: CWrapperHeaders, cppcliFilenames: CppCli) =>
+    forAll (djinniTypes) { (idlFile: String, cppFilenames: Cpp, cppHeaderFilenames: CppHeaders, javaFilenames: Java, jniFilenames: Jni, jniHeaderFilenames: JniHeaders, objcFilenames: ObjC, objcHeaderFilenames: ObjCHeaders, objcppFilenames: ObjCpp, objcppHeaderFilenames: ObjCppHeaders, pythonFilenames: Python, pyCffiFilenames: PyCffi, cWrapperFilenames: CWrapper, cWrapperHeaderFilenames: CWrapperHeaders, cppcliFilenames: CppCli) =>
       it(s"should generate valid language bridges for `$idlFile`-types") {
         Given(s"`$idlFile.djinni`")
         When(s"generating language-bridges from `$idlFile.djinni`")
@@ -150,8 +158,11 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         Then(s"the expected header files should be created for objc: ${objcHeaderFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
 
-        Then(s"the expected files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
+        Then(s"the expected source files should be created for objcpp: ${objcppFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
+
+        Then(s"the expected header files should be created for objcpp: ${objcppHeaderFilenames.mkString(", ")}")
+        assertFileContentEquals(idlFile, OBJCPP_HEADERS, objcppHeaderFilenames)
 
         Then(s"the expected files should be created for python: ${pythonFilenames.mkString(", ")}")
         assertFileContentEquals(idlFile, PY, pythonFilenames)
@@ -196,7 +207,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       val outputPath = "src/it/resources/result/only_objc_out"
       When("calling the generator with just `--objc-out and --cpp-namespace Cpp`")
       val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --cpp-namespace Cpp --objc-out $outputPath")
-      Then("the generator should successfully generate just objc output")
+      Then("the generator should successfully generate just objc output and write all generate files to the given path, including headers")
       output should equal ("Parsing...\nResolving...\nGenerating...\n")
       assertFileExists(s"$outputPath/AllDatatypes.h")
       assertFileExists(s"$outputPath/AllDatatypes.mm")
@@ -209,6 +220,16 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/all_datatypes.djinni --objc-out $outputPath")
     }
 
+
+    it("should be able to only generate Obj-C++ output") {
+      val outputPath = "src/it/resources/result/only_objcpp_out"
+      When("calling the generator with just `--objcpp-out`")
+      val output = djinni(s"--idl src/it/resources/all_datatypes.djinni --objcpp-out $outputPath")
+      Then("the generator should successfully generate just objcpp output and write all generate files to the given path, including headers")
+      output should equal ("Parsing...\nResolving...\nGenerating...\n")
+      assertFileExists(s"$outputPath/AllDatatypes+Private.h")
+      assertFileExists(s"$outputPath/AllDatatypes+Private.mm")
+    }
 
     it("should be able to only generate C++/CLI output") {
       val outputPath = "src/it/resources/result/only_cppcli_out"

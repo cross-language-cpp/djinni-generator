@@ -18,6 +18,7 @@ class IntegrationTest extends FunSpec {
   final val OBJC = "objc"
   final val OBJC_HEADERS = "objc-headers"
   final val OBJCPP = "objcpp"
+  final val OBJCPP_HEADERS = "objcpp-headers"
   final val PY = "python"
   final val CFFI = "cffi"
   final val CWRAPPER = "cwrapper"
@@ -40,6 +41,8 @@ class IntegrationTest extends FunSpec {
   def ObjCHeaders(params: String*) = List(params: _*)
   type ObjCpp = List[String]
   def ObjCpp(params: String*) = List(params: _*)
+  type ObjCppHeaders = List[String]
+  def ObjCppHeaders(params: String*) = List(params: _*)
   type Python = List[String]
   def Python(params: String*) = List(params: _*)
   type PyCffi = List[String]
@@ -67,26 +70,28 @@ class IntegrationTest extends FunSpec {
     * @return command-line output of the executed djinni-cli
     */
   def djinniGenerate(idl: String): String = {
+    val baseOutputPath = "src/it/resources/result"
     djinni("--java-package djinni.it " +
-      s"--java-out src/it/resources/result/$idl/java " +
-      s"--cpp-out src/it/resources/result/$idl/cpp " +
-      s"--cpp-header-out src/it/resources/result/$idl/cpp-headers " +
-      s"--jni-out src/it/resources/result/$idl/jni " +
-      s"--jni-header-out src/it/resources/result/$idl/jni-headers " +
-      s"--objc-out src/it/resources/result/$idl/objc " +
-      s"--objc-header-out src/it/resources/result/$idl/objc-headers " +
+      s"--java-out $baseOutputPath/$idl/$JAVA " +
+      s"--cpp-out $baseOutputPath/$idl/$CPP " +
+      s"--cpp-header-out $baseOutputPath/$idl/$CPP_HEADERS " +
+      s"--jni-out $baseOutputPath/$idl/$JNI " +
+      s"--jni-header-out $baseOutputPath/$idl/$JNI_HEADERS " +
+      s"--objc-out $baseOutputPath/$idl/$OBJC " +
+      s"--objc-header-out $baseOutputPath/$idl/$OBJC_HEADERS " +
       "--objc-swift-bridging-header bridging-header " +
       "--objc-type-prefix IT " +
-      s"--objcpp-out src/it/resources/result/$idl/objcpp " +
-      s"--py-out src/it/resources/result/$idl/python " +
-      s"--pycffi-out src/it/resources/result/$idl/cffi " +
-      s"--c-wrapper-out src/it/resources/result/$idl/cwrapper " +
-      s"--c-wrapper-header-out src/it/resources/result/$idl/cwrapper-headers " +
-      s"--c-wrapper-include-prefix ../cwrapper-headers/ " +
-      s"--c-wrapper-include-cpp-prefix ../cpp-headers/ " +
-      s"--cppcli-out src/it/resources/result/$idl/cppcli " +
-      s"--cppcli-include-cpp-prefix ../cpp-headers/ " +
-      s"--list-out-files src/it/resources/result/$idl/generated-files.txt " +
+      s"--objcpp-out $baseOutputPath/$idl/$OBJCPP " +
+      s"--objcpp-header-out $baseOutputPath/$idl/$OBJCPP_HEADERS " +
+      s"--py-out $baseOutputPath/$idl/python " +
+      s"--pycffi-out $baseOutputPath/$idl/cffi " +
+      s"--c-wrapper-out $baseOutputPath/$idl/$CWRAPPER " +
+      s"--c-wrapper-header-out $baseOutputPath/$idl/$CWRAPPER_HEADERS " +
+      s"--c-wrapper-include-prefix ../$CWRAPPER_HEADERS/ " +
+      s"--c-wrapper-include-cpp-prefix ../$CPP_HEADERS/ " +
+      s"--cppcli-out $baseOutputPath/$idl/$CPPCLI " +
+      s"--cppcli-include-cpp-prefix ../$CPP_HEADERS/ " +
+      s"--list-out-files $baseOutputPath/$idl/generated-files.txt " +
       s"--idl src/it/resources/$idl.djinni")
   }
 
@@ -94,7 +99,7 @@ class IntegrationTest extends FunSpec {
     * Asserts that all expected files have been created & have the expected content. It basically compares the contents
     * of the generator output in `resources/result/$lang` with the expectations defined in `resources/expected/$lang`.
     * @param idl filename of the input-idl (without file extension)
-    * @param lang language to assert for (e.g. `cpp`, `cpp-headers`, `java`, `jni`, `jni-headers`, `objc`, `objc-headers`, `objcpp`)
+    * @param lang language to assert for (e.g. `cpp`, `cpp-headers`, `java`, `jni`, `jni-headers`, `objc`, `objc-headers`, `objcpp`, `objcpp-headers`)
     * @param filenames list of expected filenames that should have been generated for the given language
     */
   def assertFileContentEquals(idl: String, lang: String, filenames: List[String]): Unit = {
