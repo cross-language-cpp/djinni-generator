@@ -64,35 +64,76 @@ class IntegrationTest extends FunSpec {
   }
 
   /**
-    * Executes the djinni generator with the given idl-file as input
+    * Generates the command line parameters to pass to the djinni generator.
+    *
+    * @param idl filename of the djinni-file (without file extension). The file must be located in the
+    *            `resources`-folder of the integration-tests (`src/it/resources`)
+    * @param baseOutputPath The root folder for the outputs to be generated.
+    * @param cpp Whether to generate C++ output. Default: true.
+    * @param java Whether to generate Java output. Default: true.
+    * @param objc Whether to generate Objective C output. Default: true.
+    * @param python Whether to generate Pyhton output. Default: true.
+    * @param cWrapper Whether to generate Pyhton output. Default: true.
+    * @param cppCLI Whether to generate Pyhton output. Default: true.
+    * @param useNNHeader Whether to use the nn.hpp header for non-null pointers. Default: false.
+    *
+    * @return command line params to pass to the djinni generator.
+    */
+  def djinniParams(idl: String, baseOutputPath: String = "src/it/resources/result",
+                   cpp: Boolean = true, java: Boolean = true, objc: Boolean = true,
+                   python: Boolean = true, cWrapper: Boolean = true, cppCLI: Boolean = true,
+                   useNNHeader: Boolean = false): String = {
+    var cmd = s"--idl src/it/resources/$idl.djinni"
+    if (cpp) {
+      cmd += s" --cpp-out $baseOutputPath/$idl/$CPP"
+      cmd += s" --cpp-header-out $baseOutputPath/$idl/$CPP_HEADERS"
+    }
+    if (java) {
+      cmd += " --java-package djinni.it"
+      cmd += s" --java-out $baseOutputPath/$idl/$JAVA"
+      cmd += s" --jni-out $baseOutputPath/$idl/$JNI"
+      cmd += s" --jni-header-out $baseOutputPath/$idl/$JNI_HEADERS"
+    }
+    if (objc) {
+      cmd += s" --objc-out $baseOutputPath/$idl/$OBJC"
+      cmd += s" --objc-header-out $baseOutputPath/$idl/$OBJC_HEADERS"
+      cmd += " --objc-swift-bridging-header bridging-header"
+      cmd += " --objc-type-prefix IT"
+      cmd += s" --objcpp-out $baseOutputPath/$idl/$OBJCPP"
+      cmd += s" --objcpp-header-out $baseOutputPath/$idl/$OBJCPP_HEADERS"
+    }
+    if (python) {
+      cmd += s" --py-out $baseOutputPath/$idl/python"
+      cmd += s" --pycffi-out $baseOutputPath/$idl/cffi"
+    }
+    if (cWrapper) {
+      cmd += s" --c-wrapper-out $baseOutputPath/$idl/$CWRAPPER"
+      cmd += s" --c-wrapper-header-out $baseOutputPath/$idl/$CWRAPPER_HEADERS"
+      cmd += s" --c-wrapper-include-prefix ../$CWRAPPER_HEADERS/"
+      cmd += s" --c-wrapper-include-cpp-prefix ../$CPP_HEADERS/"
+    }
+    if (cppCLI) {
+      cmd += s" --cppcli-out $baseOutputPath/$idl/$CPPCLI"
+      cmd += s" --cppcli-include-cpp-prefix ../$CPP_HEADERS/"
+    }
+    if (useNNHeader) {
+      cmd += " --cpp-nn-header nn.hpp"
+      cmd += " --cpp-nn-type dropbox::oxygen::nn_shared_ptr"
+      cmd += " --cpp-nn-check-expression NN_CHECK_ASSERT"
+    }
+    cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
+    return cmd
+  }
+
+  /**
+    * Executes the djinni generator with the given idl-file as input.
+    *
     * @param idl filename of the djinni-file (without file extension). The file must be located in the
     *            `resources`-folder of the integration-tests (`src/it/resources`)
     * @return command-line output of the executed djinni-cli
     */
   def djinniGenerate(idl: String): String = {
-    val baseOutputPath = "src/it/resources/result"
-    djinni("--java-package djinni.it " +
-      s"--java-out $baseOutputPath/$idl/$JAVA " +
-      s"--cpp-out $baseOutputPath/$idl/$CPP " +
-      s"--cpp-header-out $baseOutputPath/$idl/$CPP_HEADERS " +
-      s"--jni-out $baseOutputPath/$idl/$JNI " +
-      s"--jni-header-out $baseOutputPath/$idl/$JNI_HEADERS " +
-      s"--objc-out $baseOutputPath/$idl/$OBJC " +
-      s"--objc-header-out $baseOutputPath/$idl/$OBJC_HEADERS " +
-      "--objc-swift-bridging-header bridging-header " +
-      "--objc-type-prefix IT " +
-      s"--objcpp-out $baseOutputPath/$idl/$OBJCPP " +
-      s"--objcpp-header-out $baseOutputPath/$idl/$OBJCPP_HEADERS " +
-      s"--py-out $baseOutputPath/$idl/python " +
-      s"--pycffi-out $baseOutputPath/$idl/cffi " +
-      s"--c-wrapper-out $baseOutputPath/$idl/$CWRAPPER " +
-      s"--c-wrapper-header-out $baseOutputPath/$idl/$CWRAPPER_HEADERS " +
-      s"--c-wrapper-include-prefix ../$CWRAPPER_HEADERS/ " +
-      s"--c-wrapper-include-cpp-prefix ../$CPP_HEADERS/ " +
-      s"--cppcli-out $baseOutputPath/$idl/$CPPCLI " +
-      s"--cppcli-include-cpp-prefix ../$CPP_HEADERS/ " +
-      s"--list-out-files $baseOutputPath/$idl/generated-files.txt " +
-      s"--idl src/it/resources/$idl.djinni")
+    return djinni(djinniParams(idl))
   }
 
   /**
