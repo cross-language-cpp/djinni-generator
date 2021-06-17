@@ -108,9 +108,9 @@ The available data types for a record, argument, or return value are:
     | `string`      | `String`                                                  |                  |
     | `binary`      | `byte[]`                                                  |                  |
     | `date`        | `java.util.Date`                                          |                  |
-    | `list<type>`  | `java.util.ArrayList` *                                   |                  |
-    | `set<type>`   | `java.util.HashSet` *                                     |                  |
-    | `map<K, V>`   | `java.util.HashMap` *                                     |                  |
+    | `list<type>`  | `java.util.ArrayList` ✱                                   |                  |
+    | `set<type>`   | `java.util.HashSet` ✱                                     |                  |
+    | `map<K, V>`   | `java.util.HashMap` ✱                                     |                  |
     | `optional<T>` | object / boxed primitive reference (which can be  `null`) |                  |
 
 === "Objective-C"
@@ -127,9 +127,9 @@ The available data types for a record, argument, or return value are:
     | `string`      | `NSString`                           |              |
     | `binary`      | `NSData`                             |              |
     | `date`        | `NSDate`                             |              |
-    | `list<type>`  | `NSArray` *                          |              |
-    | `set<type>`   | `NSSet` *                            |              |
-    | `map<K, V>`   | `NSDictionary` *                     |              |
+    | `list<type>`  | `NSArray` ✱                          |              |
+    | `set<type>`   | `NSSet` ✱                            |              |
+    | `map<K, V>`   | `NSDictionary` ✱                     |              |
     | `optional<T>` | strong reference (which can be`nil`) |              |
 
 === "C#"
@@ -171,7 +171,7 @@ The available data types for a record, argument, or return value are:
     | `optional<T>` |                                           |
 
 
-*(\*) Primitives will be boxed in Java and Objective-C.*
+✱ *Primitives will be boxed in Java and Objective-C.*
 
 Additional possible data types are: 
 
