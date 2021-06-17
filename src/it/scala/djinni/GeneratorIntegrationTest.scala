@@ -184,6 +184,20 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       }
     }
 
+    it("should be able to generate C++ output for interfaces with external dependencies and non-null pointers") {
+      val idlFile = "cpp_dependent_interface"
+      When(s"generating C++ language-bridges from `$idlFile.djinni`")
+      val cppHeaderFilenames = CppHeaders("dependent_interface.hpp")
+      val cmd = djinniParams(idlFile, cpp=true, objc=false, java=false, python=false, cWrapper=false, cppCLI=false, useNNHeader=true)
+      djinni(cmd)
+
+      Then(s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}")
+      assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
+
+      Then("the file `generated-files.txt` should contain all generated files")
+      assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+    }
+
     it("should be able to only generate Java output") {
       val outputPath = "src/it/resources/result/only_java_out"
       When("calling the generator with just `--java-out`")

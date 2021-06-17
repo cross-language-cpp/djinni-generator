@@ -180,11 +180,21 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
                 case DInterface => s"${nnType}<${withNamespace(idCpp.ty(d.name))}>"
                 case _ => base(tm.base) + args
               }
+            case e: MExtern =>
+              e.defType match {
+                case DInterface => s"${nnType}<${e.cpp.typename.get}>"
+                case _ => base(tm.base) + args
+              }
             case MOptional =>
               tm.args.head.base match {
                 case d: MDef =>
                   d.defType match {
                     case DInterface => s"std::shared_ptr<${withNamespace(idCpp.ty(d.name))}>"
+                    case _ => base(tm.base) + args
+                  }
+                case e: MExtern =>
+                  e.defType match {
+                    case DInterface => s"std::shared_ptr<${e.cpp.typename.get}>"
                     case _ => base(tm.base) + args
                   }
                 case _ => base(tm.base) + args
