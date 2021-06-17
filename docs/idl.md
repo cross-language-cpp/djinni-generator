@@ -163,7 +163,7 @@ The available data types for a record, argument, or return value are:
     | `f32`         |                                           |
     | `f64`         |                                           |
     | `string`      |                                           |
-    | `binary`      | object supporting the  `buffer` interface |
+    | `binary`      | object supporting the `buffer` interface  |
     | `date`        | `datetime.datetime`                       |
     | `list<type>`  | `List`                                    |
     | `set<type>`   | `Set`                                     |
