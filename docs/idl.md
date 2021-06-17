@@ -74,28 +74,30 @@ will only be processed once.
 
 The available data types for a record, argument, or return value are:
 
- - Boolean (`bool`)
- - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
- - Strings (`string`)
- - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   `NSData` in Objective-C, an object supporting the `buffer` interface in Python, and `System.Array<System.Byte>` in C#.
- - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
-   `NSDate` in Objective-C, `datetime.datetime` in Python, and `System.DateTime` in C#.
- - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
-   in Objective-C, `List` in Python, and `System.Collections.Generic.List` in C#. 
-   Primitives in a list will be boxed in Java and Objective-C.
- - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
-   Objective-C, `Set` in Python, and `System.Collections.Generic.HashSet` in C#. 
-   Primitives in a set will be boxed in Java and Objective-C.
- - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, 
-   `NSDictionary` in Objective-C, `Dictionary` in Python, and `System.Collections.Generic.Dictionary` in C#. 
-   Primitives in a map will be boxed in Java and Objective-C.
- - Enumerations / Flags
- - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
-   boxed primitive reference in Java (which can be `null`), and object / NSNumber strong
-   reference in Objective-C (which can be `nil`).
- - Other record types. This is generated with a by-value semantic, i.e. the copy method will
-   deep-copy the contents.
+| Djinni&nbsp;Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | C++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Java<br>(Java boxed)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Objective-C<br>(Obj-C boxed)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Python&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | C#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+|---------------|----------------------------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------|-------------------------------------------|-----------------------------------------|
+| `bool`        | `bool`                                                                           | `boolean`<br>(`Boolean`)                                  | `BOOL`<br>(`NSNumber`)                  |                                           | `bool`                                  |
+| `i8`          | `int8_t`                                                                         | `byte`<br>(`Byte`)                                        | `int8_t`<br>(`NSNumber`)                |                                           | `sbyte`                                 |
+| `i16`         | `int16_t`                                                                        | `short`<br>(`Short`)                                      | `int16_t`<br>(`NSNumber`)               |                                           | `short`                                 |
+| `i32`         | `int32_t`                                                                        | `int`<br>(`Integer`)                                      | `int32_t`<br>(`NSNumber`)               |                                           | `int`                                   |
+| `i64`         | `int64_t`                                                                        | `long`<br>(`Long`)                                        | `int64_t`<br>(`NSNumber`)               |                                           | `long`                                  |
+| `f32`         | `float`                                                                          | `float`<br>(`Float`)                                      | `float`<br>(`NSNumber`)                 |                                           | `float`                                 |
+| `f64`         | `double`                                                                         | `double`<br>(`Double`)                                    | `double`<br>(`NSNumber`)                |                                           | `double`                                |
+| `string`      | `std::string`                                                                    | `String`                                                  | `NSString`                              |                                           | `System.String`                         |
+| `binary`      | `std::vector<uint8_t>`                                                           | `byte[]`                                                  | `NSData`                                | object supporting the  `buffer` interface | `System.Array<System.Byte>`             |
+| `date`        | `chrono::system_clock::time_point`                                               | `java.util.Date`                                          | `NSDate`                                | `datetime.datetime`                       | `System.DateTime`                       |
+| `list<type>`  | `std::vector<T>`                                                                 | `java.util.ArrayList` *                                   | `NSArray` *                             | `List`                                    | `System.Collections.Generic.List`       |
+| `set<type>`   | `std::unordered_set<T>`                                                          | `java.util.HashSet` *                                     | `NSSet` *                               | `Set`                                     | `System.Collections.Generic.HashSet`    |
+| `map<K, V>`   | `std::unordered_map<K, V>`                                                       | `java.util.HashMap` *                                     | `NSDictionary` *                        | `Dictionary`                              | `System.Collections.Generic.Dictionary` |
+| `optional<T>` | `std::optional<T>` for value types and  `std::shared_ptr<T>` for reference types | object / boxed primitive reference (which can be  `null`) | strong reference (which can be   `nil`) |                                           | `System.Nullable<T>`                    |
+
+*(\*) Primitives will be boxed in Java and Objective-C.*
+
+Additional possible values are: 
+
+- Enumerations / Flags
+- Other record types. This is generated with a by-value semantic, i.e. the copy method will
+  deep-copy the contents.
 
 ## Types
 
