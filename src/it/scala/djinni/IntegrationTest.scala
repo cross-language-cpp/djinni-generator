@@ -72,9 +72,9 @@ class IntegrationTest extends FunSpec {
     * @param cpp Whether to generate C++ output. Default: true.
     * @param java Whether to generate Java output. Default: true.
     * @param objc Whether to generate Objective C output. Default: true.
-    * @param python Whether to generate Pyhton output. Default: true.
-    * @param cWrapper Whether to generate Pyhton output. Default: true.
-    * @param cppCLI Whether to generate Pyhton output. Default: true.
+    * @param python Whether to generate Python output. Default: true.
+    * @param cWrapper Whether to generate Python output. Default: true.
+    * @param cppCLI Whether to generate Python output. Default: true.
     * @param useNNHeader Whether to use the nn.hpp header for non-null pointers. Default: false.
     *
     * @return command line params to pass to the djinni generator.
