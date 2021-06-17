@@ -72,7 +72,7 @@ will only be processed once.
 
 ## Data Types
 
-The available data types for a record, argument, or return value are:
+The available data types for a record, argument, or return value, and their equivalent in the target languages, are:
 
 === "C++"
 
