@@ -93,7 +93,7 @@ The available data types for a record, argument, or return value are:
 
 *(\*) Primitives will be boxed in Java and Objective-C.*
 
-Additional possible values are: 
+Additional possible data types are: 
 
 - Enumerations / Flags
 - Other record types. This is generated with a by-value semantic, i.e. the copy method will
