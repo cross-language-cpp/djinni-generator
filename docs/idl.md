@@ -76,99 +76,79 @@ The available data types for a record, argument, or return value, and their equi
 
 === "C++"
 
-    | Djinni | C++ |
-    |---------------|----------------------------------------------------------------------------------|
-    | `bool`        | `bool`                                                                           |
-    | `i8`          | `int8_t`                                                                         |
-    | `i16`         | `int16_t`                                                                        |
-    | `i32`         | `int32_t`                                                                        |
-    | `i64`         | `int64_t`                                                                        |
-    | `f32`         | `float`                                                                          |
-    | `f64`         | `double`                                                                         |
-    | `string`      | `std::string`                                                                    |
-    | `binary`      | `std::vector<uint8_t>`                                                           |
-    | `date`        | `chrono::system_clock::time_point`                                               |
-    | `list<type>`  | `std::vector<T>`                                                                 |
-    | `set<type>`   | `std::unordered_set<T>`                                                          |
-    | `map<K, V>`   | `std::unordered_map<K, V>`                                                       |
-    | `optional<T>` | `std::optional<T>` for value types and  `std::shared_ptr<T>` for reference types |
+    | Djinni                    | C++                                                                              |
+    |---------------------------|----------------------------------------------------------------------------------|
+    | `bool`                    | `bool`                                                                           |
+    | `i8`, `i16`, `i32`, `i64` | `int8_t`, `int16_t`, `int32_t`, `int64_t`                                        |
+    | `f32`, `f64`              | `float`, `double`                                                                |
+    | `string`                  | `std::string`                                                                    |
+    | `binary`                  | `std::vector<uint8_t>`                                                           |
+    | `date`                    | `chrono::system_clock::time_point`                                               |
+    | `list<T>`                 | `std::vector<T>`                                                                 |
+    | `set<T>`                  | `std::unordered_set<T>`                                                          |
+    | `map<K, V>`               | `std::unordered_map<K, V>`                                                       |
+    | `optional<T>`             | `std::optional<T>` for value types and  `std::shared_ptr<T>` for reference types |
 
 
 === "Java"
 
-    | Djinni        | Java                                                      | Boxed            |
-    |---------------|-----------------------------------------------------------|------------------|
-    | `bool`        | `boolean`                                                 | `Boolean`        |
-    | `i8`          | `byte`                                                    | `Byte`           |
-    | `i16`         | `short`                                                   | `Short`          |
-    | `i32`         | `int`                                                     | `Integer`        |
-    | `i64`         | `long`                                                    | `Long`           |
-    | `f32`         | `float`                                                   | `Float`          |
-    | `f64`         | `double`                                                  | `Double`         |
-    | `string`      | `String`                                                  |                  |
-    | `binary`      | `byte[]`                                                  |                  |
-    | `date`        | `java.util.Date`                                          |                  |
-    | `list<type>`  | `java.util.ArrayList` ✱                                   |                  |
-    | `set<type>`   | `java.util.HashSet` ✱                                     |                  |
-    | `map<K, V>`   | `java.util.HashMap` ✱                                     |                  |
-    | `optional<T>` | object / boxed primitive reference (which can be  `null`) |                  |
+    | Djinni                    | Java                                                         | Boxed                              |
+    |---------------------------|--------------------------------------------------------------|------------------------------------|
+    | `bool`                    | `boolean`                                                    | `Boolean`                          |
+    | `i8`, `i16`, `i32`, `i64` | `byte`, `short`, `int`, `long`                               | `Byte`, `Short`, `Integer`, `Long` |
+    | `f32`, `f64`              | `float`, `double`                                            | `Float`, `Double`                  |
+    | `string`                  | `String`                                                     |                                    |
+    | `binary`                  | `byte[]`                                                     |                                    |
+    | `date`                    | `java.util.Date`                                             |                                    |
+    | `list<T>`                 | `java.util.ArrayList<T>` ✱                                   |                                    |
+    | `set<T>`                  | `java.util.HashSet<T>` ✱                                     |                                    |
+    | `map<K, V>`               | `java.util.HashMap<K, V>` ✱                                  |                                    |
+    | `optional<T>`             | object / boxed primitive reference<br>(which can be  `null`) |                                    |
 
 === "Objective-C"
 
-    | Djinni        | Objective-C                          | Boxed        |
-    |---------------|--------------------------------------|--------------|
-    | `bool`        | `BOOL`                               | `NSNumber`   |
-    | `i8`          | `int8_t`                             | `NSNumber`   |
-    | `i16`         | `int16_t`                            | `NSNumber`   |
-    | `i32`         | `int32_t`                            | `NSNumber`   |
-    | `i64`         | `int64_t`                            | `NSNumber`   |
-    | `f32`         | `float`                              | `NSNumber`   |
-    | `f64`         | `double`                             | `NSNumber`   |
-    | `string`      | `NSString`                           |              |
-    | `binary`      | `NSData`                             |              |
-    | `date`        | `NSDate`                             |              |
-    | `list<type>`  | `NSArray` ✱                          |              |
-    | `set<type>`   | `NSSet` ✱                            |              |
-    | `map<K, V>`   | `NSDictionary` ✱                     |              |
-    | `optional<T>` | strong reference (which can be`nil`) |              |
+    | Djinni                    | Objective-C                               | Boxed      |
+    |---------------------------|-------------------------------------------|------------|
+    | `bool`                    | `BOOL`                                    | `NSNumber` |
+    | `i8`, `i16`, `i32`, `i64` | `int8_t`, `int16_t`, `int32_t`, `int64_t` | `NSNumber` |
+    | `f32`, `f64`              | `float`, `double`                         | `NSNumber` |
+    | `string`                  | `NSString`                                |            |
+    | `binary`                  | `NSData`                                  |            |
+    | `date`                    | `NSDate`                                  |            |
+    | `list<T>`                 | `NSArray` ✱                               |            |
+    | `set<T>`                  | `NSSet` ✱                                 |            |
+    | `map<K, V>`               | `NSDictionary` ✱                          |            |
+    | `optional<T>`             | strong reference (which can be`nil`)      |            |
 
 === "C#"
 
-    | Djinni        | C#                                        |
-    |---------------|-------------------------------------------|
-    | `bool`        | `bool`                                    |
-    | `i8`          | `sbyte`                                   |
-    | `i16`         | `short`                                   |
-    | `i32`         | `int`                                     |
-    | `i64`         | `long`                                    |
-    | `f32`         | `float`                                   |
-    | `f64`         | `double`                                  |
-    | `string`      | `System.String`                           |
-    | `binary`      | `System.Array<System.Byte>`               |
-    | `date`        | `System.DateTime`                         |
-    | `list<type>`  | `System.Collections.Generic.List`         |
-    | `set<type>`   | `System.Collections.Generic.HashSet`      |
-    | `map<K, V>`   | `System.Collections.Generic.Dictionary`   |
-    | `optional<T>` | `System.Nullable<T>`                      |
+    | Djinni                    | C#                                            |
+    |---------------------------|-----------------------------------------------|
+    | `bool`                    | `bool`                                        |
+    | `i8`, `i16`, `i32`, `i64` | `sbyte`, `short`, `int`, `long`               |
+    | `f32`, `f64`              | `float`, `double`                             |
+    | `string`                  | `System.String`                               |
+    | `binary`                  | `System.Array<System.Byte>`                   |
+    | `date`                    | `System.DateTime`                             |
+    | `list<T>`                 | `System.Collections.Generic.List<T>`          |
+    | `set<T>`                  | `System.Collections.Generic.HashSet<T>`       |
+    | `map<K, V>`               | `System.Collections.Generic.Dictionary<K, V>` |
+    | `optional<T>`             | `System.Nullable<T>`                          |
 
 === "Python"
 
-    | Djinni        | Python                                    |
-    |---------------|-------------------------------------------|
-    | `bool`        |                                           |
-    | `i8`          |                                           |
-    | `i16`         |                                           |
-    | `i32`         |                                           |
-    | `i64`         |                                           |
-    | `f32`         |                                           |
-    | `f64`         |                                           |
-    | `string`      |                                           |
-    | `binary`      | object supporting the `buffer` interface  |
-    | `date`        | `datetime.datetime`                       |
-    | `list<type>`  | `List`                                    |
-    | `set<type>`   | `Set`                                     |
-    | `map<K, V>`   | `Dictionary`                              |
-    | `optional<T>` |                                           |
+    | Djinni                    | Python                                    |
+    |---------------------------|-------------------------------------------|
+    | `bool`                    |                                           |
+    | `i8`, `i16`, `i32`, `i64` |                                           |
+    | `f32`, `f64`              |                                           |
+    | `string`                  |                                           |
+    | `binary`                  | object supporting the `buffer` interface  |
+    | `date`                    | `datetime.datetime`                       |
+    | `list<T>`                 | `List`                                    |
+    | `set<T>`                  | `Set`                                     |
+    | `map<K, V>`               | `Dictionary`                              |
+    | `optional<T>`             |                                           |
 
 
 ✱ *Primitives will be boxed in Java and Objective-C.*
