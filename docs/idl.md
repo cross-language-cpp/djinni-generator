@@ -72,30 +72,92 @@ will only be processed once.
 
 ## Data Types
 
-The available data types for a record, argument, or return value are:
+The available data types for a record, argument, or return value, and their equivalent in the target languages, are:
 
- - Boolean (`bool`)
- - Primitives (`i8`, `i16`, `i32`, `i64`, `f32`, `f64`).
- - Strings (`string`)
- - Binary (`binary`). This is implemented as `std::vector<uint8_t>` in C++, `byte[]` in Java,
-   `NSData` in Objective-C, an object supporting the `buffer` interface in Python, and `System.Array<System.Byte>` in C#.
- - Date (`date`).  This is `chrono::system_clock::time_point` in C++, `Date` in Java,
-   `NSDate` in Objective-C, `datetime.datetime` in Python, and `System.DateTime` in C#.
- - List (`list<type>`). This is `vector<T>` in C++, `ArrayList` in Java, `NSArray`
-   in Objective-C, `List` in Python, and `System.Collections.Generic.List` in C#. 
-   Primitives in a list will be boxed in Java and Objective-C.
- - Set (`set<type>`). This is `unordered_set<T>` in C++, `HashSet` in Java, `NSSet` in
-   Objective-C, `Set` in Python, and `System.Collections.Generic.HashSet` in C#. 
-   Primitives in a set will be boxed in Java and Objective-C.
- - Map (`map<typeA, typeB>`). This is `unordered_map<K, V>` in C++, `HashMap` in Java, 
-   `NSDictionary` in Objective-C, `Dictionary` in Python, and `System.Collections.Generic.Dictionary` in C#. 
-   Primitives in a map will be boxed in Java and Objective-C.
- - Enumerations / Flags
- - Optionals (`optional<typeA>`). This is `std::experimental::optional<T>` in C++11, object /
-   boxed primitive reference in Java (which can be `null`), and object / NSNumber strong
-   reference in Objective-C (which can be `nil`).
- - Other record types. This is generated with a by-value semantic, i.e. the copy method will
-   deep-copy the contents.
+=== "C++"
+
+    | Djinni                    | C++                                                                              |
+    |---------------------------|----------------------------------------------------------------------------------|
+    | `bool`                    | `bool`                                                                           |
+    | `i8`, `i16`, `i32`, `i64` | `int8_t`, `int16_t`, `int32_t`, `int64_t`                                        |
+    | `f32`, `f64`              | `float`, `double`                                                                |
+    | `string`                  | `std::string`                                                                    |
+    | `binary`                  | `std::vector<uint8_t>`                                                           |
+    | `date`                    | `chrono::system_clock::time_point`                                               |
+    | `list<T>`                 | `std::vector<T>`                                                                 |
+    | `set<T>`                  | `std::unordered_set<T>`                                                          |
+    | `map<K, V>`               | `std::unordered_map<K, V>`                                                       |
+    | `optional<T>`             | `std::optional<T>` for value types and  `std::shared_ptr<T>` for reference types |
+
+
+=== "Java"
+
+    | Djinni                    | Java                                                         | Boxed                              |
+    |---------------------------|--------------------------------------------------------------|------------------------------------|
+    | `bool`                    | `boolean`                                                    | `Boolean`                          |
+    | `i8`, `i16`, `i32`, `i64` | `byte`, `short`, `int`, `long`                               | `Byte`, `Short`, `Integer`, `Long` |
+    | `f32`, `f64`              | `float`, `double`                                            | `Float`, `Double`                  |
+    | `string`                  | `String`                                                     |                                    |
+    | `binary`                  | `byte[]`                                                     |                                    |
+    | `date`                    | `java.util.Date`                                             |                                    |
+    | `list<T>`                 | `java.util.ArrayList<T>` ✱                                   |                                    |
+    | `set<T>`                  | `java.util.HashSet<T>` ✱                                     |                                    |
+    | `map<K, V>`               | `java.util.HashMap<K, V>` ✱                                  |                                    |
+    | `optional<T>`             | object / boxed primitive reference<br>(which can be  `null`) |                                    |
+
+=== "Objective-C"
+
+    | Djinni                    | Objective-C                               | Boxed      |
+    |---------------------------|-------------------------------------------|------------|
+    | `bool`                    | `BOOL`                                    | `NSNumber` |
+    | `i8`, `i16`, `i32`, `i64` | `int8_t`, `int16_t`, `int32_t`, `int64_t` | `NSNumber` |
+    | `f32`, `f64`              | `float`, `double`                         | `NSNumber` |
+    | `string`                  | `NSString`                                |            |
+    | `binary`                  | `NSData`                                  |            |
+    | `date`                    | `NSDate`                                  |            |
+    | `list<T>`                 | `NSArray` ✱                               |            |
+    | `set<T>`                  | `NSSet` ✱                                 |            |
+    | `map<K, V>`               | `NSDictionary` ✱                          |            |
+    | `optional<T>`             | strong reference (which can be`nil`)      |            |
+
+=== "C#"
+
+    | Djinni                    | C#                                            |
+    |---------------------------|-----------------------------------------------|
+    | `bool`                    | `bool`                                        |
+    | `i8`, `i16`, `i32`, `i64` | `sbyte`, `short`, `int`, `long`               |
+    | `f32`, `f64`              | `float`, `double`                             |
+    | `string`                  | `System.String`                               |
+    | `binary`                  | `System.Array<System.Byte>`                   |
+    | `date`                    | `System.DateTime`                             |
+    | `list<T>`                 | `System.Collections.Generic.List<T>`          |
+    | `set<T>`                  | `System.Collections.Generic.HashSet<T>`       |
+    | `map<K, V>`               | `System.Collections.Generic.Dictionary<K, V>` |
+    | `optional<T>`             | `System.Nullable<T>`                          |
+
+=== "Python"
+
+    | Djinni                    | Python                                    |
+    |---------------------------|-------------------------------------------|
+    | `bool`                    |                                           |
+    | `i8`, `i16`, `i32`, `i64` |                                           |
+    | `f32`, `f64`              |                                           |
+    | `string`                  |                                           |
+    | `binary`                  | object supporting the `buffer` interface  |
+    | `date`                    | `datetime.datetime`                       |
+    | `list<T>`                 | `List`                                    |
+    | `set<T>`                  | `Set`                                     |
+    | `map<K, V>`               | `Dictionary`                              |
+    | `optional<T>`             |                                           |
+
+
+✱ *Primitives will be boxed in Java and Objective-C.*
+
+Additional possible data types are: 
+
+- Enumerations / Flags
+- Other record types. This is generated with a by-value semantic, i.e. the copy method will
+  deep-copy the contents.
 
 ## Types
 
