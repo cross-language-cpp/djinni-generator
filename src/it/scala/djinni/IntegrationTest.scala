@@ -6,6 +6,10 @@ import org.scalatest.Matchers.{be, convertToAnyShouldWrapper, equal, noException
 import scala.io.Source
 import scala.sys.process._
 
+import scala.reflect.io.Directory
+import java.io.File
+
+
 /**
   * Base class for integration tests, providing a few handy helper functions
   */
@@ -79,7 +83,7 @@ class IntegrationTest extends FunSpec {
     *
     * @return command line params to pass to the djinni generator.
     */
-  def djinniParams(idl: String, baseOutputPath: String = "src/it/resources/result",
+  def djinniParams(idl: String, baseOutputPath: String = "src/it/resources/result", // this should never change, see removeTestOutputDirectory, and it is also used on other locations
                    cpp: Boolean = true, java: Boolean = true, objc: Boolean = true,
                    python: Boolean = true, cWrapper: Boolean = true, cppCLI: Boolean = true,
                    useNNHeader: Boolean = false): String = {
@@ -150,6 +154,13 @@ class IntegrationTest extends FunSpec {
       resultFile.mkString should equal (expectationFile.mkString)
       resultFile.close()
       expectationFile.close()
+    }
+  }
+
+  def removeTestOutputDirectory(baseOutputPath: String = "src/it/resources/result") {
+    val directory = new Directory(new File(baseOutputPath))
+    if (directory.deleteRecursively()) {
+      System.console.printf("[info] Clean up old generated test output/files.\n")
     }
   }
 
