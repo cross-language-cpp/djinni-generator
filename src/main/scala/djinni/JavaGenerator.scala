@@ -186,7 +186,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             w.wl
           }
         }
-        
+
         if (i.ext.cpp) {
           w.wl
           javaAnnotationHeader.foreach(w.wl)
@@ -204,6 +204,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
               w.wl("boolean destroyed = this.destroyed.getAndSet(true);")
               w.wl("if (!destroyed) nativeDestroy(this.nativeRef);")
             }
+            w.wl("@SuppressWarnings(\"deprecation\")")
             w.wl("protected void finalize() throws java.lang.Throwable").braced {
               w.wl("_djinni_private_destroy();")
               w.wl("super.finalize();")
