@@ -7,6 +7,7 @@ src/it/resources/result/all_datatypes/objc-headers/ITAllDatatypes.h
 src/it/resources/result/all_datatypes/objc/ITAllDatatypes.mm
 src/it/resources/result/all_datatypes/objcpp-headers/ITAllDatatypes+Private.h
 src/it/resources/result/all_datatypes/objcpp/ITAllDatatypes+Private.mm
+src/it/resources/result/all_datatypes/objc-headers/bridging-header.h
 src/it/resources/result/all_datatypes/cppcli/AllDatatypes.hpp
 src/it/resources/result/all_datatypes/cppcli/AllDatatypes.cpp
 src/it/resources/result/all_datatypes/python/dh__list_bool.py

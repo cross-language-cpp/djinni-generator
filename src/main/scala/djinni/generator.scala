@@ -272,6 +272,9 @@ package object generatorTools {
           SwiftBridgingHeaderGenerator.writeAutogenerationWarning(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
           SwiftBridgingHeaderGenerator.writeBridgingVars(spec.objcSwiftBridgingHeaderName.get, spec.objcSwiftBridgingHeaderWriter.get)
           new SwiftBridgingHeaderGenerator(spec).generate(idl)
+          if (spec.outFileListWriter.isDefined) {
+            spec.outFileListWriter.get.write(FilenameUtils.separatorsToUnix(new File(spec.objcHeaderOutFolder.get, spec.objcSwiftBridgingHeaderName.get + ".h").getPath) + "\n")
+          }
         }
       }
       if (spec.cppCliOutFolder.isDefined) {
