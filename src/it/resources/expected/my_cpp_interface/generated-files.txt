@@ -8,6 +8,7 @@ src/it/resources/result/my_cpp_interface/objc-headers/ITMyCppInterface.h
 src/it/resources/result/my_cpp_interface/objc/ITMyCppInterface.mm
 src/it/resources/result/my_cpp_interface/objcpp-headers/ITMyCppInterface+Private.h
 src/it/resources/result/my_cpp_interface/objcpp/ITMyCppInterface+Private.mm
+src/it/resources/result/my_cpp_interface/objc-headers/bridging-header.h
 src/it/resources/result/my_cpp_interface/cppcli/MyCppInterface.hpp
 src/it/resources/result/my_cpp_interface/cppcli/MyCppInterface.cpp
 src/it/resources/result/my_cpp_interface/python/my_cpp_interface.py
