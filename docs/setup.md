@@ -19,6 +19,22 @@ asdf plugin add djinni
 asdf install djinni latest
 ```
 
+#### MacOS homebrew
+
+We have a brew tap!
+
+Add the tap:
+
+```bash
+brew tap cross-language-cpp/brew https://github.com/cross-language-cpp/brew.git
+```
+
+Install the djinni generator:
+
+```bash
+brew install djinni
+```
+
 ### Windows
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/cross-language-cpp/djinni-generator?label=Download&logo=windows&style=for-the-badge)](https://github.com/cross-language-cpp/djinni-generator/releases/latest/download/djinni.bat)
