@@ -64,6 +64,9 @@ package object meta {
         pointer: Option[
           Boolean
         ], // True to construct pointer types and make it eligible for "nonnull" qualifier. Only used for "record" types.
+        generic: Option[
+          Boolean
+        ], // Set to false to exclude type arguments from the Objective-C typename. This is false by default. Useful if template arguments are only used in C++.
         hash: Option[String] // A well-formed expression to get the hash value. Must be a format string with a single "%s" placeholder. Only used for "record" types with "eq" deriving when needed.
     )
     case class Objcpp(
