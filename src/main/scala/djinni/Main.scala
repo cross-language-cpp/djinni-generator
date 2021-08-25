@@ -39,6 +39,7 @@ object Main {
     var cppNnType: Option[String] = None
     var cppNnCheckExpression: Option[String] = None
     var cppUseWideStrings: Boolean = false
+    var cppGenDefaultRecordCtor: Boolean = false
     var javaOutFolder: Option[File] = None
     var javaPackage: Option[String] = None
     var javaClassAccessModifier: JavaAccessModifier.Value = JavaAccessModifier.Public
@@ -174,6 +175,8 @@ object Main {
         .text("The expression to use for building non-nullable pointers")
       opt[Boolean]( "cpp-use-wide-strings").valueName("<true/false>").foreach(x => cppUseWideStrings = x)
         .text("Use wide strings in C++ code (default: false)")
+      opt[Boolean]("cpp-generate-default-record-constructor").valueName("<true/false>").foreach(x => cppGenDefaultRecordCtor = x)
+        .text("Generate a `= default` constructor for records in C++ code (default: `false`)")
       note("\nJNI")
       opt[File]("jni-out").valueName("<out-folder>").foreach(x => jniOutFolder = Some(x))
         .text("The folder for the JNI C++ output files (Generator disabled if unspecified).")
@@ -434,6 +437,7 @@ object Main {
       cppNnType,
       cppNnCheckExpression,
       cppUseWideStrings,
+      cppGenDefaultRecordCtor,
       jniOutFolder,
       jniHeaderOutFolder,
       jniIncludePrefix,

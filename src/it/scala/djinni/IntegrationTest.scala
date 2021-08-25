@@ -86,7 +86,7 @@ class IntegrationTest extends FunSpec {
   def djinniParams(idl: String, baseOutputPath: String = "src/it/resources/result", // this should never change, see removeTestOutputDirectory, and it is also used on other locations
                    cpp: Boolean = true, java: Boolean = true, objc: Boolean = true,
                    python: Boolean = true, cWrapper: Boolean = true, cppCLI: Boolean = true,
-                   useNNHeader: Boolean = false): String = {
+                   useNNHeader: Boolean = false, cppDefaultRecordCtor: Boolean = false): String = {
     var cmd = s"--idl src/it/resources/$idl.djinni"
     if (cpp) {
       cmd += s" --cpp-out $baseOutputPath/$idl/$CPP"
@@ -124,6 +124,9 @@ class IntegrationTest extends FunSpec {
       cmd += " --cpp-nn-header nn.hpp"
       cmd += " --cpp-nn-type dropbox::oxygen::nn_shared_ptr"
       cmd += " --cpp-nn-check-expression NN_CHECK_ASSERT"
+    }
+    if (cppDefaultRecordCtor) {
+      cmd += " --cpp-generate-default-record-constructor true"
     }
     cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
     return cmd
