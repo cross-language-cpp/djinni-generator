@@ -355,7 +355,14 @@ object YamlGenerator {
         "cs",
         "reference",
         _.asInstanceOf[Boolean]
-      )
+      ),
+      nested(
+        td,
+        false,
+        "cs",
+        "generic",
+        _.asInstanceOf[Boolean]
+      ) orElse Option.apply[Boolean](false)
     )
   )
 

@@ -106,7 +106,10 @@ package object meta {
         ], // C++ typename containing ToCpp/FromCpp methods
         header: Option[String], // Where to find the translator class
         typename: Option[String],
-        reference: Option[Boolean]
+        reference: Option[Boolean],
+        generic: Option[
+          Boolean
+        ] // Set to false to exclude type arguments from the C++/CLI typename. This is false by default. Useful if template arguments are only used in C++.
     )
   }
 

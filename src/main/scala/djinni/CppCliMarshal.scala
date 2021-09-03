@@ -155,7 +155,11 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
               }
             case _ => expr(arg)
           }
-        case e: MExtern => withNamespace(e.cs.typename.get)
+        case e: MExtern =>
+          if (e.cs.generic.get)
+            withNamespace(e.cs.typename.get) + args + handle(e)
+          else
+            withNamespace(e.cs.typename.get)
         case o =>
           val base = o match {
             case p: MPrimitive => p.cppCliName
