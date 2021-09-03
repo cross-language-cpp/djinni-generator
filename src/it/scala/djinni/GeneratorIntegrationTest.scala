@@ -298,5 +298,27 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       Then("the generation should fail gracefully if code for Objective-C is generated")
       a [RuntimeException] should be thrownBy djinni(s"--idl src/it/resources/date_no_cs.djinni --objc-out $outputPath")
     }
+    
+     it(s"skip-generate should not generate any files") {
+        var idlFile = "all_datatypes"
+        var outputPath = "src/it/resources/result/skip_generate"
+        Given(s"`$idlFile.djinni`")
+        When(s"passing skip-generation true")
+
+        djinni(djinniParams(idlFile, outputPath) + " --skip-generation true")
+
+        Then(s"`$outputPath` should have been created")
+        var dir = new java.io.File(outputPath, idlFile)
+        dir.exists should be (true)
+
+        Then(s"genreated-files.txt should have been generated")
+        val gen = new java.io.File(dir,"generated-files.txt")
+        gen.exists should be (true)
+
+        Then(s"only the generated-files.txt should be generated")
+        var files = dir.listFiles()
+        files should contain only ( gen )
+      }
+
   }
 }
