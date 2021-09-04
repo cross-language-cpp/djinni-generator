@@ -25,5 +25,10 @@ struct MyRecordDefaultCtor final {
     , hash(std::move(hash_))
     {}
 
-    MyRecordDefaultCtor() = default;
+    MyRecordDefaultCtor()
+    : id()
+    , info()
+    , store()
+    , hash()
+    {}
 };
