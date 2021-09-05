@@ -12,4 +12,8 @@ struct OtherRecord final {
     OtherRecord(CustomDatatype customDatatypeData_)
     : customDatatypeData(std::move(customDatatypeData_))
     {}
+
+    OtherRecord()
+    : customDatatypeData()
+    {}
 };

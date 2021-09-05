@@ -244,7 +244,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
           w.wl("{}")
 
           // Default (empty) constructor.
-          if(spec.cppGenDefaultRecordCtor) {
+          if(!spec.cppOmitDefaultRecordCtor) {
             w.wl
             w.wl(actualSelf + "()")
             val init = (f: Field) => idCpp.field(f.ident) + "()"

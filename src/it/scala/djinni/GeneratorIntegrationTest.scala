@@ -201,11 +201,11 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileContentEquals(idlFile, "", List("generated-files.txt"))
     }
 
-    it("should be able to generate C++ records with default constructors") {
-      val idlFile = "my_record_default_ctor"
-      When(s"generating a C++ record from `$idlFile.djinni` with default ctor flag enabled")
-      val cppHeaderFilenames = CppHeaders("my_record_default_ctor.hpp")
-      val cmd = djinniParams(idlFile, cpp=true, objc=false, java=false, python=false, cWrapper=false, cppCLI=false, cppDefaultRecordCtor=true)
+    it("should be able to generate C++ records without a default constructor") {
+      val idlFile = "my_record_omit_default_ctor"
+      When(s"generating a C++ record from `$idlFile.djinni` with omit default ctor flag enabled")
+      val cppHeaderFilenames = CppHeaders("my_record_omit_default_ctor.hpp")
+      val cmd = djinniParams(idlFile, cpp=true, objc=false, java=false, python=false, cWrapper=false, cppCLI=false, cppOmitDefaultRecordCtor=true)
       djinni(cmd)
 
       Then(s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}")

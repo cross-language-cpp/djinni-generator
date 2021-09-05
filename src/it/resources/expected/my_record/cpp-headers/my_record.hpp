@@ -26,4 +26,11 @@ struct MyRecord final {
     , store(std::move(store_))
     , hash(std::move(hash_))
     {}
+
+    MyRecord()
+    : id()
+    , info()
+    , store()
+    , hash()
+    {}
 };

@@ -1,4 +1,4 @@
-my_record_default_ctor = record {
+my_record_omit_default_ctor = record {
   id: i32;
   info: string;
   store: set<string>;

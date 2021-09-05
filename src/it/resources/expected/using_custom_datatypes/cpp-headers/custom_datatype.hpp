@@ -12,4 +12,8 @@ struct CustomDatatype final {
     CustomDatatype(std::string recordData_)
     : recordData(std::move(recordData_))
     {}
+
+    CustomDatatype()
+    : recordData()
+    {}
 };
