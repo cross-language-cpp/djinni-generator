@@ -57,7 +57,6 @@ object Main {
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
-    var jniBaseLibIncludePrefix: String = ""
     var jniGenerateMain: Boolean = true
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
@@ -82,12 +81,10 @@ object Main {
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcppNamespace: String = "djinni_generated"
-    var objcBaseLibIncludePrefix: String = ""
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
     var cppCliNamespace: String = ""
     var cppCliIncludeCppPrefix: String = ""
-    var cppCliBaseLibIncludePrefix: String = ""
     var inFileListPath: Option[File] = None
     var outFileListPath: Option[File] = None
     var skipGeneration: Boolean = false
@@ -100,7 +97,6 @@ object Main {
     var cWrapperHeaderOutFolderOptional: Option[File] = None
     var cWrapperIncludePrefix: String = ""
     var cWrapperIncludeCppPrefix: String = ""
-    var cWrapperBaseLibIncludePrefix: String = ""
     var pycffiPackageName: String = ""
     var pycffiDynamicLibList: String = ""
     var pycffiOutFolder: Option[File] = None
@@ -185,8 +181,6 @@ object Main {
         .text("The prefix for #includes of the main header files from JNI C++ files.")
       opt[String]("jni-namespace").valueName("...").foreach(x => jniNamespace = x)
         .text("The namespace name to use for generated JNI C++ classes.")
-      opt[String]("jni-base-lib-include-prefix").valueName("...").foreach(x => jniBaseLibIncludePrefix = x)
-        .text("The JNI base support library's include path.")
       opt[Boolean]("jni-generate-main").valueName("<true/false>").foreach(x => jniGenerateMain = x)
         .text("Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)")
       note("\nObjective-C")
@@ -223,8 +217,6 @@ object Main {
         .text("The prefix path for #import of the extended record Objective-C header (.h) files")
       opt[String]("objcpp-namespace").valueName("<prefix>").foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
-      opt[String]("objc-base-lib-include-prefix").valueName("...").foreach(x => objcBaseLibIncludePrefix = x)
-        .text("The Objective-C base support library's include path.")
       note("\nPython")
       opt[File]("py-out").valueName("<out-folder>").foreach(x => pyOutFolder = Some(x))
         .text("The output folder for Python files (Generator disabled if unspecified).")
@@ -242,8 +234,6 @@ object Main {
         .text("The prefix for #includes of C wrapper header files from C wrapper C++ files.")
       opt[String]("c-wrapper-include-cpp-prefix").valueName("<prefix>").foreach(x => cWrapperIncludeCppPrefix = x)
         .text("The prefix for #includes of C++ header files from C wrapper C++ files.")
-      opt[String]("c-wrapper-base-lib-include-prefix").valueName("<prefix>").foreach(x => cWrapperBaseLibIncludePrefix = x)
-        .text("The C wrapper base support library's include path.")
       opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
         .text("The import prefix used within python generated files (default: \"\")")
       note("\nC++/CLI")
@@ -253,8 +243,6 @@ object Main {
         .text("The namespace name to use for generated C++/CLI classes.")
       opt[String]("cppcli-include-cpp-prefix").valueName("<prefix>").foreach(x => cppCliIncludeCppPrefix = x)
         .text("The prefix for #include of the main C++ header files from C++/CLI files.")
-      opt[String]("cppcli-base-lib-include-prefix").valueName("<prefix>").foreach(x => cppCliBaseLibIncludePrefix = x)
-        .text("The C++/CLI base support library's include path.")
       note("\nYaml Generation")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
@@ -441,7 +429,6 @@ object Main {
       jniNamespace,
       jniClassIdentStyle,
       jniFileIdentStyle,
-      jniBaseLibIncludePrefix,
       jniGenerateMain,
       cppExt,
       cppHeaderExt,
@@ -459,13 +446,11 @@ object Main {
       objcppIncludeCppPrefix,
       objcppIncludeObjcPrefix,
       objcppNamespace,
-      objcBaseLibIncludePrefix,
       objcSwiftBridgingHeaderWriter,
       cppCliOutFolder,
       cppCliIdentStyle,
       cppCliNamespace,
       cppCliIncludeCppPrefix,
-      cppCliBaseLibIncludePrefix,
       objcSwiftBridgingHeaderName,
       objcClosedEnums,
       outFileListWriter,
@@ -483,7 +468,6 @@ object Main {
       cWrapperHeaderOutFolder,
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
-      cWrapperBaseLibIncludePrefix,
       pyImportPrefix)
 
     try {

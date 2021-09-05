@@ -25,6 +25,8 @@ import sun.reflect.generics.tree.ReturnType
 import scala.collection.mutable
 
 class CWrapperGenerator(spec: Spec) extends Generator(spec) {
+  final val cWrapperBaseLibIncludePrefix = "djinni/cwrapper/"
+
   val marshal = new CWrapperMarshal(spec)
   val cppMarshal = new CppMarshal(spec)
   val dw = "djinni_this"
@@ -710,7 +712,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       // always include support library
       w.wl("#include <iostream> // for debugging")
       w.wl("#include <cassert>")
-      w.wl("#include " + q(spec.cWrapperBaseLibIncludePrefix + "wrapper_marshal.hpp"))
+      w.wl("#include " + q(cWrapperBaseLibIncludePrefix + "wrapper_marshal.hpp"))
       w.wl("#include " + q(spec.cWrapperIncludeCppPrefix + ident + ".hpp"))  // include abstract cpp base class header
       // Includes for Djinni Wrappers
       if (includes.nonEmpty) {
