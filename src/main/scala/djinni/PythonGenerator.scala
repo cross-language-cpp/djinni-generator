@@ -162,7 +162,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     ret = "struct DjinniObjectHandle *"
     defArgs = Seq("").mkString("(", ", ", ")")
     cArgs = Seq("").mkString("(", ", ", ")")
-    writeGetterCallback("__python_create", ret, cArgs, defArgs, w, w => {
+    writeGetterCallback("__create", ret, cArgs, defArgs, w, w => {
       w.wl("c_ptr = ffi.new_handle" + p(createName))
       w.wl(className + ".c_data_set.add(c_ptr)")
       w.wl("return ffi.cast(\"struct DjinniObjectHandle *\", c_ptr)")
@@ -172,7 +172,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     ret = "void"
     defArgs = Seq("cself, " + toAddDefArgs).mkString("(", ", ", ")")
     cArgs = Seq("struct DjinniObjectHandle *", toAddCArgs).mkString("(", ", ", ")")
-    writeGetterCallback("__python_add", ret, cArgs, defArgs, w, w => {
+    writeGetterCallback("__add", ret, cArgs, defArgs, w, w => {
       w.wl(addElemCall)
     })
 
@@ -189,8 +189,8 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       // release method callback added
       w.wl("lib." + name + "_add_callback_" + "__delete" + p(className + "." + "__delete"))
       w.wl("lib." + name + "_add_callback" + "__get_size" + p(className + "." + "__get_size"))
-      w.wl("lib." + name + "_add_callback" + "__python_create" + p(className + "." + "__python_create"))
-      w.wl("lib." + name + "_add_callback" + "__python_add" + p(className + "." + "__python_add"))
+      w.wl("lib." + name + "_add_callback" + "__create" + p(className + "." + "__create"))
+      w.wl("lib." + name + "_add_callback" + "__add" + p(className + "." + "__add"))
       if (extraAddCallback != "") w.wl(extraAddCallback)
     }
     w.wl
@@ -262,13 +262,13 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
             "len(CPyObjectProxy.toPyObj(" + "None" + ", " + "cself))",
             proxyName + p("dict()"),
             "CPyObjectProxy.toPyObj(" + "None" + ", " + "cself)[" + marshal.convertTo("key", keyTyRef) + "] = " + marshal.convertTo("value", valTyref), "key, value", keyTy + ", "+ valTy,
-              "lib." + fileName + "_add_callback" + "__python_next" + p(helperClass + "." + "__python_next"),
+              "lib." + fileName + "_add_callback" + "__next" + p(helperClass + "." + "__next"),
             w =>{
               // NEXT in iteration
               val ret = keyTy
               val defArgs = Seq("cself").mkString("(", ", ", ")")
               val cArgs = Seq("struct DjinniObjectHandle *").mkString("(", ", ", ")")
-              writeGetterCallback("__python_next", ret, cArgs, defArgs, w, w => {
+              writeGetterCallback("__next", ret, cArgs, defArgs, w, w => {
                 writeReturnFromCallback("CPyObjectProxy.toPyObj(None, cself)", keyTyRef, next, w)
               })
             }
@@ -286,14 +286,14 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
               proxyName + p("set()"),
               "CPyObjectProxy.toPyObj(" + "None" + ", " + "cself).add(" + marshal.convertTo("el", keyTyRef) + ")",
               "el", keyTy,
-              "lib." + fileName + "_add_callback" + "__python_next" + p(helperClass + "." + "__python_next"),
+              "lib." + fileName + "_add_callback" + "__next" + p(helperClass + "." + "__next"),
               w => {
                 // NEXT in iteration
                 val ret = keyTy
                 val defArgs = Seq("cself").mkString("(", ", ", ")")
                 val cArgs = Seq("struct DjinniObjectHandle *").mkString("(", ", ", ")")
 
-                writeGetterCallback("__python_next", ret, cArgs, defArgs, w, w => {
+                writeGetterCallback("__next", ret, cArgs, defArgs, w, w => {
                   writeReturnFromCallback("CPyObjectProxy.toPyObj(None, cself)", keyTyRef, next, w)
                 })
               })
@@ -885,10 +885,10 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
 
     // Callback to allow creating a Python Record from C
     w.wl("@ffi.callback" + p(q("struct DjinniRecordHandle *" + getRecordTypes(r).mkString("(", ",", ")"))))
-    w.wl("def " + "python_create_" + recordAsMethod + getRecordArguments(r, "").mkString("(", ",", ")") +":").nested {
+    w.wl("def " + "create_" + recordAsMethod + getRecordArguments(r, "").mkString("(", ",", ")") +":").nested {
       writeRecordToFromCb(ident, r, "", 0, w)
     }
-    callbackNames.add("python_create_" + recordAsMethod)
+    callbackNames.add("create_" + recordAsMethod)
     w.wl
 
     val recordAsClassName = idPython.className(ident.name)

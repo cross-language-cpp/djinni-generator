@@ -28,7 +28,6 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
   val djinniWrapper = "DjinniWrapper"
   val cw = "cw__" // prefix for c wrapper files
   val dh = "dh__" // prefix for c files containing djinni helpers for records
-  val pyHelper = "py_helper_"
   val djinniObjectHandle = "DjinniObjectHandle"
 
   def ctypename(tm: MExpr, forHeader: Boolean): String = cParamType(tm, forHeader)
@@ -246,7 +245,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     }
     else return s
   }
-  def pyCallback(s: String): String = "s_py_callback_" + s
+  def callback(s: String): String = "s_callback_" + s
 
   def wrappedName(s: String): String = djinniWrapper + s // del
 
