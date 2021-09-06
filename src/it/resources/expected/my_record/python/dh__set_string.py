@@ -20,13 +20,13 @@ class SetStringHelper:
         return len(CPyObjectProxy.toPyObj(None, cself))
 
     @ffi.callback("struct DjinniObjectHandle *()")
-    def __python_create():
+    def __create():
         c_ptr = ffi.new_handle(SetStringProxy(set()))
         SetStringHelper.c_data_set.add(c_ptr)
         return ffi.cast("struct DjinniObjectHandle *", c_ptr)
 
     @ffi.callback("void(struct DjinniObjectHandle *, struct DjinniString *)")
-    def __python_add(cself, el):
+    def __add(cself, el):
         CPyObjectProxy.toPyObj(None, cself).add(CPyString.toPy(el))
 
     @ffi.callback("void(struct DjinniObjectHandle * )")
@@ -35,7 +35,7 @@ class SetStringHelper:
         SetStringHelper.c_data_set.remove(c_ptr)
 
     @ffi.callback("struct DjinniString *(struct DjinniObjectHandle *)")
-    def __python_next(cself):
+    def __next(cself):
         try:
             with CPyString.fromPy(next(CPyObjectProxy.toPyIter(cself))) as py_obj:
                 _ret = py_obj.release_djinni_string()
@@ -49,9 +49,9 @@ class SetStringHelper:
     def _add_callbacks():
         lib.set_string_add_callback___delete(SetStringHelper.__delete)
         lib.set_string_add_callback__get_size(SetStringHelper.__get_size)
-        lib.set_string_add_callback__python_create(SetStringHelper.__python_create)
-        lib.set_string_add_callback__python_add(SetStringHelper.__python_add)
-        lib.set_string_add_callback__python_next(SetStringHelper.__python_next)
+        lib.set_string_add_callback__create(SetStringHelper.__create)
+        lib.set_string_add_callback__add(SetStringHelper.__add)
+        lib.set_string_add_callback__next(SetStringHelper.__next)
 
 SetStringHelper._add_callbacks()
 

@@ -8,41 +8,41 @@
 
 #include "dh__custom_datatype.hpp"
 
-static void(*s_py_callback_custom_datatype___delete)(DjinniRecordHandle * );
+static void(*s_callback_custom_datatype___delete)(DjinniRecordHandle * );
 void custom_datatype_add_callback___delete(void(* ptr)(DjinniRecordHandle * )) {
-    s_py_callback_custom_datatype___delete = ptr;
+    s_callback_custom_datatype___delete = ptr;
 }
 
 void custom_datatype___delete(DjinniRecordHandle * drh) {
-    s_py_callback_custom_datatype___delete(drh);
+    s_callback_custom_datatype___delete(drh);
 }
 void optional_custom_datatype___delete(DjinniOptionalRecordHandle * drh) {
-    s_py_callback_custom_datatype___delete((DjinniRecordHandle *) drh); // can't static cast, find better way
+    s_callback_custom_datatype___delete((DjinniRecordHandle *) drh); // can't static cast, find better way
 }
-static DjinniString * ( * s_py_callback_custom_datatype_get_custom_datatype_f1)(DjinniRecordHandle *);
+static DjinniString * ( * s_callback_custom_datatype_get_custom_datatype_f1)(DjinniRecordHandle *);
 
 void custom_datatype_add_callback_get_custom_datatype_f1(DjinniString *( * ptr)(DjinniRecordHandle *)) {
-    s_py_callback_custom_datatype_get_custom_datatype_f1 = ptr;
+    s_callback_custom_datatype_get_custom_datatype_f1 = ptr;
 }
 
-static DjinniRecordHandle * ( * s_py_callback_custom_datatype_python_create_custom_datatype)(DjinniString *);
+static DjinniRecordHandle * ( * s_callback_custom_datatype_create_custom_datatype)(DjinniString *);
 
-void custom_datatype_add_callback_python_create_custom_datatype(DjinniRecordHandle *( * ptr)(DjinniString *)) {
-    s_py_callback_custom_datatype_python_create_custom_datatype = ptr;
+void custom_datatype_add_callback_create_custom_datatype(DjinniRecordHandle *( * ptr)(DjinniString *)) {
+    s_callback_custom_datatype_create_custom_datatype = ptr;
 }
 
 djinni::Handle<DjinniRecordHandle> DjinniCustomDatatype::fromCpp(const ::CustomDatatype& dr) {
     auto  _field_recordData = DjinniString::fromCpp(dr.recordData);
 
     djinni::Handle<DjinniRecordHandle> _aux(
-        s_py_callback_custom_datatype_python_create_custom_datatype(
+        s_callback_custom_datatype_create_custom_datatype(
             _field_recordData.release()),
         custom_datatype___delete);
     return _aux;
 }
 
 ::CustomDatatype DjinniCustomDatatype::toCpp(djinni::Handle<DjinniRecordHandle> dh) {
-    std::unique_ptr<DjinniString> _field_recordData(s_py_callback_custom_datatype_get_custom_datatype_f1(dh.get()));
+    std::unique_ptr<DjinniString> _field_recordData(s_callback_custom_datatype_get_custom_datatype_f1(dh.get()));
 
     auto _aux = ::CustomDatatype(
         DjinniString::toCpp(std::move( _field_recordData)));

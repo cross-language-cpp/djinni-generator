@@ -31,13 +31,13 @@ class MapStringInt32THelper:
         return len(CPyObjectProxy.toPyObj(None, cself))
 
     @ffi.callback("struct DjinniObjectHandle *()")
-    def __python_create():
+    def __create():
         c_ptr = ffi.new_handle(MapStringInt32TProxy(dict()))
         MapStringInt32THelper.c_data_set.add(c_ptr)
         return ffi.cast("struct DjinniObjectHandle *", c_ptr)
 
     @ffi.callback("void(struct DjinniObjectHandle *, struct DjinniString *, int32_t)")
-    def __python_add(cself, key, value):
+    def __add(cself, key, value):
         CPyObjectProxy.toPyObj(None, cself)[CPyString.toPy(key)] = CPyPrimitive.toPy(value)
 
     @ffi.callback("void(struct DjinniObjectHandle * )")
@@ -46,7 +46,7 @@ class MapStringInt32THelper:
         MapStringInt32THelper.c_data_set.remove(c_ptr)
 
     @ffi.callback("struct DjinniString *(struct DjinniObjectHandle *)")
-    def __python_next(cself):
+    def __next(cself):
         try:
             with CPyString.fromPy(next(CPyObjectProxy.toPyIter(cself))) as py_obj:
                 _ret = py_obj.release_djinni_string()
@@ -61,9 +61,9 @@ class MapStringInt32THelper:
         lib.map_string_int32_t_add_callback__get_value(MapStringInt32THelper.__get_value)
         lib.map_string_int32_t_add_callback___delete(MapStringInt32THelper.__delete)
         lib.map_string_int32_t_add_callback__get_size(MapStringInt32THelper.__get_size)
-        lib.map_string_int32_t_add_callback__python_create(MapStringInt32THelper.__python_create)
-        lib.map_string_int32_t_add_callback__python_add(MapStringInt32THelper.__python_add)
-        lib.map_string_int32_t_add_callback__python_next(MapStringInt32THelper.__python_next)
+        lib.map_string_int32_t_add_callback__create(MapStringInt32THelper.__create)
+        lib.map_string_int32_t_add_callback__add(MapStringInt32THelper.__add)
+        lib.map_string_int32_t_add_callback__next(MapStringInt32THelper.__next)
 
 MapStringInt32THelper._add_callbacks()
 

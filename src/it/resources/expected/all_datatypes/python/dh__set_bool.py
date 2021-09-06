@@ -20,13 +20,13 @@ class SetBoolHelper:
         return len(CPyObjectProxy.toPyObj(None, cself))
 
     @ffi.callback("struct DjinniObjectHandle *()")
-    def __python_create():
+    def __create():
         c_ptr = ffi.new_handle(SetBoolProxy(set()))
         SetBoolHelper.c_data_set.add(c_ptr)
         return ffi.cast("struct DjinniObjectHandle *", c_ptr)
 
     @ffi.callback("void(struct DjinniObjectHandle *, bool)")
-    def __python_add(cself, el):
+    def __add(cself, el):
         CPyObjectProxy.toPyObj(None, cself).add(CPyPrimitive.toPy(el))
 
     @ffi.callback("void(struct DjinniObjectHandle * )")
@@ -35,7 +35,7 @@ class SetBoolHelper:
         SetBoolHelper.c_data_set.remove(c_ptr)
 
     @ffi.callback("bool(struct DjinniObjectHandle *)")
-    def __python_next(cself):
+    def __next(cself):
         try:
             _ret = CPyPrimitive.fromPy(next(CPyObjectProxy.toPyIter(cself)))
             return _ret
@@ -47,9 +47,9 @@ class SetBoolHelper:
     def _add_callbacks():
         lib.set_bool_add_callback___delete(SetBoolHelper.__delete)
         lib.set_bool_add_callback__get_size(SetBoolHelper.__get_size)
-        lib.set_bool_add_callback__python_create(SetBoolHelper.__python_create)
-        lib.set_bool_add_callback__python_add(SetBoolHelper.__python_add)
-        lib.set_bool_add_callback__python_next(SetBoolHelper.__python_next)
+        lib.set_bool_add_callback__create(SetBoolHelper.__create)
+        lib.set_bool_add_callback__add(SetBoolHelper.__add)
+        lib.set_bool_add_callback__next(SetBoolHelper.__next)
 
 SetBoolHelper._add_callbacks()
 

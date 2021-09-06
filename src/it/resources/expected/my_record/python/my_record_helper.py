@@ -62,7 +62,7 @@ class MyRecordHelper:
             return ffi.NULL
 
     @ffi.callback("struct DjinniRecordHandle *(int32_t,struct DjinniString *,struct DjinniObjectHandle *,struct DjinniObjectHandle *)")
-    def python_create_my_record(id,info,store,hash):
+    def create_my_record(id,info,store,hash):
         py_rec = MyRecord(
             CPyPrimitive.toPy(id),
             CPyString.toPy(info),
@@ -81,8 +81,8 @@ class MyRecordHelper:
         lib.my_record_add_callback_get_my_record_f1(MyRecordHelper.get_my_record_f1)
         lib.my_record_add_callback_get_my_record_f2(MyRecordHelper.get_my_record_f2)
         lib.my_record_add_callback_get_my_record_f3(MyRecordHelper.get_my_record_f3)
+        lib.my_record_add_callback_create_my_record(MyRecordHelper.create_my_record)
         lib.my_record_add_callback___delete(MyRecordHelper.__delete)
-        lib.my_record_add_callback_python_create_my_record(MyRecordHelper.python_create_my_record)
 
 
 MyRecordHelper._add_callbacks()
