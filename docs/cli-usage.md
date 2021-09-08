@@ -87,7 +87,7 @@ djinni \
 | `--jni-include-prefix <prefix>` | The prefix for `#includes` of JNI header files from JNI C++ files. |
 | `--jni-include-cpp-prefix <prefix>` | The prefix for `#includes` of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
-| `--jni-base-lib-include-prefix ...` | The JNI base support library's include path. |
+| `--jni-base-lib-include-prefix ...` | The JNI base support library's include path (default: `djinni/jni/`). |
 | `--jni-generate-main <true/false>` | Generate a source file (`djinni_jni_main.cpp`) that includes the default `JNI_OnLoad` & `JNI_OnUnload` implementation from the support library. (default: `true`) |
 
 ### Objective-C
@@ -115,7 +115,7 @@ djinni \
 | `--cpp-extended-record-include-prefix <prefix>` | The prefix path for `#include` of the extended record C++ header (`.hpp`) files |
 |`--objc-extended-record-include-prefix <prefix>` | The prefix path for `#import` of the extended record Objective-C header (`.h`) files  |
 |`--objcpp-namespace <prefix>` | The namespace name to use for generated Objective-C++ classes.  |
-|`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path.  |
+|`--objc-base-lib-include-prefix ...` | The Objective-C base support library's include path (default: `djinni/objc/`).  |
 
 ### Python
 
@@ -129,7 +129,7 @@ djinni \
 | `--c-wrapper-header-out <out-folder>` | The output folder for C wrapper header files (default: the same as `--c-wrapper-out`). |
 | `--c-wrapper-include-prefix <prefix>` | The prefix for #includes of C wrapper header files from C wrapper C++ files. |
 | `--c-wrapper-include-cpp-prefix <prefix>` | The prefix for #includes of C++ header files from C wrapper C++ files. |
-| `--c-wrapper-base-lib-include-prefix <prefix>` | The C wrapper base support library's include path. |
+| `--c-wrapper-base-lib-include-prefix <prefix>` | The C wrapper base support library's include path (default: `djinni/cwrapper/`). |
 | `--py-import-prefix <import-prefix>` | The import prefix used within python generated files (default: "") |
 
 ### C++/CLI
@@ -139,7 +139,7 @@ djinni \
 | `--cppcli-out <out-folder>` | The output folder for C++/CLI files (Generator disabled if unspecified). |
 | `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
 | `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
-| `--cppcli-base-lib-include-prefix <prefix>` | The C++/CLI base support library's include path. |
+| `--cppcli-base-lib-include-prefix <prefix>` | The C++/CLI base support library's include path (default: `djinni/cppcli/`). |
 
 
 ### Yaml Generation
