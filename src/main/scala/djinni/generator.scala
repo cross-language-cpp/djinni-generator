@@ -61,6 +61,7 @@ package object generatorTools {
                    jniNamespace: String,
                    jniClassIdentStyle: IdentConverter,
                    jniFileIdentStyle: IdentConverter,
+                   jniBaseLibIncludePrefix: String,
                    jniGenerateMain: Boolean,
                    cppExt: String,
                    cppHeaderExt: String,
@@ -78,11 +79,13 @@ package object generatorTools {
                    objcppIncludeCppPrefix: String,
                    objcppIncludeObjcPrefix: String,
                    objcppNamespace: String,
+                   objcBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderWriter: Option[Writer],
                    cppCliOutFolder: Option[File],
                    cppCliIdentStyle: CppCliIdentStyle,
                    cppCliNamespace: String,
                    cppCliIncludeCppPrefix: String,
+                   cppCliBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderName: Option[String],
                    objcClosedEnums: Boolean,
                    outFileListWriter: Option[Writer],
@@ -100,6 +103,7 @@ package object generatorTools {
                    cWrapperHeaderOutFolder: Option[File],
                    cWrapperIncludePrefix: String,
                    cWrapperIncludeCppPrefix: String,
+                   cWrapperBaseLibIncludePrefix: String,
                    pyImportPrefix: String)
 
   def preComma(s: String) = {

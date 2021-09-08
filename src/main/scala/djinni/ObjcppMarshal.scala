@@ -5,8 +5,6 @@ import djinni.generatorTools._
 import djinni.meta._
 
 class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
-  final val objcBaseLibIncludePrefix = "djinni/objc/"
-
   private val cppMarshal = new CppMarshal(spec)
   private val objcMarshal = new ObjcMarshal(spec)
 
@@ -34,7 +32,7 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
 
   def references(m: Meta): Seq[SymbolReference] = m match {
     case o: MOpaque =>
-      List(ImportRef(q(objcBaseLibIncludePrefix + "DJIMarshal+Private.h")))
+      List(ImportRef(q(spec.objcBaseLibIncludePrefix + "DJIMarshal+Private.h")))
     case d: MDef => d.defType match {
       case DEnum | DInterface =>
         List(ImportRef(include(m)))

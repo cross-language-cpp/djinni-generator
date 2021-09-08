@@ -97,12 +97,14 @@ class IntegrationTest extends FunSpec {
       cmd += s" --java-out $baseOutputPath/$idl/$JAVA"
       cmd += s" --jni-out $baseOutputPath/$idl/$JNI"
       cmd += s" --jni-header-out $baseOutputPath/$idl/$JNI_HEADERS"
+      cmd += " --jni-base-lib-include-prefix djinni/jni/"
     }
     if (objc) {
       cmd += s" --objc-out $baseOutputPath/$idl/$OBJC"
       cmd += s" --objc-header-out $baseOutputPath/$idl/$OBJC_HEADERS"
       cmd += " --objc-swift-bridging-header bridging-header"
       cmd += " --objc-type-prefix IT"
+      cmd += " --objc-base-lib-include-prefix djinni/objc/"
       cmd += s" --objcpp-out $baseOutputPath/$idl/$OBJCPP"
       cmd += s" --objcpp-header-out $baseOutputPath/$idl/$OBJCPP_HEADERS"
     }
@@ -115,10 +117,12 @@ class IntegrationTest extends FunSpec {
       cmd += s" --c-wrapper-header-out $baseOutputPath/$idl/$CWRAPPER_HEADERS"
       cmd += s" --c-wrapper-include-prefix ../$CWRAPPER_HEADERS/"
       cmd += s" --c-wrapper-include-cpp-prefix ../$CPP_HEADERS/"
+      cmd += " --c-wrapper-base-lib-include-prefix djinni/cwrapper/"
     }
     if (cppCLI) {
       cmd += s" --cppcli-out $baseOutputPath/$idl/$CPPCLI"
       cmd += s" --cppcli-include-cpp-prefix ../$CPP_HEADERS/"
+      cmd += " --cppcli-base-lib-include-prefix djinni/cppcli/"
     }
     if (useNNHeader) {
       cmd += " --cpp-nn-header nn.hpp"
