@@ -27,7 +27,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   def typename(ty: TypeRef, needsHandle: Boolean): String = toCppCliType(ty, None, Seq(), needsHandle)
   def typename(name: String, ty: TypeDef): String = idCs.ty(name)
 
-  override def fqTypename(tm: meta.MExpr): String = toCppCliType(tm, None, Seq(), needsHandle = true)
+  override def fqTypename(tm: meta.MExpr): String = toCppCliType(tm, Some(spec.cppCliNamespace.replace(".", "::")), Seq(), needsHandle = true)
 
   override def paramType(tm: meta.MExpr): String = typename(tm)
   def paramType(tm: MExpr, scopeSymbols: Seq[String]): String = toCppCliType(tm, None, scopeSymbols, needsHandle = true)
