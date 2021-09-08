@@ -1,0 +1,1 @@
+src/it/resources/result/my_record_omit_default_ctor/cpp-headers/my_record_omit_default_ctor.hpp

@@ -57,4 +57,21 @@ struct AllDatatypes final {
     , mapData(std::move(mapData_))
     , optionalData(std::move(optionalData_))
     {}
+
+    AllDatatypes()
+    : booleanData()
+    , integer8Data()
+    , integer16Data()
+    , integer32Data()
+    , integer64Data()
+    , float32Data()
+    , float64Data()
+    , stringData()
+    , binaryData()
+    , dateData()
+    , listData()
+    , setData()
+    , mapData()
+    , optionalData()
+    {}
 };

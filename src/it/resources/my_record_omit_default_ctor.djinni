@@ -1,0 +1,6 @@
+my_record_omit_default_ctor = record {
+  id: i32;
+  info: string;
+  store: set<string>;
+  hash: map<string, i32>;
+}
