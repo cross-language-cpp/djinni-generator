@@ -31,13 +31,13 @@ class MapInt8TBoolHelper:
         return len(CPyObjectProxy.toPyObj(None, cself))
 
     @ffi.callback("struct DjinniObjectHandle *()")
-    def __python_create():
+    def __create():
         c_ptr = ffi.new_handle(MapInt8TBoolProxy(dict()))
         MapInt8TBoolHelper.c_data_set.add(c_ptr)
         return ffi.cast("struct DjinniObjectHandle *", c_ptr)
 
     @ffi.callback("void(struct DjinniObjectHandle *, int8_t, bool)")
-    def __python_add(cself, key, value):
+    def __add(cself, key, value):
         CPyObjectProxy.toPyObj(None, cself)[CPyPrimitive.toPy(key)] = CPyPrimitive.toPy(value)
 
     @ffi.callback("void(struct DjinniObjectHandle * )")
@@ -46,7 +46,7 @@ class MapInt8TBoolHelper:
         MapInt8TBoolHelper.c_data_set.remove(c_ptr)
 
     @ffi.callback("int8_t(struct DjinniObjectHandle *)")
-    def __python_next(cself):
+    def __next(cself):
         try:
             _ret = CPyPrimitive.fromPy(next(CPyObjectProxy.toPyIter(cself)))
             return _ret
@@ -59,9 +59,9 @@ class MapInt8TBoolHelper:
         lib.map_int8_t_bool_add_callback__get_value(MapInt8TBoolHelper.__get_value)
         lib.map_int8_t_bool_add_callback___delete(MapInt8TBoolHelper.__delete)
         lib.map_int8_t_bool_add_callback__get_size(MapInt8TBoolHelper.__get_size)
-        lib.map_int8_t_bool_add_callback__python_create(MapInt8TBoolHelper.__python_create)
-        lib.map_int8_t_bool_add_callback__python_add(MapInt8TBoolHelper.__python_add)
-        lib.map_int8_t_bool_add_callback__python_next(MapInt8TBoolHelper.__python_next)
+        lib.map_int8_t_bool_add_callback__create(MapInt8TBoolHelper.__create)
+        lib.map_int8_t_bool_add_callback__add(MapInt8TBoolHelper.__add)
+        lib.map_int8_t_bool_add_callback__next(MapInt8TBoolHelper.__next)
 
 MapInt8TBoolHelper._add_callbacks()
 

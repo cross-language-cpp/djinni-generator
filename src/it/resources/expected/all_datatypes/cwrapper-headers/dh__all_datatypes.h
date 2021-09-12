@@ -24,5 +24,5 @@ void all_datatypes_add_callback_get_all_datatypes_f11(struct DjinniObjectHandle 
 void all_datatypes_add_callback_get_all_datatypes_f12(struct DjinniObjectHandle *( * ptr)(struct DjinniRecordHandle *));
 void all_datatypes_add_callback_get_all_datatypes_f13(struct DjinniObjectHandle *( * ptr)(struct DjinniRecordHandle *));
 void all_datatypes_add_callback_get_all_datatypes_f14(struct DjinniBoxedBool *( * ptr)(struct DjinniRecordHandle *));
-void all_datatypes_add_callback_python_create_all_datatypes(struct DjinniRecordHandle *( * ptr)(bool, int8_t, int16_t, int32_t, int64_t, float, double, struct DjinniString *, struct DjinniBinary *, uint64_t, struct DjinniObjectHandle *, struct DjinniObjectHandle *, struct DjinniObjectHandle *, struct DjinniBoxedBool *));
+void all_datatypes_add_callback_create_all_datatypes(struct DjinniRecordHandle *( * ptr)(bool, int8_t, int16_t, int32_t, int64_t, float, double, struct DjinniString *, struct DjinniBinary *, uint64_t, struct DjinniObjectHandle *, struct DjinniObjectHandle *, struct DjinniObjectHandle *, struct DjinniBoxedBool *));
 void all_datatypes_add_callback___delete(void( * ptr)(struct DjinniRecordHandle *));

@@ -28,7 +28,7 @@ class CustomDatatypeHelper:
             return ffi.NULL
 
     @ffi.callback("struct DjinniRecordHandle *(struct DjinniString *)")
-    def python_create_custom_datatype(recordData):
+    def create_custom_datatype(recordData):
         py_rec = CustomDatatype(
             CPyString.toPy(recordData))
         return CPyRecord.fromPy(CustomDatatype.c_data_set, py_rec) #to do: can be optional?
@@ -41,8 +41,8 @@ class CustomDatatypeHelper:
     @staticmethod
     def _add_callbacks():
         lib.custom_datatype_add_callback_get_custom_datatype_f1(CustomDatatypeHelper.get_custom_datatype_f1)
+        lib.custom_datatype_add_callback_create_custom_datatype(CustomDatatypeHelper.create_custom_datatype)
         lib.custom_datatype_add_callback___delete(CustomDatatypeHelper.__delete)
-        lib.custom_datatype_add_callback_python_create_custom_datatype(CustomDatatypeHelper.python_create_custom_datatype)
 
 CustomDatatypeHelper._add_callbacks()
 

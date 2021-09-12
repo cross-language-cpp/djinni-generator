@@ -14,46 +14,46 @@
 #include <optional>
 #include <vector>
 
-static void(*s_py_callback_list_bool___delete)(DjinniObjectHandle *);
+static void(*s_callback_list_bool___delete)(DjinniObjectHandle *);
 void list_bool_add_callback___delete(void(* ptr)(DjinniObjectHandle *)) {
-    s_py_callback_list_bool___delete = ptr;
+    s_callback_list_bool___delete = ptr;
 }
 
 void list_bool___delete(DjinniObjectHandle * drh) {
-    s_py_callback_list_bool___delete(drh);
+    s_callback_list_bool___delete(drh);
 }
 void optional_list_bool___delete(DjinniOptionalObjectHandle *  drh) {
-    s_py_callback_list_bool___delete((DjinniObjectHandle *) drh);
+    s_callback_list_bool___delete((DjinniObjectHandle *) drh);
 }
-static bool ( * s_py_callback_list_bool__get_elem)(DjinniObjectHandle *, size_t);
+static bool ( * s_callback_list_bool__get_elem)(DjinniObjectHandle *, size_t);
 
 void list_bool_add_callback__get_elem(bool( * ptr)(DjinniObjectHandle *, size_t)) {
-    s_py_callback_list_bool__get_elem = ptr;
+    s_callback_list_bool__get_elem = ptr;
 }
 
-static size_t ( * s_py_callback_list_bool__get_size)(DjinniObjectHandle *);
+static size_t ( * s_callback_list_bool__get_size)(DjinniObjectHandle *);
 
 void list_bool_add_callback__get_size(size_t( * ptr)(DjinniObjectHandle *)) {
-    s_py_callback_list_bool__get_size = ptr;
+    s_callback_list_bool__get_size = ptr;
 }
 
-static DjinniObjectHandle * ( * s_py_callback_list_bool__python_create)(void);
+static DjinniObjectHandle * ( * s_callback_list_bool__create)(void);
 
-void list_bool_add_callback__python_create(DjinniObjectHandle *( * ptr)(void)) {
-    s_py_callback_list_bool__python_create = ptr;
+void list_bool_add_callback__create(DjinniObjectHandle *( * ptr)(void)) {
+    s_callback_list_bool__create = ptr;
 }
 
-static void ( * s_py_callback_list_bool__python_add)(DjinniObjectHandle *, bool);
+static void ( * s_callback_list_bool__add)(DjinniObjectHandle *, bool);
 
-void list_bool_add_callback__python_add(void( * ptr)(DjinniObjectHandle *, bool)) {
-    s_py_callback_list_bool__python_add = ptr;
+void list_bool_add_callback__add(void( * ptr)(DjinniObjectHandle *, bool)) {
+    s_callback_list_bool__add = ptr;
 }
 
 djinni::Handle<DjinniObjectHandle> DjinniListBool::fromCpp(const std::vector<bool> & dc) {
-    djinni::Handle<DjinniObjectHandle> _handle(s_py_callback_list_bool__python_create(), & list_bool___delete);
+    djinni::Handle<DjinniObjectHandle> _handle(s_callback_list_bool__create(), & list_bool___delete);
     size_t size = dc.size();
     for (int i = 0; i < size; i++) {
-        s_py_callback_list_bool__python_add(_handle.get(), dc[i]);
+        s_callback_list_bool__add(_handle.get(), dc[i]);
     }
 
     return _handle;
@@ -61,11 +61,11 @@ djinni::Handle<DjinniObjectHandle> DjinniListBool::fromCpp(const std::vector<boo
 
 std::vector<bool> DjinniListBool::toCpp(djinni::Handle<DjinniObjectHandle> dh) {
     std::vector<bool>_ret;
-    size_t size = s_py_callback_list_bool__get_size(dh.get());
+    size_t size = s_callback_list_bool__get_size(dh.get());
     _ret.reserve(size);
 
     for (int i = 0; i < size; i++) {
-        _ret.push_back(s_py_callback_list_bool__get_elem(dh.get(), i));
+        _ret.push_back(s_callback_list_bool__get_elem(dh.get(), i));
     }
 
     return _ret;

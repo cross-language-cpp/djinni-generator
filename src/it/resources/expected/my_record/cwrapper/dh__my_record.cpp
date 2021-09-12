@@ -10,45 +10,45 @@
 #include "dh__my_record.hpp"
 #include "dh__set_string.hpp"
 
-static void(*s_py_callback_my_record___delete)(DjinniRecordHandle * );
+static void(*s_callback_my_record___delete)(DjinniRecordHandle * );
 void my_record_add_callback___delete(void(* ptr)(DjinniRecordHandle * )) {
-    s_py_callback_my_record___delete = ptr;
+    s_callback_my_record___delete = ptr;
 }
 
 void my_record___delete(DjinniRecordHandle * drh) {
-    s_py_callback_my_record___delete(drh);
+    s_callback_my_record___delete(drh);
 }
 void optional_my_record___delete(DjinniOptionalRecordHandle * drh) {
-    s_py_callback_my_record___delete((DjinniRecordHandle *) drh); // can't static cast, find better way
+    s_callback_my_record___delete((DjinniRecordHandle *) drh); // can't static cast, find better way
 }
-static int32_t ( * s_py_callback_my_record_get_my_record_f1)(DjinniRecordHandle *);
+static int32_t ( * s_callback_my_record_get_my_record_f1)(DjinniRecordHandle *);
 
 void my_record_add_callback_get_my_record_f1(int32_t( * ptr)(DjinniRecordHandle *)) {
-    s_py_callback_my_record_get_my_record_f1 = ptr;
+    s_callback_my_record_get_my_record_f1 = ptr;
 }
 
-static DjinniString * ( * s_py_callback_my_record_get_my_record_f2)(DjinniRecordHandle *);
+static DjinniString * ( * s_callback_my_record_get_my_record_f2)(DjinniRecordHandle *);
 
 void my_record_add_callback_get_my_record_f2(DjinniString *( * ptr)(DjinniRecordHandle *)) {
-    s_py_callback_my_record_get_my_record_f2 = ptr;
+    s_callback_my_record_get_my_record_f2 = ptr;
 }
 
-static DjinniObjectHandle * ( * s_py_callback_my_record_get_my_record_f3)(DjinniRecordHandle *);
+static DjinniObjectHandle * ( * s_callback_my_record_get_my_record_f3)(DjinniRecordHandle *);
 
 void my_record_add_callback_get_my_record_f3(DjinniObjectHandle *( * ptr)(DjinniRecordHandle *)) {
-    s_py_callback_my_record_get_my_record_f3 = ptr;
+    s_callback_my_record_get_my_record_f3 = ptr;
 }
 
-static DjinniObjectHandle * ( * s_py_callback_my_record_get_my_record_f4)(DjinniRecordHandle *);
+static DjinniObjectHandle * ( * s_callback_my_record_get_my_record_f4)(DjinniRecordHandle *);
 
 void my_record_add_callback_get_my_record_f4(DjinniObjectHandle *( * ptr)(DjinniRecordHandle *)) {
-    s_py_callback_my_record_get_my_record_f4 = ptr;
+    s_callback_my_record_get_my_record_f4 = ptr;
 }
 
-static DjinniRecordHandle * ( * s_py_callback_my_record_python_create_my_record)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *);
+static DjinniRecordHandle * ( * s_callback_my_record_create_my_record)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *);
 
-void my_record_add_callback_python_create_my_record(DjinniRecordHandle *( * ptr)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *)) {
-    s_py_callback_my_record_python_create_my_record = ptr;
+void my_record_add_callback_create_my_record(DjinniRecordHandle *( * ptr)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *)) {
+    s_callback_my_record_create_my_record = ptr;
 }
 
 djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr) {
@@ -57,7 +57,7 @@ djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr)
     auto  _field_hash = DjinniMapStringInt32T::fromCpp(dr.hash);
 
     djinni::Handle<DjinniRecordHandle> _aux(
-        s_py_callback_my_record_python_create_my_record(
+        s_callback_my_record_create_my_record(
             dr.id,
             _field_info.release(),
             _field_store.release(),
@@ -67,12 +67,12 @@ djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr)
 }
 
 ::MyRecord DjinniMyRecord::toCpp(djinni::Handle<DjinniRecordHandle> dh) {
-    std::unique_ptr<DjinniString> _field_info(s_py_callback_my_record_get_my_record_f2(dh.get()));
-    djinni::Handle<DjinniObjectHandle> _field_store(s_py_callback_my_record_get_my_record_f3(dh.get()), set_string___delete);
-    djinni::Handle<DjinniObjectHandle> _field_hash(s_py_callback_my_record_get_my_record_f4(dh.get()), map_string_int32_t___delete);
+    std::unique_ptr<DjinniString> _field_info(s_callback_my_record_get_my_record_f2(dh.get()));
+    djinni::Handle<DjinniObjectHandle> _field_store(s_callback_my_record_get_my_record_f3(dh.get()), set_string___delete);
+    djinni::Handle<DjinniObjectHandle> _field_hash(s_callback_my_record_get_my_record_f4(dh.get()), map_string_int32_t___delete);
 
     auto _aux = ::MyRecord(
-        s_py_callback_my_record_get_my_record_f1(dh.get()),
+        s_callback_my_record_get_my_record_f1(dh.get()),
         DjinniString::toCpp(std::move( _field_info)),
         DjinniSetString::toCpp(std::move( _field_store)),
         DjinniMapStringInt32T::toCpp(std::move( _field_hash)));

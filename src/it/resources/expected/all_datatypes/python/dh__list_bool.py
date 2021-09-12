@@ -29,13 +29,13 @@ class ListBoolHelper:
         return len(CPyObject.toPy(None, cself))
 
     @ffi.callback("struct DjinniObjectHandle *()")
-    def __python_create():
+    def __create():
         c_ptr = ffi.new_handle(list())
         ListBoolHelper.c_data_set.add(c_ptr)
         return ffi.cast("struct DjinniObjectHandle *", c_ptr)
 
     @ffi.callback("void(struct DjinniObjectHandle *, bool)")
-    def __python_add(cself, el):
+    def __add(cself, el):
         CPyObject.toPy(None, cself).append(CPyPrimitive.toPy(el))
 
     @ffi.callback("void(struct DjinniObjectHandle * )")
@@ -48,8 +48,8 @@ class ListBoolHelper:
         lib.list_bool_add_callback__get_elem(ListBoolHelper.__get_elem)
         lib.list_bool_add_callback___delete(ListBoolHelper.__delete)
         lib.list_bool_add_callback__get_size(ListBoolHelper.__get_size)
-        lib.list_bool_add_callback__python_create(ListBoolHelper.__python_create)
-        lib.list_bool_add_callback__python_add(ListBoolHelper.__python_add)
+        lib.list_bool_add_callback__create(ListBoolHelper.__create)
+        lib.list_bool_add_callback__add(ListBoolHelper.__add)
 
 ListBoolHelper._add_callbacks()
 

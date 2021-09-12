@@ -157,7 +157,7 @@ class AllDatatypesHelper:
             return ffi.NULL
 
     @ffi.callback("struct DjinniRecordHandle *(bool,int8_t,int16_t,int32_t,int64_t,float,double,struct DjinniString *,struct DjinniBinary *,uint64_t,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniBoxedBool *)")
-    def python_create_all_datatypes(booleanData,integer8Data,integer16Data,integer32Data,integer64Data,float32Data,float64Data,stringData,binaryData,dateData,listData,setData,mapData,optionalData):
+    def create_all_datatypes(booleanData,integer8Data,integer16Data,integer32Data,integer64Data,float32Data,float64Data,stringData,binaryData,dateData,listData,setData,mapData,optionalData):
         py_rec = AllDatatypes(
             CPyPrimitive.toPy(booleanData),
             CPyPrimitive.toPy(integer8Data),
@@ -183,6 +183,7 @@ class AllDatatypesHelper:
     @staticmethod
     def _add_callbacks():
         lib.all_datatypes_add_callback_get_all_datatypes_f10(AllDatatypesHelper.get_all_datatypes_f10)
+        lib.all_datatypes_add_callback_create_all_datatypes(AllDatatypesHelper.create_all_datatypes)
         lib.all_datatypes_add_callback_get_all_datatypes_f1(AllDatatypesHelper.get_all_datatypes_f1)
         lib.all_datatypes_add_callback_get_all_datatypes_f8(AllDatatypesHelper.get_all_datatypes_f8)
         lib.all_datatypes_add_callback_get_all_datatypes_f2(AllDatatypesHelper.get_all_datatypes_f2)
@@ -194,7 +195,6 @@ class AllDatatypesHelper:
         lib.all_datatypes_add_callback_get_all_datatypes_f4(AllDatatypesHelper.get_all_datatypes_f4)
         lib.all_datatypes_add_callback_get_all_datatypes_f14(AllDatatypesHelper.get_all_datatypes_f14)
         lib.all_datatypes_add_callback_get_all_datatypes_f5(AllDatatypesHelper.get_all_datatypes_f5)
-        lib.all_datatypes_add_callback_python_create_all_datatypes(AllDatatypesHelper.python_create_all_datatypes)
         lib.all_datatypes_add_callback_get_all_datatypes_f6(AllDatatypesHelper.get_all_datatypes_f6)
         lib.all_datatypes_add_callback___delete(AllDatatypesHelper.__delete)
         lib.all_datatypes_add_callback_get_all_datatypes_f7(AllDatatypesHelper.get_all_datatypes_f7)

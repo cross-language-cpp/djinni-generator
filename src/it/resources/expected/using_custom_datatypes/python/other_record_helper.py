@@ -30,7 +30,7 @@ class OtherRecordHelper:
             return ffi.NULL
 
     @ffi.callback("struct DjinniRecordHandle *(struct DjinniRecordHandle *)")
-    def python_create_other_record(customDatatypeData):
+    def create_other_record(customDatatypeData):
         py_rec = OtherRecord(
             CPyRecord.toPy(CustomDatatype.c_data_set, customDatatypeData))
         return CPyRecord.fromPy(OtherRecord.c_data_set, py_rec) #to do: can be optional?
@@ -42,9 +42,9 @@ class OtherRecordHelper:
 
     @staticmethod
     def _add_callbacks():
-        lib.other_record_add_callback_python_create_other_record(OtherRecordHelper.python_create_other_record)
         lib.other_record_add_callback_get_other_record_f1(OtherRecordHelper.get_other_record_f1)
         lib.other_record_add_callback___delete(OtherRecordHelper.__delete)
+        lib.other_record_add_callback_create_other_record(OtherRecordHelper.create_other_record)
 
 OtherRecordHelper._add_callbacks()
 
