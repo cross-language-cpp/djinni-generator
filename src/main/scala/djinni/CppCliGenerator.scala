@@ -25,6 +25,7 @@ import djinni.writer.IndentWriter
 import scala.collection.mutable
 
 class CppCliGenerator(spec: Spec) extends Generator(spec) {
+  final val cppCliBaseLibIncludePrefix = "djinni/cppcli/"
 
   val marshal = new CppCliMarshal(spec)
   val cppMarshal = new CppMarshal(spec)
@@ -234,7 +235,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       }
     })
 
-    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Marshal.hpp"))
+    refs.cpp.add("#include " + q(cppCliBaseLibIncludePrefix + "Marshal.hpp"))
     refs.cpp.add("#include <memory>")
 
     writeCppCliCppFile(ident, origin, refs.cpp, w => {
@@ -390,9 +391,9 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       }
     })
 
-    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Marshal.hpp"))
-    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "Error.hpp"))
-    refs.cpp.add("#include " + q(spec.cppCliBaseLibIncludePrefix + "WrapperCache.hpp"))
+    refs.cpp.add("#include " + q(cppCliBaseLibIncludePrefix + "Marshal.hpp"))
+    refs.cpp.add("#include " + q(cppCliBaseLibIncludePrefix + "Error.hpp"))
+    refs.cpp.add("#include " + q(cppCliBaseLibIncludePrefix + "WrapperCache.hpp"))
     i.methods.foreach(m => {
       m.params.foreach(p => {
         def include(tm: MExpr): Unit = tm.base match {

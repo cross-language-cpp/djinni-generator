@@ -26,7 +26,6 @@ import djinni.writer.IndentWriter
 import scala.collection.mutable
 
 class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
-
   val objcMarshal = new ObjcMarshal(spec)
   val objcppMarshal = new ObjcppMarshal(spec)
   val cppMarshal = new CppMarshal(spec)
@@ -50,7 +49,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
   override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
     var imports = mutable.TreeSet[String]()
-    imports.add("#import " + q(spec.objcBaseLibIncludePrefix + "DJIMarshal+Private.h"))
+    imports.add("#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIMarshal+Private.h"))
     imports.add("!#include " + q(spec.objcppIncludeCppPrefix + spec.cppFileIdentStyle(ident) + "." + spec.cppHeaderExt))
 
     writeObjcFile(ident.name, isHeader = true, origin, imports, w => {} )
@@ -125,9 +124,9 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     })
 
     if (i.ext.cpp) {
-      refs.body.add("#import " + q(spec.objcBaseLibIncludePrefix + "DJICppWrapperCache+Private.h"))
+      refs.body.add("#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJICppWrapperCache+Private.h"))
       refs.body.add("#include <utility>")
-      refs.body.add("#import " + q(spec.objcBaseLibIncludePrefix + "DJIError.h"))
+      refs.body.add("#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIError.h"))
       refs.body.add("#include <exception>")
     }
     if (spec.cppNnType.isDefined || spec.cppNnCheckExpression.isEmpty) {
@@ -135,11 +134,11 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     }
 
     if (i.ext.objc) {
-      refs.body.add("#import " + q(spec.objcBaseLibIncludePrefix + "DJIObjcWrapperCache+Private.h"))
+      refs.body.add("#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIObjcWrapperCache+Private.h"))
     }
 
     if (!i.ext.cpp && !i.ext.objc) {
-      refs.body.add("#import " + q(spec.objcBaseLibIncludePrefix + "DJIError.h"))
+      refs.body.add("#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIError.h"))
     }
 
     writeObjcFile(ident.name, isHeader = false, origin, refs.body, w => {

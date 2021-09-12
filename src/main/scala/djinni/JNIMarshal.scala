@@ -5,6 +5,7 @@ import djinni.generatorTools._
 import djinni.meta._
 
 class JNIMarshal(spec: Spec) extends Marshal(spec) {
+  final val jniBaseLibIncludePrefix = "djinni/jni/"
 
   // For JNI typename() is always fully qualified and describes the mangled Java type to be used in field/method signatures
   override def typename(tm: MExpr): String = javaTypeSignature(tm)
@@ -34,7 +35,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
   private def helperClass(tm: MExpr): String = helperName(tm) + helperTemplates(tm)
 
   def references(m: Meta, exclude: String = ""): Seq[SymbolReference] = m match {
-    case o: MOpaque => List(ImportRef(q(spec.jniBaseLibIncludePrefix + "Marshal.hpp")))
+    case o: MOpaque => List(ImportRef(q(jniBaseLibIncludePrefix + "Marshal.hpp")))
     case d: MDef => List(ImportRef(include(d.name)))
     case e: MExtern => List(ImportRef(e.jni.header.get))
     case _ => List()

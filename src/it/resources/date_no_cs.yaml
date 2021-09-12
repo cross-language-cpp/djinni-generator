@@ -16,7 +16,7 @@ objc:
   hash: '(NSUInteger)%s.timeIntervalSinceReferenceDate'
 objcpp:
   translator: '::djinni::Date'
-  header: '"DJIMarshal+Private.h"'
+  header: '"djinni/objc/DJIMarshal+Private.h"'
 java:
   typename: 'java.util.Date'
   boxed: 'java.util.Date'
