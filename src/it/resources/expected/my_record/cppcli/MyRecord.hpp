@@ -5,6 +5,7 @@
 
 #include "../cpp-headers/my_record.hpp"
 
+/** record comment */
 [System::Serializable]
 public ref class MyRecord {
 public:
@@ -50,6 +51,7 @@ internal:
     static CsType FromCpp(const CppType& cpp);
 
 private:
+    /** record property comment */
     int _id;
     System::String^ _info;
     System::Collections::Generic::HashSet<System::String^>^ _store;

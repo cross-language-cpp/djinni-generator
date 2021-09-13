@@ -5,9 +5,11 @@
 
 #include "../cpp-headers/my_flags.hpp"
 
+/** flag comment */
 [System::Flags]
 public enum class MyFlags {
     NoFlags = 0,
+    /** flag option comment */
     Flag1 = 1 << 0,
     Flag2 = 1 << 1,
     Flag3 = 1 << 2,

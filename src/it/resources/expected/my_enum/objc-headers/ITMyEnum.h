@@ -3,8 +3,10 @@
 
 #import <Foundation/Foundation.h>
 
+/** enum comment */
 typedef NS_ENUM(NSInteger, ITMyEnum)
 {
+    /** enum option comment */
     ITMyEnumOption1,
     ITMyEnumOption2,
     ITMyEnumOption3,

@@ -1,4 +1,6 @@
+# enum comment
 my_enum = enum {
+  # enum option comment
   option1;
   option2;
   option3;

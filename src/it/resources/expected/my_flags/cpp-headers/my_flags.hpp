@@ -5,8 +5,10 @@
 
 #include <functional>
 
+/** flag comment */
 enum class MyFlags : unsigned {
     NO_FLAGS = 0,
+    /** flag option comment */
     FLAG1 = 1 << 0,
     FLAG2 = 1 << 1,
     FLAG3 = 1 << 2,

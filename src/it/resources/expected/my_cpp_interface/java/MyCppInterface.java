@@ -5,10 +5,12 @@ package djinni.it;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/** interface comment */
 public abstract class MyCppInterface {
     /** Interfaces can also have constants */
     public static final int VERSION = 1;
 
+    /** method comment */
     public abstract void methodReturningNothing(int value);
 
     public abstract int methodReturningSomeType(String key);

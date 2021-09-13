@@ -6,6 +6,7 @@ package djinni.it;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/** record comment */
 public final class MyRecord {
 
     public static final String STRING_CONST = "Constants can be put here";
@@ -30,6 +31,7 @@ public final class MyRecord {
         this.hash = hash;
     }
 
+    /** record property comment */
     public int getId() {
         return id;
     }

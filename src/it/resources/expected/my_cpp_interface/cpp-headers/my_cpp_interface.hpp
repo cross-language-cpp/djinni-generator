@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <string>
 
+/** interface comment */
 class MyCppInterface {
 public:
     virtual ~MyCppInterface() {}
@@ -13,6 +14,7 @@ public:
     /** Interfaces can also have constants */
     static constexpr int32_t VERSION = 1;
 
+    /** method comment */
     virtual void method_returning_nothing(int32_t value) = 0;
 
     virtual int32_t method_returning_some_type(const std::string & key) = 0;

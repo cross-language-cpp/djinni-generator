@@ -1,4 +1,6 @@
+# flag comment
 my_flags = flags {
+  # flag option comment
   flag1;
   flag2;
   flag3;

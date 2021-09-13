@@ -6,8 +6,10 @@
 #include "../cpp-headers/my_cpp_interface.hpp"
 #include <memory>
 
+/** interface comment */
 public ref class MyCppInterface abstract {
 public:
+    /** method comment */
     virtual void MethodReturningNothing(int value) abstract;
 
     virtual int MethodReturningSomeType(System::String^ key) abstract;

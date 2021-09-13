@@ -1,4 +1,6 @@
+# interface comment
 my_cpp_interface = interface +c {
+  # method comment
   method_returning_nothing(value: i32);
   method_returning_some_type(key: string): i32;
   const method_changing_nothing(): i32;

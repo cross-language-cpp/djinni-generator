@@ -1,4 +1,6 @@
+# record comment
 my_record = record {
+  # record property comment
   id: i32;
   info: string;
   store: set<string>;

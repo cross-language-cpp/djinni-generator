@@ -357,11 +357,13 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     val methodNamesInScope = i.methods.map(m => idCs.method(m.ident))
 
     writeCppCliHppFile(ident, origin, refs.hpp, refs.hppFwds, w => {
+      writeDoc(w, doc)
       w.w(s"public ref class $self abstract").bracedSemi {
         w.wlOutdent("public:")
         val skipFirst = new SkipFirst
         i.methods.foreach(m => {
           skipFirst {w.wl}
+          writeDoc(w, m.doc)
           val staticVirtual = if (m.static) "static " else "virtual "
           val params = m.params.map(p => {
             marshal.paramType(p.ty, methodNamesInScope) + " " + idCs.local(p.ident)

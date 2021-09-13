@@ -6,8 +6,10 @@
 /** Interfaces can also have constants */
 extern int32_t const ITMyCppInterfaceVersion;
 
+/** interface comment */
 @interface ITMyCppInterface : NSObject
 
+/** method comment */
 - (void)methodReturningNothing:(int32_t)value;
 
 - (int32_t)methodReturningSomeType:(nonnull NSString *)key;
