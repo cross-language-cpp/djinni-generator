@@ -3,6 +3,7 @@
 
 #import <Foundation/Foundation.h>
 
+/** record comment */
 @interface ITMyRecord : NSObject
 - (nonnull instancetype)initWithId:(int32_t)id
                               info:(nonnull NSString *)info
@@ -13,6 +14,7 @@
                                  store:(nonnull NSSet<NSString *> *)store
                                   hash:(nonnull NSDictionary<NSString *, NSNumber *> *)hash;
 
+/** record property comment */
 @property (nonatomic, readonly) int32_t id;
 
 @property (nonatomic, readonly, nonnull) NSString * info;

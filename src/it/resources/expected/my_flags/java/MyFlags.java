@@ -3,7 +3,9 @@
 
 package djinni.it;
 
+/** flag comment */
 public enum MyFlags {
+    /** flag option comment */
     FLAG1,
     FLAG2,
     FLAG3,

@@ -9,6 +9,9 @@ from djinni import exception # this forces run of __init__.py which gives cpp op
 from enum import IntEnum
 
 class MyEnum(IntEnum):
+    """ enum comment """
+
+    """ enum option comment """
     Option1 = 0
     Option2 = 1
     Option3 = 2

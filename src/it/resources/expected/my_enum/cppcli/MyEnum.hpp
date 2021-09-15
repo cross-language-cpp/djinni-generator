@@ -5,7 +5,9 @@
 
 #include "../cpp-headers/my_enum.hpp"
 
+/** enum comment */
 public enum class MyEnum {
+    /** enum option comment */
     Option1,
     Option2,
     Option3,

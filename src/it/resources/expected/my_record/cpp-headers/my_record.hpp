@@ -9,9 +9,11 @@
 #include <unordered_set>
 #include <utility>
 
+/** record comment */
 struct MyRecord final {
 
     static std::string const STRING_CONST;
+    /** record property comment */
     int32_t id;
     std::string info;
     std::unordered_set<std::string> store;

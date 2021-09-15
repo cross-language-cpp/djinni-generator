@@ -9,7 +9,10 @@ from djinni import exception # this forces run of __init__.py which gives cpp op
 from enum import IntFlag
 
 class MyFlags(IntFlag):
+    """ flag comment """
+
     No_Flags = 0
+    """ flag option comment """
     Flag1 = 1
     Flag2 = 2
     Flag3 = 4

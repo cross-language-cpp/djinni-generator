@@ -13,6 +13,7 @@ from djinni import exception # this forces run of __init__.py which gives cpp op
 
 class MyCppInterface(with_metaclass(ABCMeta)):
     """
+     interface comment
     Constants
         VERSION: Interfaces can also have constants
     """
@@ -21,6 +22,7 @@ class MyCppInterface(with_metaclass(ABCMeta)):
 
     @abstractmethod
     def method_returning_nothing(self, value):
+        """ method comment """
         raise NotImplementedError
 
     @abstractmethod

@@ -3,7 +3,9 @@
 
 package djinni.it;
 
+/** enum comment */
 public enum MyEnum {
+    /** enum option comment */
     OPTION1,
     OPTION2,
     OPTION3,

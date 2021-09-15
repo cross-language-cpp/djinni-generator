@@ -3,9 +3,11 @@
 
 #import <Foundation/Foundation.h>
 
+/** flag comment */
 typedef NS_OPTIONS(NSUInteger, ITMyFlags)
 {
     ITMyFlagsNoFlags = 0,
+    /** flag option comment */
     ITMyFlagsFlag1 = 1 << 0,
     ITMyFlagsFlag2 = 1 << 1,
     ITMyFlagsFlag3 = 1 << 2,

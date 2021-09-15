@@ -14,6 +14,15 @@ from _cffi import ffi, lib
 from djinni import exception # this forces run of __init__.py which gives cpp option to call back into py to create exception
 
 class MyRecord:
+    """
+     record comment
+    Fields
+        id: record property comment
+        info
+        store
+        hash
+    """
+
     c_data_set = MultiSet()
 
     @staticmethod
