@@ -12,12 +12,14 @@ NSString * __nonnull const ITMyRecordStringConst = @"Constants can be put here";
                               info:(nonnull NSString *)info
                              store:(nonnull NSSet<NSString *> *)store
                               hash:(nonnull NSDictionary<NSString *, NSNumber *> *)hash
+                            myEnum:(ITMyEnum)myEnum
 {
     if (self = [super init]) {
         _id = id;
         _info = [info copy];
         _store = [store copy];
         _hash = [hash copy];
+        _myEnum = myEnum;
     }
     return self;
 }
@@ -26,16 +28,18 @@ NSString * __nonnull const ITMyRecordStringConst = @"Constants can be put here";
                                   info:(nonnull NSString *)info
                                  store:(nonnull NSSet<NSString *> *)store
                                   hash:(nonnull NSDictionary<NSString *, NSNumber *> *)hash
+                                myEnum:(ITMyEnum)myEnum
 {
     return [(ITMyRecord*)[self alloc] initWithId:id
                                             info:info
                                            store:store
-                                            hash:hash];
+                                            hash:hash
+                                          myEnum:myEnum];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p id:%@ info:%@ store:%@ hash:%@>", self.class, (void *)self, @(self.id), self.info, self.store, self.hash];
+    return [NSString stringWithFormat:@"<%@ %p id:%@ info:%@ store:%@ hash:%@ myEnum:%@>", self.class, (void *)self, @(self.id), self.info, self.store, self.hash, @(self.myEnum)];
 }
 
 @end

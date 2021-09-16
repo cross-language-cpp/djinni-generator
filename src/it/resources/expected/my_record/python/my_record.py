@@ -3,12 +3,13 @@
 
 from djinni.support import MultiSet # default imported in all files
 from djinni.exception import CPyException # default imported in all files
-from djinni.pycffi_marshal import CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
+from djinni.pycffi_marshal import CPyEnum, CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
 
 from dh__map_string_int32_t import MapStringInt32THelper
 from dh__map_string_int32_t import MapStringInt32TProxy
 from dh__set_string import SetStringHelper
 from dh__set_string import SetStringProxy
+from my_enum import MyEnum
 from _cffi import ffi, lib
 
 from djinni import exception # this forces run of __init__.py which gives cpp option to call back into py to create exception
@@ -21,6 +22,7 @@ class MyRecord:
         info
         store
         hash
+        my_enum
     """
 
     c_data_set = MultiSet()
@@ -30,14 +32,16 @@ class MyRecord:
         assert len(MyRecord.c_data_set) == 0
         SetStringHelper.check_c_data_set_empty()
         MapStringInt32THelper.check_c_data_set_empty()
+        MyEnum.check_c_data_set_empty()
 
     STRING_CONST = "Constants can be put here"
 
 
-    def __init__(self, id, info, store, hash):
+    def __init__(self, id, info, store, hash, my_enum):
         self.id = id
         self.info = info
         self.store = store
         self.hash = hash
+        self.my_enum = my_enum
 
 

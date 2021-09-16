@@ -7,8 +7,10 @@
 #include "../cpp-headers/my_record.hpp"
 
 #include "dh__map_string_int32_t.hpp"
+#include "dh__my_enum.hpp"
 #include "dh__my_record.hpp"
 #include "dh__set_string.hpp"
+#include "my_enum.hpp"
 
 static void(*s_callback_set_string___delete)(DjinniObjectHandle *);
 void set_string_add_callback___delete(void(* ptr)(DjinniObjectHandle *)) {

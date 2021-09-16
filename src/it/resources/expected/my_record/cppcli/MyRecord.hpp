@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../cpp-headers/my_record.hpp"
+#include "MyEnum.hpp"
 
 /** record comment */
 [System::Serializable]
@@ -36,10 +37,16 @@ public:
         System::Collections::Generic::Dictionary<System::String^, int>^ get();
     }
 
+    property ::MyEnum MyEnum
+    {
+        ::MyEnum get();
+    }
+
     MyRecord(int id,
              System::String^ info,
              System::Collections::Generic::HashSet<System::String^>^ store,
-             System::Collections::Generic::Dictionary<System::String^, int>^ hash);
+             System::Collections::Generic::Dictionary<System::String^, int>^ hash,
+             ::MyEnum myEnum);
 
     System::String^ ToString() override;
 
@@ -56,4 +63,5 @@ private:
     System::String^ _info;
     System::Collections::Generic::HashSet<System::String^>^ _store;
     System::Collections::Generic::Dictionary<System::String^, int>^ _hash;
+    ::MyEnum _myEnum;
 };

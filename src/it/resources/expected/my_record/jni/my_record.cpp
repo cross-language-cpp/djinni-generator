@@ -3,6 +3,7 @@
 
 #include "my_record.hpp"  // my header
 #include "djinni/jni/Marshal.hpp"
+#include "my_enum.hpp"
 
 namespace djinni_generated {
 
@@ -16,19 +17,21 @@ auto MyRecord::fromCpp(JNIEnv* jniEnv, const CppType& c) -> ::djinni::LocalRef<J
                                                            ::djinni::get(::djinni::I32::fromCpp(jniEnv, c.id)),
                                                            ::djinni::get(::djinni::String::fromCpp(jniEnv, c.info)),
                                                            ::djinni::get(::djinni::Set<::djinni::String>::fromCpp(jniEnv, c.store)),
-                                                           ::djinni::get(::djinni::Map<::djinni::String, ::djinni::I32>::fromCpp(jniEnv, c.hash)))};
+                                                           ::djinni::get(::djinni::Map<::djinni::String, ::djinni::I32>::fromCpp(jniEnv, c.hash)),
+                                                           ::djinni::get(::djinni_generated::MyEnum::fromCpp(jniEnv, c.my_enum)))};
     ::djinni::jniExceptionCheck(jniEnv);
     return r;
 }
 
 auto MyRecord::toCpp(JNIEnv* jniEnv, JniType j) -> CppType {
-    ::djinni::JniLocalScope jscope(jniEnv, 5);
+    ::djinni::JniLocalScope jscope(jniEnv, 6);
     assert(j != nullptr);
     const auto& data = ::djinni::JniClass<MyRecord>::get();
     return {::djinni::I32::toCpp(jniEnv, jniEnv->GetIntField(j, data.field_id)),
             ::djinni::String::toCpp(jniEnv, (jstring)jniEnv->GetObjectField(j, data.field_info)),
             ::djinni::Set<::djinni::String>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_store)),
-            ::djinni::Map<::djinni::String, ::djinni::I32>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_hash))};
+            ::djinni::Map<::djinni::String, ::djinni::I32>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_hash)),
+            ::djinni_generated::MyEnum::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_myEnum))};
 }
 
 }  // namespace djinni_generated

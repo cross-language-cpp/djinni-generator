@@ -7,8 +7,10 @@
 #include "../cpp-headers/my_record.hpp"
 
 #include "dh__map_string_int32_t.hpp"
+#include "dh__my_enum.hpp"
 #include "dh__my_record.hpp"
 #include "dh__set_string.hpp"
+#include "my_enum.hpp"
 
 static void(*s_callback_my_record___delete)(DjinniRecordHandle * );
 void my_record_add_callback___delete(void(* ptr)(DjinniRecordHandle * )) {
@@ -45,9 +47,15 @@ void my_record_add_callback_get_my_record_f4(DjinniObjectHandle *( * ptr)(Djinni
     s_callback_my_record_get_my_record_f4 = ptr;
 }
 
-static DjinniRecordHandle * ( * s_callback_my_record_create_my_record)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *);
+static int ( * s_callback_my_record_get_my_record_f5)(DjinniRecordHandle *);
 
-void my_record_add_callback_create_my_record(DjinniRecordHandle *( * ptr)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *)) {
+void my_record_add_callback_get_my_record_f5(int( * ptr)(DjinniRecordHandle *)) {
+    s_callback_my_record_get_my_record_f5 = ptr;
+}
+
+static DjinniRecordHandle * ( * s_callback_my_record_create_my_record)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *, int);
+
+void my_record_add_callback_create_my_record(DjinniRecordHandle *( * ptr)(int32_t, DjinniString *, DjinniObjectHandle *, DjinniObjectHandle *, int)) {
     s_callback_my_record_create_my_record = ptr;
 }
 
@@ -61,7 +69,8 @@ djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr)
             dr.id,
             _field_info.release(),
             _field_store.release(),
-            _field_hash.release()),
+            _field_hash.release(),
+            int32_from_enum_my_enum(dr.my_enum)),
         my_record___delete);
     return _aux;
 }
@@ -75,7 +84,8 @@ djinni::Handle<DjinniRecordHandle> DjinniMyRecord::fromCpp(const ::MyRecord& dr)
         s_callback_my_record_get_my_record_f1(dh.get()),
         DjinniString::toCpp(std::move( _field_info)),
         DjinniSetString::toCpp(std::move( _field_store)),
-        DjinniMapStringInt32T::toCpp(std::move( _field_hash)));
+        DjinniMapStringInt32T::toCpp(std::move( _field_hash)),
+        static_cast<::MyEnum>(s_callback_my_record_get_my_record_f5(dh.get())));
     return _aux;
 }
 

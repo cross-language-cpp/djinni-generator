@@ -8,11 +8,13 @@
 MyRecord::MyRecord(int id,
                    System::String^ info,
                    System::Collections::Generic::HashSet<System::String^>^ store,
-                   System::Collections::Generic::Dictionary<System::String^, int>^ hash)
+                   System::Collections::Generic::Dictionary<System::String^, int>^ hash,
+                   ::MyEnum myEnum)
 : _id(id)
 , _info(info)
 , _store(store)
 , _hash(hash)
+, _myEnum(myEnum)
 {}
 
 int MyRecord::Id::get()
@@ -35,13 +37,19 @@ System::Collections::Generic::Dictionary<System::String^, int>^ MyRecord::Hash::
     return _hash;
 }
 
+MyEnum MyRecord::MyEnum::get()
+{
+    return _myEnum;
+}
+
 System::String^ MyRecord::ToString()
 {
-    return System::String::Format("MyRecord {{Id{0}, Info{1}, Store{2}, Hash{3}}}",
+    return System::String::Format("MyRecord {{Id{0}, Info{1}, Store{2}, Hash{3}, MyEnum{4}}}",
                                   Id,
                                   Info,
                                   Store,
-                                  Hash);
+                                  Hash,
+                                  MyEnum);
 }
 
 MyRecord::CppType MyRecord::ToCpp(MyRecord::CsType cs)
@@ -50,7 +58,8 @@ MyRecord::CppType MyRecord::ToCpp(MyRecord::CsType cs)
     return {::djinni::I32::ToCpp(cs->Id),
             ::djinni::String::ToCpp(cs->Info),
             ::djinni::Set<::djinni::String>::ToCpp(cs->Store),
-            ::djinni::Map<::djinni::String, ::djinni::I32>::ToCpp(cs->Hash)};
+            ::djinni::Map<::djinni::String, ::djinni::I32>::ToCpp(cs->Hash),
+            ::djinni::Enum<::MyEnum, ::MyEnum>::ToCpp(cs->MyEnum)};
 }
 
 MyRecord::CsType MyRecord::FromCpp(const MyRecord::CppType& cpp)
@@ -58,5 +67,6 @@ MyRecord::CsType MyRecord::FromCpp(const MyRecord::CppType& cpp)
     return gcnew MyRecord(::djinni::I32::FromCpp(cpp.id),
                           ::djinni::String::FromCpp(cpp.info),
                           ::djinni::Set<::djinni::String>::FromCpp(cpp.store),
-                          ::djinni::Map<::djinni::String, ::djinni::I32>::FromCpp(cpp.hash));
+                          ::djinni::Map<::djinni::String, ::djinni::I32>::FromCpp(cpp.hash),
+                          ::djinni::Enum<::MyEnum, ::MyEnum>::FromCpp(cpp.my_enum));
 }

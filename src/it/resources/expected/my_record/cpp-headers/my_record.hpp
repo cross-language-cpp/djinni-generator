@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "my_enum.hpp"
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -18,15 +19,18 @@ struct MyRecord final {
     std::string info;
     std::unordered_set<std::string> store;
     std::unordered_map<std::string, int32_t> hash;
+    MyEnum my_enum;
 
     MyRecord(int32_t id_,
              std::string info_,
              std::unordered_set<std::string> store_,
-             std::unordered_map<std::string, int32_t> hash_)
+             std::unordered_map<std::string, int32_t> hash_,
+             MyEnum my_enum_)
     : id(std::move(id_))
     , info(std::move(info_))
     , store(std::move(store_))
     , hash(std::move(hash_))
+    , my_enum(std::move(my_enum_))
     {}
 
     MyRecord()
@@ -34,5 +38,6 @@ struct MyRecord final {
     , info()
     , store()
     , hash()
+    , my_enum()
     {}
 };

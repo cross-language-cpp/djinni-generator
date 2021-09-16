@@ -20,15 +20,19 @@ public final class MyRecord {
 
     /*package*/ final HashMap<String, Integer> hash;
 
+    /*package*/ final MyEnum myEnum;
+
     public MyRecord(
             int id,
             String info,
             HashSet<String> store,
-            HashMap<String, Integer> hash) {
+            HashMap<String, Integer> hash,
+            MyEnum myEnum) {
         this.id = id;
         this.info = info;
         this.store = store;
         this.hash = hash;
+        this.myEnum = myEnum;
     }
 
     /** record property comment */
@@ -48,6 +52,10 @@ public final class MyRecord {
         return hash;
     }
 
+    public MyEnum getMyEnum() {
+        return myEnum;
+    }
+
     @Override
     public String toString() {
         return "MyRecord{" +
@@ -55,6 +63,7 @@ public final class MyRecord {
                 "," + "info=" + info +
                 "," + "store=" + store +
                 "," + "hash=" + hash +
+                "," + "myEnum=" + myEnum +
         "}";
     }
 

@@ -1,3 +1,5 @@
+@import "my_enum.djinni"
+
 # record comment
 my_record = record {
   # record property comment
@@ -5,5 +7,6 @@ my_record = record {
   info: string;
   store: set<string>;
   hash: map<string, i32>;
+  my_enum: my_enum;
   const string_const: string = "Constants can be put here";
 }

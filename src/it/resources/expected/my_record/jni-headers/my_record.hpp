@@ -25,11 +25,12 @@ private:
     friend ::djinni::JniClass<MyRecord>;
 
     const ::djinni::GlobalRef<jclass> clazz { ::djinni::jniFindClass("djinni/it/MyRecord") };
-    const jmethodID jconstructor { ::djinni::jniGetMethodID(clazz.get(), "<init>", "(ILjava/lang/String;Ljava/util/HashSet;Ljava/util/HashMap;)V") };
+    const jmethodID jconstructor { ::djinni::jniGetMethodID(clazz.get(), "<init>", "(ILjava/lang/String;Ljava/util/HashSet;Ljava/util/HashMap;Ldjinni/it/MyEnum;)V") };
     const jfieldID field_id { ::djinni::jniGetFieldID(clazz.get(), "id", "I") };
     const jfieldID field_info { ::djinni::jniGetFieldID(clazz.get(), "info", "Ljava/lang/String;") };
     const jfieldID field_store { ::djinni::jniGetFieldID(clazz.get(), "store", "Ljava/util/HashSet;") };
     const jfieldID field_hash { ::djinni::jniGetFieldID(clazz.get(), "hash", "Ljava/util/HashMap;") };
+    const jfieldID field_myEnum { ::djinni::jniGetFieldID(clazz.get(), "myEnum", "Ldjinni/it/MyEnum;") };
 };
 
 }  // namespace djinni_generated

@@ -12,4 +12,5 @@ FOUNDATION_EXPORT double bridgingheaderVersionNumber;
 //! Project version string for bridgingheader.
 FOUNDATION_EXPORT const unsigned char bridgingheaderVersionString[];
 
+#import "ITMyEnum.h"
 #import "ITMyRecord.h"
