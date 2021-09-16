@@ -3,13 +3,14 @@
 
 from djinni.support import MultiSet # default imported in all files
 from djinni.exception import CPyException # default imported in all files
-from djinni.pycffi_marshal import CPyBinary, CPyBoxedBool, CPyDate, CPyObject, CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
+from djinni.pycffi_marshal import CPyBinary, CPyBoxedBool, CPyDate, CPyEnum, CPyObject, CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
 
 from dh__list_bool import ListBoolHelper
 from dh__map_int8_t_bool import MapInt8TBoolHelper
 from dh__map_int8_t_bool import MapInt8TBoolProxy
 from dh__set_bool import SetBoolHelper
 from dh__set_bool import SetBoolProxy
+from enum_data import EnumData
 from _cffi import ffi, lib
 
 from djinni import exception # this forces run of __init__.py which gives cpp option to call back into py to create exception
@@ -23,9 +24,10 @@ class AllDatatypes:
         ListBoolHelper.check_c_data_set_empty()
         SetBoolHelper.check_c_data_set_empty()
         MapInt8TBoolHelper.check_c_data_set_empty()
+        EnumData.check_c_data_set_empty()
 
 
-    def __init__(self, booleanData, integer8Data, integer16Data, integer32Data, integer64Data, float32Data, float64Data, stringData, binaryData, dateData, listData, setData, mapData, optionalData):
+    def __init__(self, booleanData, integer8Data, integer16Data, integer32Data, integer64Data, float32Data, float64Data, stringData, binaryData, dateData, listData, setData, mapData, optionalData, enum_data):
         self.booleanData = booleanData
         self.integer8Data = integer8Data
         self.integer16Data = integer16Data
@@ -40,4 +42,5 @@ class AllDatatypes:
         self.setData = setData
         self.mapData = mapData
         self.optionalData = optionalData
+        self.enum_data = enum_data
 

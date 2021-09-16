@@ -1,3 +1,8 @@
+enum_data = enum {
+  a;
+  b;
+}
+
 all_datatypes = record {
   booleanData: bool;
   integer8Data: i8;
@@ -13,4 +18,5 @@ all_datatypes = record {
   setData: set<bool>;
   mapData: map<i8, bool>;
   optionalData: optional<bool>;
+  enum_data: enum_data;
 }

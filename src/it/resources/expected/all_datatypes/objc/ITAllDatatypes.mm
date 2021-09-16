@@ -20,6 +20,7 @@
                                     setData:(nonnull NSSet<NSNumber *> *)setData
                                     mapData:(nonnull NSDictionary<NSNumber *, NSNumber *> *)mapData
                                optionalData:(nullable NSNumber *)optionalData
+                                   enumData:(ITEnumData)enumData
 {
     if (self = [super init]) {
         _booleanData = booleanData;
@@ -36,6 +37,7 @@
         _setData = [setData copy];
         _mapData = [mapData copy];
         _optionalData = optionalData;
+        _enumData = enumData;
     }
     return self;
 }
@@ -54,6 +56,7 @@
                                             setData:(nonnull NSSet<NSNumber *> *)setData
                                             mapData:(nonnull NSDictionary<NSNumber *, NSNumber *> *)mapData
                                        optionalData:(nullable NSNumber *)optionalData
+                                           enumData:(ITEnumData)enumData
 {
     return [(ITAllDatatypes*)[self alloc] initWithBooleanData:booleanData
                                                  integer8Data:integer8Data
@@ -68,12 +71,13 @@
                                                      listData:listData
                                                       setData:setData
                                                       mapData:mapData
-                                                 optionalData:optionalData];
+                                                 optionalData:optionalData
+                                                     enumData:enumData];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p booleanData:%@ integer8Data:%@ integer16Data:%@ integer32Data:%@ integer64Data:%@ float32Data:%@ float64Data:%@ stringData:%@ binaryData:%@ dateData:%@ listData:%@ setData:%@ mapData:%@ optionalData:%@>", self.class, (void *)self, @(self.booleanData), @(self.integer8Data), @(self.integer16Data), @(self.integer32Data), @(self.integer64Data), @(self.float32Data), @(self.float64Data), self.stringData, self.binaryData, self.dateData, self.listData, self.setData, self.mapData, self.optionalData];
+    return [NSString stringWithFormat:@"<%@ %p booleanData:%@ integer8Data:%@ integer16Data:%@ integer32Data:%@ integer64Data:%@ float32Data:%@ float64Data:%@ stringData:%@ binaryData:%@ dateData:%@ listData:%@ setData:%@ mapData:%@ optionalData:%@ enumData:%@>", self.class, (void *)self, @(self.booleanData), @(self.integer8Data), @(self.integer16Data), @(self.integer32Data), @(self.integer64Data), @(self.float32Data), @(self.float64Data), self.stringData, self.binaryData, self.dateData, self.listData, self.setData, self.mapData, self.optionalData, @(self.enumData)];
 }
 
 @end

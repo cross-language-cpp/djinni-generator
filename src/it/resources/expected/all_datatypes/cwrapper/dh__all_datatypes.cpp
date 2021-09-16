@@ -7,9 +7,11 @@
 #include "../cpp-headers/all_datatypes.hpp"
 
 #include "dh__all_datatypes.hpp"
+#include "dh__enum_data.hpp"
 #include "dh__list_bool.hpp"
 #include "dh__map_int8_t_bool.hpp"
 #include "dh__set_bool.hpp"
+#include "enum_data.hpp"
 #include <chrono>
 #include <optional>
 #include <vector>
@@ -109,9 +111,15 @@ void all_datatypes_add_callback_get_all_datatypes_f14(DjinniBoxedBool *( * ptr)(
     s_callback_all_datatypes_get_all_datatypes_f14 = ptr;
 }
 
-static DjinniRecordHandle * ( * s_callback_all_datatypes_create_all_datatypes)(bool, int8_t, int16_t, int32_t, int64_t, float, double, DjinniString *, DjinniBinary *, uint64_t, DjinniObjectHandle *, DjinniObjectHandle *, DjinniObjectHandle *, DjinniBoxedBool *);
+static int ( * s_callback_all_datatypes_get_all_datatypes_f15)(DjinniRecordHandle *);
 
-void all_datatypes_add_callback_create_all_datatypes(DjinniRecordHandle *( * ptr)(bool, int8_t, int16_t, int32_t, int64_t, float, double, DjinniString *, DjinniBinary *, uint64_t, DjinniObjectHandle *, DjinniObjectHandle *, DjinniObjectHandle *, DjinniBoxedBool *)) {
+void all_datatypes_add_callback_get_all_datatypes_f15(int( * ptr)(DjinniRecordHandle *)) {
+    s_callback_all_datatypes_get_all_datatypes_f15 = ptr;
+}
+
+static DjinniRecordHandle * ( * s_callback_all_datatypes_create_all_datatypes)(bool, int8_t, int16_t, int32_t, int64_t, float, double, DjinniString *, DjinniBinary *, uint64_t, DjinniObjectHandle *, DjinniObjectHandle *, DjinniObjectHandle *, DjinniBoxedBool *, int);
+
+void all_datatypes_add_callback_create_all_datatypes(DjinniRecordHandle *( * ptr)(bool, int8_t, int16_t, int32_t, int64_t, float, double, DjinniString *, DjinniBinary *, uint64_t, DjinniObjectHandle *, DjinniObjectHandle *, DjinniObjectHandle *, DjinniBoxedBool *, int)) {
     s_callback_all_datatypes_create_all_datatypes = ptr;
 }
 
@@ -138,7 +146,8 @@ djinni::Handle<DjinniRecordHandle> DjinniAllDatatypes::fromCpp(const ::AllDataty
             _field_listData.release(),
             _field_setData.release(),
             _field_mapData.release(),
-            _field_optionalData.release()),
+            _field_optionalData.release(),
+            int32_from_enum_enum_data(dr.enum_data)),
         all_datatypes___delete);
     return _aux;
 }
@@ -165,7 +174,8 @@ djinni::Handle<DjinniRecordHandle> DjinniAllDatatypes::fromCpp(const ::AllDataty
         DjinniListBool::toCpp(std::move( _field_listData)),
         DjinniSetBool::toCpp(std::move( _field_setData)),
         DjinniMapInt8TBool::toCpp(std::move( _field_mapData)),
-        DjinniBoxedBool::toCpp(std::move( _field_optionalData)));
+        DjinniBoxedBool::toCpp(std::move( _field_optionalData)),
+        static_cast<::EnumData>(s_callback_all_datatypes_get_all_datatypes_f15(dh.get())));
     return _aux;
 }
 
