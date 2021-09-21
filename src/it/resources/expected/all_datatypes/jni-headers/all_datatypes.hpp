@@ -25,7 +25,7 @@ private:
     friend ::djinni::JniClass<AllDatatypes>;
 
     const ::djinni::GlobalRef<jclass> clazz { ::djinni::jniFindClass("djinni/it/AllDatatypes") };
-    const jmethodID jconstructor { ::djinni::jniGetMethodID(clazz.get(), "<init>", "(ZBSIJFDLjava/lang/String;[BLjava/util/Date;Ljava/util/ArrayList;Ljava/util/HashSet;Ljava/util/HashMap;Ljava/lang/Boolean;)V") };
+    const jmethodID jconstructor { ::djinni::jniGetMethodID(clazz.get(), "<init>", "(ZBSIJFDLjava/lang/String;[BLjava/util/Date;Ljava/util/ArrayList;Ljava/util/HashSet;Ljava/util/HashMap;Ljava/lang/Boolean;Ldjinni/it/EnumData;)V") };
     const jfieldID field_booleanData { ::djinni::jniGetFieldID(clazz.get(), "booleanData", "Z") };
     const jfieldID field_integer8Data { ::djinni::jniGetFieldID(clazz.get(), "integer8Data", "B") };
     const jfieldID field_integer16Data { ::djinni::jniGetFieldID(clazz.get(), "integer16Data", "S") };
@@ -40,6 +40,7 @@ private:
     const jfieldID field_setData { ::djinni::jniGetFieldID(clazz.get(), "setData", "Ljava/util/HashSet;") };
     const jfieldID field_mapData { ::djinni::jniGetFieldID(clazz.get(), "mapData", "Ljava/util/HashMap;") };
     const jfieldID field_optionalData { ::djinni::jniGetFieldID(clazz.get(), "optionalData", "Ljava/lang/Boolean;") };
+    const jfieldID field_enumData { ::djinni::jniGetFieldID(clazz.get(), "enumData", "Ldjinni/it/EnumData;") };
 };
 
 }  // namespace djinni_generated

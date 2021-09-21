@@ -18,7 +18,8 @@ AllDatatypes::AllDatatypes(bool booleanData,
                            System::Collections::Generic::List<bool>^ listData,
                            System::Collections::Generic::HashSet<bool>^ setData,
                            System::Collections::Generic::Dictionary<char, bool>^ mapData,
-                           System::Nullable<bool> optionalData)
+                           System::Nullable<bool> optionalData,
+                           ::EnumData enumData)
 : _booleanData(booleanData)
 , _integer8Data(integer8Data)
 , _integer16Data(integer16Data)
@@ -33,6 +34,7 @@ AllDatatypes::AllDatatypes(bool booleanData,
 , _setData(setData)
 , _mapData(mapData)
 , _optionalData(optionalData)
+, _enumData(enumData)
 {}
 
 bool AllDatatypes::BooleanData::get()
@@ -105,9 +107,14 @@ System::Nullable<bool> AllDatatypes::OptionalData::get()
     return _optionalData;
 }
 
+EnumData AllDatatypes::EnumData::get()
+{
+    return _enumData;
+}
+
 System::String^ AllDatatypes::ToString()
 {
-    return System::String::Format("AllDatatypes {{BooleanData{0}, Integer8Data{1}, Integer16Data{2}, Integer32Data{3}, Integer64Data{4}, Float32Data{5}, Float64Data{6}, StringData{7}, BinaryData{8}, DateData{9}, ListData{10}, SetData{11}, MapData{12}, OptionalData{13}}}",
+    return System::String::Format("AllDatatypes {{BooleanData{0}, Integer8Data{1}, Integer16Data{2}, Integer32Data{3}, Integer64Data{4}, Float32Data{5}, Float64Data{6}, StringData{7}, BinaryData{8}, DateData{9}, ListData{10}, SetData{11}, MapData{12}, OptionalData{13}, EnumData{14}}}",
                                   BooleanData,
                                   Integer8Data,
                                   Integer16Data,
@@ -121,7 +128,8 @@ System::String^ AllDatatypes::ToString()
                                   ListData,
                                   SetData,
                                   MapData,
-                                  OptionalData);
+                                  OptionalData,
+                                  EnumData);
 }
 
 AllDatatypes::CppType AllDatatypes::ToCpp(AllDatatypes::CsType cs)
@@ -140,7 +148,8 @@ AllDatatypes::CppType AllDatatypes::ToCpp(AllDatatypes::CsType cs)
             ::djinni::List<::djinni::Bool>::ToCpp(cs->ListData),
             ::djinni::Set<::djinni::Bool>::ToCpp(cs->SetData),
             ::djinni::Map<::djinni::I8, ::djinni::Bool>::ToCpp(cs->MapData),
-            ::djinni::Optional<std::optional, ::djinni::Bool>::ToCpp(cs->OptionalData)};
+            ::djinni::Optional<std::optional, ::djinni::Bool>::ToCpp(cs->OptionalData),
+            ::djinni::Enum<::EnumData, ::EnumData>::ToCpp(cs->EnumData)};
 }
 
 AllDatatypes::CsType AllDatatypes::FromCpp(const AllDatatypes::CppType& cpp)
@@ -158,5 +167,6 @@ AllDatatypes::CsType AllDatatypes::FromCpp(const AllDatatypes::CppType& cpp)
                               ::djinni::List<::djinni::Bool>::FromCpp(cpp.listData),
                               ::djinni::Set<::djinni::Bool>::FromCpp(cpp.setData),
                               ::djinni::Map<::djinni::I8, ::djinni::Bool>::FromCpp(cpp.mapData),
-                              ::djinni::Optional<std::optional, ::djinni::Bool>::FromCpp(cpp.optionalData));
+                              ::djinni::Optional<std::optional, ::djinni::Bool>::FromCpp(cpp.optionalData),
+                              ::djinni::Enum<::EnumData, ::EnumData>::FromCpp(cpp.enum_data));
 }

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "enum_data.hpp"
 #include <chrono>
 #include <cstdint>
 #include <optional>
@@ -27,6 +28,7 @@ struct AllDatatypes final {
     std::unordered_set<bool> setData;
     std::unordered_map<int8_t, bool> mapData;
     std::optional<bool> optionalData;
+    EnumData enum_data;
 
     AllDatatypes(bool booleanData_,
                  int8_t integer8Data_,
@@ -41,7 +43,8 @@ struct AllDatatypes final {
                  std::vector<bool> listData_,
                  std::unordered_set<bool> setData_,
                  std::unordered_map<int8_t, bool> mapData_,
-                 std::optional<bool> optionalData_)
+                 std::optional<bool> optionalData_,
+                 EnumData enum_data_)
     : booleanData(std::move(booleanData_))
     , integer8Data(std::move(integer8Data_))
     , integer16Data(std::move(integer16Data_))
@@ -56,6 +59,7 @@ struct AllDatatypes final {
     , setData(std::move(setData_))
     , mapData(std::move(mapData_))
     , optionalData(std::move(optionalData_))
+    , enum_data(std::move(enum_data_))
     {}
 
     AllDatatypes()
@@ -73,5 +77,6 @@ struct AllDatatypes final {
     , setData()
     , mapData()
     , optionalData()
+    , enum_data()
     {}
 };

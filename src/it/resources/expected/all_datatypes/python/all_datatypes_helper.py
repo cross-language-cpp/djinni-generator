@@ -3,13 +3,14 @@
 
 from djinni.support import MultiSet # default imported in all files
 from djinni.exception import CPyException # default imported in all files
-from djinni.pycffi_marshal import CPyBinary, CPyBoxedBool, CPyDate, CPyObject, CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
+from djinni.pycffi_marshal import CPyBinary, CPyBoxedBool, CPyDate, CPyEnum, CPyObject, CPyObject, CPyObjectProxy, CPyPrimitive, CPyRecord, CPyString
 
 from dh__list_bool import ListBoolHelper
 from dh__map_int8_t_bool import MapInt8TBoolHelper
 from dh__map_int8_t_bool import MapInt8TBoolProxy
 from dh__set_bool import SetBoolHelper
 from dh__set_bool import SetBoolProxy
+from enum_data import EnumData
 from _cffi import ffi, lib
 
 from djinni import exception # this forces run of __init__.py which gives cpp option to call back into py to create exception
@@ -156,8 +157,18 @@ class AllDatatypesHelper:
             CPyException.setExceptionFromPy(_djinni_py_e)
             return ffi.NULL
 
-    @ffi.callback("struct DjinniRecordHandle *(bool,int8_t,int16_t,int32_t,int64_t,float,double,struct DjinniString *,struct DjinniBinary *,uint64_t,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniBoxedBool *)")
-    def create_all_datatypes(booleanData,integer8Data,integer16Data,integer32Data,integer64Data,float32Data,float64Data,stringData,binaryData,dateData,listData,setData,mapData,optionalData):
+    @ffi.callback("int(struct DjinniRecordHandle *)")
+    def get_all_datatypes_f15(cself):
+        try:
+            _ret = CPyEnum.fromPy(CPyRecord.toPy(None, cself).enum_data)
+            assert _ret != -1
+            return _ret
+        except Exception as _djinni_py_e:
+            CPyException.setExceptionFromPy(_djinni_py_e)
+            return ffi.NULL
+
+    @ffi.callback("struct DjinniRecordHandle *(bool,int8_t,int16_t,int32_t,int64_t,float,double,struct DjinniString *,struct DjinniBinary *,uint64_t,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniObjectHandle *,struct DjinniBoxedBool *,int)")
+    def create_all_datatypes(booleanData,integer8Data,integer16Data,integer32Data,integer64Data,float32Data,float64Data,stringData,binaryData,dateData,listData,setData,mapData,optionalData,enum_data):
         py_rec = AllDatatypes(
             CPyPrimitive.toPy(booleanData),
             CPyPrimitive.toPy(integer8Data),
@@ -172,7 +183,8 @@ class AllDatatypesHelper:
             CPyObject.toPy(ListBoolHelper.c_data_set, listData),
             CPyObjectProxy.toPyObj(SetBoolHelper.c_data_set, setData),
             CPyObjectProxy.toPyObj(MapInt8TBoolHelper.c_data_set, mapData),
-            CPyBoxedBool.toPyOpt(optionalData))
+            CPyBoxedBool.toPyOpt(optionalData),
+            CPyEnum.toPy(EnumData, enum_data))
         return CPyRecord.fromPy(AllDatatypes.c_data_set, py_rec) #to do: can be optional?
 
     @ffi.callback("void (struct DjinniRecordHandle *)")
@@ -198,6 +210,7 @@ class AllDatatypesHelper:
         lib.all_datatypes_add_callback_get_all_datatypes_f6(AllDatatypesHelper.get_all_datatypes_f6)
         lib.all_datatypes_add_callback___delete(AllDatatypesHelper.__delete)
         lib.all_datatypes_add_callback_get_all_datatypes_f7(AllDatatypesHelper.get_all_datatypes_f7)
+        lib.all_datatypes_add_callback_get_all_datatypes_f15(AllDatatypesHelper.get_all_datatypes_f15)
 
 AllDatatypesHelper._add_callbacks()
 

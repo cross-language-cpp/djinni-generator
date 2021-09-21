@@ -39,6 +39,8 @@ public final class AllDatatypes {
 
     /*package*/ final Boolean optionalData;
 
+    /*package*/ final EnumData enumData;
+
     public AllDatatypes(
             boolean booleanData,
             byte integer8Data,
@@ -53,7 +55,8 @@ public final class AllDatatypes {
             ArrayList<Boolean> listData,
             HashSet<Boolean> setData,
             HashMap<Byte, Boolean> mapData,
-            Boolean optionalData) {
+            Boolean optionalData,
+            EnumData enumData) {
         this.booleanData = booleanData;
         this.integer8Data = integer8Data;
         this.integer16Data = integer16Data;
@@ -68,6 +71,7 @@ public final class AllDatatypes {
         this.setData = setData;
         this.mapData = mapData;
         this.optionalData = optionalData;
+        this.enumData = enumData;
     }
 
     public boolean getBooleanData() {
@@ -126,6 +130,10 @@ public final class AllDatatypes {
         return optionalData;
     }
 
+    public EnumData getEnumData() {
+        return enumData;
+    }
+
     @Override
     public String toString() {
         return "AllDatatypes{" +
@@ -143,6 +151,7 @@ public final class AllDatatypes {
                 "," + "setData=" + setData +
                 "," + "mapData=" + mapData +
                 "," + "optionalData=" + optionalData +
+                "," + "enumData=" + enumData +
         "}";
     }
 

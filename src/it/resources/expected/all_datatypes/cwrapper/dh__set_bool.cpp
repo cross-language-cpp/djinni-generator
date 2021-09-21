@@ -7,9 +7,11 @@
 #include "../cpp-headers/all_datatypes.hpp"
 
 #include "dh__all_datatypes.hpp"
+#include "dh__enum_data.hpp"
 #include "dh__list_bool.hpp"
 #include "dh__map_int8_t_bool.hpp"
 #include "dh__set_bool.hpp"
+#include "enum_data.hpp"
 #include <chrono>
 #include <optional>
 #include <vector>

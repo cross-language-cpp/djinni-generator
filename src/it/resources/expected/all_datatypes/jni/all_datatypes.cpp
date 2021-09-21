@@ -3,6 +3,7 @@
 
 #include "all_datatypes.hpp"  // my header
 #include "djinni/jni/Marshal.hpp"
+#include "enum_data.hpp"
 
 namespace djinni_generated {
 
@@ -26,13 +27,14 @@ auto AllDatatypes::fromCpp(JNIEnv* jniEnv, const CppType& c) -> ::djinni::LocalR
                                                            ::djinni::get(::djinni::List<::djinni::Bool>::fromCpp(jniEnv, c.listData)),
                                                            ::djinni::get(::djinni::Set<::djinni::Bool>::fromCpp(jniEnv, c.setData)),
                                                            ::djinni::get(::djinni::Map<::djinni::I8, ::djinni::Bool>::fromCpp(jniEnv, c.mapData)),
-                                                           ::djinni::get(::djinni::Optional<std::optional, ::djinni::Bool>::fromCpp(jniEnv, c.optionalData)))};
+                                                           ::djinni::get(::djinni::Optional<std::optional, ::djinni::Bool>::fromCpp(jniEnv, c.optionalData)),
+                                                           ::djinni::get(::djinni_generated::EnumData::fromCpp(jniEnv, c.enum_data)))};
     ::djinni::jniExceptionCheck(jniEnv);
     return r;
 }
 
 auto AllDatatypes::toCpp(JNIEnv* jniEnv, JniType j) -> CppType {
-    ::djinni::JniLocalScope jscope(jniEnv, 15);
+    ::djinni::JniLocalScope jscope(jniEnv, 16);
     assert(j != nullptr);
     const auto& data = ::djinni::JniClass<AllDatatypes>::get();
     return {::djinni::Bool::toCpp(jniEnv, jniEnv->GetBooleanField(j, data.field_booleanData)),
@@ -48,7 +50,8 @@ auto AllDatatypes::toCpp(JNIEnv* jniEnv, JniType j) -> CppType {
             ::djinni::List<::djinni::Bool>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_listData)),
             ::djinni::Set<::djinni::Bool>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_setData)),
             ::djinni::Map<::djinni::I8, ::djinni::Bool>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_mapData)),
-            ::djinni::Optional<std::optional, ::djinni::Bool>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_optionalData))};
+            ::djinni::Optional<std::optional, ::djinni::Bool>::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_optionalData)),
+            ::djinni_generated::EnumData::toCpp(jniEnv, jniEnv->GetObjectField(j, data.field_enumData))};
 }
 
 }  // namespace djinni_generated

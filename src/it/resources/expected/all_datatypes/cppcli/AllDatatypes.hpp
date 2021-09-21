@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../cpp-headers/all_datatypes.hpp"
+#include "EnumData.hpp"
 
 [System::Serializable]
 public ref class AllDatatypes {
@@ -79,6 +80,11 @@ public:
         System::Nullable<bool> get();
     }
 
+    property ::EnumData EnumData
+    {
+        ::EnumData get();
+    }
+
     AllDatatypes(bool booleanData,
                  char integer8Data,
                  short integer16Data,
@@ -92,7 +98,8 @@ public:
                  System::Collections::Generic::List<bool>^ listData,
                  System::Collections::Generic::HashSet<bool>^ setData,
                  System::Collections::Generic::Dictionary<char, bool>^ mapData,
-                 System::Nullable<bool> optionalData);
+                 System::Nullable<bool> optionalData,
+                 ::EnumData enumData);
 
     System::String^ ToString() override;
 
@@ -118,4 +125,5 @@ private:
     System::Collections::Generic::HashSet<bool>^ _setData;
     System::Collections::Generic::Dictionary<char, bool>^ _mapData;
     System::Nullable<bool> _optionalData;
+    ::EnumData _enumData;
 };
