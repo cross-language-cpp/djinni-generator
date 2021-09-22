@@ -75,7 +75,10 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
       case MSet => "Ljava/util/HashSet;"
       case MMap => "Ljava/util/HashMap;"
     }
-    case e: MExtern => e.jni.typeSignature.get
+    case e: MExtern => e.body match {
+      case e: Enum if e.flags => "Ljava/util/EnumSet;"
+      case _ => e.jni.typeSignature.get
+    }
     case MParam(_) => "Ljava/lang/Object;"
     case d: MDef => d.body match {
       case e: Enum if e.flags => "Ljava/util/EnumSet;"
