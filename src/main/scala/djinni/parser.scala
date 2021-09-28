@@ -51,8 +51,11 @@ private object IdlParser extends RegexParsers {
     var file: Option[File] = None
 
     val path = includePaths.find(path => {
-      val relPath = if (path.isEmpty) fileStack.top.getParent() else path
-      val tmp = new File(relPath, fileName)
+      var relPath = if (path.isEmpty) fileStack.top.getParent() else path
+      if (relPath.endsWith(fileName)) {
+        relPath = relPath.substring(0, relPath.length - fileName.length)
+      }
+      val tmp = if (relPath.isEmpty()) new File(fileName) else new File(relPath, fileName)
       val exists = tmp.exists
       if (exists) file = Some(tmp)
       exists
