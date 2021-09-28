@@ -5,7 +5,7 @@ import djinni.generatorTools._
 import djinni.meta._
 
 class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
-  final val objcBaseLibIncludePrefix = "djinni/objc/"
+  final val objcBaseLibIncludePrefix = spec.objcBaseLibIncludePrefix + "djinni/objc/"
 
   private val cppMarshal = new CppMarshal(spec)
   private val objcMarshal = new ObjcMarshal(spec)

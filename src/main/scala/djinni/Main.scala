@@ -82,6 +82,7 @@ object Main {
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcppNamespace: String = "djinni_generated"
+    var objcBaseLibIncludePrefix: String = ""
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
     var cppCliNamespace: String = ""
@@ -220,6 +221,8 @@ object Main {
         .text("The prefix path for #import of the extended record Objective-C header (.h) files")
       opt[String]("objcpp-namespace").valueName("<prefix>").foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
+      opt[String]("objc-base-lib-include-prefix").valueName("<include-prefix>").foreach(objcBaseLibIncludePrefix = _)
+        .text("The Objective-C++ base library's include path, relative to the Objective-C++ classes. (default: \"djinni/objc/\")")
       note("\nPython")
       opt[File]("py-out").valueName("<out-folder>").foreach(x => pyOutFolder = Some(x))
         .text("The output folder for Python files (Generator disabled if unspecified).")
@@ -451,6 +454,7 @@ object Main {
       objcppIncludeCppPrefix,
       objcppIncludeObjcPrefix,
       objcppNamespace,
+      objcBaseLibIncludePrefix,
       objcSwiftBridgingHeaderWriter,
       cppCliOutFolder,
       cppCliIdentStyle,

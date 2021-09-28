@@ -79,6 +79,7 @@ package object generatorTools {
                    objcppIncludeCppPrefix: String,
                    objcppIncludeObjcPrefix: String,
                    objcppNamespace: String,
+                   objcBaseLibIncludePrefix: String,
                    objcSwiftBridgingHeaderWriter: Option[Writer],
                    cppCliOutFolder: Option[File],
                    cppCliIdentStyle: CppCliIdentStyle,
