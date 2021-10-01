@@ -92,6 +92,8 @@ class IntegrationTest extends FunSpec {
     *   Whether to generate Python output. Default: true.
     * @param useNNHeader
     *   Whether to use the nn.hpp header for non-null pointers. Default: false.
+    * @param cppJsonSerialization
+    *   Specify JSON serializer library for c++ output. Default: None
     *
     * @return
     *   command line params to pass to the djinni generator.
@@ -107,7 +109,8 @@ class IntegrationTest extends FunSpec {
       cWrapper: Boolean = true,
       cppCLI: Boolean = true,
       useNNHeader: Boolean = false,
-      cppOmitDefaultRecordCtor: Boolean = false
+      cppOmitDefaultRecordCtor: Boolean = false,
+      cppJsonSerialization: Option[String] = None
   ): String = {
     var cmd = s"--idl src/it/resources/$idl.djinni"
     if (cpp) {
@@ -149,6 +152,9 @@ class IntegrationTest extends FunSpec {
     }
     if (cppOmitDefaultRecordCtor) {
       cmd += " --cpp-omit-default-record-constructor true"
+    }
+    if(cppJsonSerialization.isDefined) {
+      cmd += s" --cpp-json-serialization ${cppJsonSerialization.get}"
     }
     cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
     return cmd

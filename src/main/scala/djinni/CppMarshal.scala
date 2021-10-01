@@ -61,7 +61,8 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
   def hppReferences(
       m: Meta,
       exclude: String,
-      forwardDeclareOnly: Boolean
+      forwardDeclareOnly: Boolean,
+      extension: String = ""
   ): Seq[SymbolReference] = m match {
     case p: MPrimitive =>
       p.idlName match {
@@ -87,7 +88,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
                 )
               )
             } else {
-              List(ImportRef(include(d.name, r.ext.cpp)))
+              List(ImportRef(include(d.name, r.ext.cpp, extension)))
             }
           } else {
             List()
@@ -103,7 +104,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
                 )
               )
             } else {
-              List(ImportRef(include(d.name)))
+              List(ImportRef(include(d.name, false, extension)))
             }
           } else {
             List()
@@ -167,11 +168,19 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
     }
   }
 
-  def include(ident: String, isExtendedRecord: Boolean = false): String = {
+  def include(
+      ident: String,
+      isExtendedRecord: Boolean = false,
+      extension: String = ""
+  ): String = {
     val prefix =
       if (isExtendedRecord) spec.cppExtendedRecordIncludePrefix
       else spec.cppIncludePrefix
-    q(prefix + spec.cppFileIdentStyle(ident) + "." + spec.cppHeaderExt)
+    q(
+      prefix + spec.cppFileIdentStyle(
+        ident
+      ) + s"$extension." + spec.cppHeaderExt
+    )
   }
 
   private def toCppType(

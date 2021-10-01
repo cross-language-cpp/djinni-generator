@@ -107,6 +107,7 @@ object Main {
     var pycffiDynamicLibList: String = ""
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
+    var cppJsonSerialization: Option[String] = None
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -528,6 +529,10 @@ object Main {
         .text(
           "Way of specifying if file generation should be skipped (default: false)"
         )
+      opt[String]("cpp-json-serialization")
+        .valueName("<None/nlohmann>")
+        .foreach(x => cppJsonSerialization = Some(x))
+        .text("Generate automatic json serializer for DJINNI value types")
 
       note(
         "\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")"
@@ -911,7 +916,8 @@ object Main {
       cWrapperHeaderOutFolder,
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
-      pyImportPrefix
+      pyImportPrefix,
+      cppJsonSerialization
     )
 
     try {
