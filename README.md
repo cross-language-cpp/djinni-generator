@@ -20,7 +20,6 @@ Djinni generator parses an interface definition file and generates:
 - Python and C code to convert between C++ and Python over CFFI
 - C++/CLI code to convert between C++ and C#
 
-
 ## Installation
 
 Djinni **requires Java** to be able to execute!
@@ -40,7 +39,6 @@ asdf install djinni latest
 
 #### MacOS homebrew
 
-
 Add the tap:
 
 ```bash
@@ -52,8 +50,6 @@ Install the djinni generator:
 ```bash
 brew install djinni
 ```
-
-
 
 ### Windows
 
@@ -69,6 +65,12 @@ Add the generator as a build requirement in `conanfile.txt`:
 [build_requires]
 djinni-generator/1.2.0
 ```
+
+### Code format
+
+All code files of type **scala** and **sbt** need be formatted with [scala-fmt](https://scalameta.org/scalafmt/) plugin.
+
+To format all files execute `sbt plugins scalafmtAll`.
 
 ## Credits
 

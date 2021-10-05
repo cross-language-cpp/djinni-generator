@@ -13,13 +13,11 @@ lazy val djinni = (project in file("."))
     libraryDependencies += "org.yaml" % "snakeyaml" % "1.26",
     libraryDependencies += "com.github.scopt" %% "scopt" % "3.7.1",
     libraryDependencies += "commons-io" % "commons-io" % "2.8.0",
-    assemblyOutputPath in assembly := { file("target/bin") / (assemblyJarName in assembly).value },
+    assemblyOutputPath in assembly := {
+      file("target/bin") / (assemblyJarName in assembly).value
+    },
     assemblyJarName in assembly := s"${name.value}",
-    assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
+    assemblyOption in assembly := (assemblyOption in assembly).value
+      .copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
     test in assembly := {}
   )
-
-
-
-
-

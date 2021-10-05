@@ -44,10 +44,10 @@ abstract class Marshal(spec: Spec) {
   protected val idCs = spec.cppCliIdentStyle
 
   protected def withNs(namespace: Option[String], t: String) = namespace match {
-      case None => t
-      case Some("") => "::" + t
-      case Some(s) => "::" + s + "::" + t
-    }
+    case None     => t
+    case Some("") => "::" + t
+    case Some(s)  => "::" + s + "::" + t
+  }
 
   protected def withCppNs(t: String) = withNs(Some(spec.cppNamespace), t)
 }
