@@ -80,6 +80,8 @@ The version of scala format tool can be changed in the file `.scalafmt.conf` and
 
 To change the code formatter configurations, put all configurations options inside `.scalafmt.conf`. See all configutations here: https://scalameta.org/scalafmt/docs/configuration.html. 
 
+You can check if formatter is working with command `sbt scalafmtCheck `.
+
 All available tasks of the code formatter plugin can be checked here: https://scalameta.org/scalafmt/docs/installation.html#task-keys.
 
 ## Credits
