@@ -1,16 +1,20 @@
+# java and scala
 /target
 /project/project
 /project/target
 /test/result
 /classes
-/.idea
+
 # vs code stuff
 .vscode/
 .bloop/
 .metals/
 project/metals.sbt
 
+# intellij idea
+.idea
+.iml
+
 # for personal trials / tests that shall be ignored but stay on your disk
 ztest/
-
 .bsp/

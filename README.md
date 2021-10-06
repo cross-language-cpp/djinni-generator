@@ -70,6 +70,18 @@ Add the generator as a build requirement in `conanfile.txt`:
 djinni-generator/1.2.0
 ```
 
+### Code format
+
+All code files of type **scala** and **sbt** need be formatted with [scala-fmt](https://scalameta.org/scalafmt/) plugin.
+
+To format all files execute `sbt plugins scalafmtAll`.
+
+The version of scala format tool can be changed in the file `.scalafmt.conf` and the version of scala plugin can be changed in the file `project/plugins.sbt`.
+
+To change the code formatter configurations, put all configurations options inside `.scalafmt.conf`. See all configutations here: https://scalameta.org/scalafmt/docs/configuration.html. 
+
+All available tasks of the code formatter plugin can be checked here: https://scalameta.org/scalafmt/docs/installation.html#task-keys.
+
 ## Credits
 
 [Thanks goes to these contributors!](https://github.com/cross-language-cpp/djinni-generator/graphs/contributors)
