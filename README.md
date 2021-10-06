@@ -70,19 +70,19 @@ Add the generator as a build requirement in `conanfile.txt`:
 djinni-generator/1.2.0
 ```
 
-### Code format
+### Code Formatting
 
-All code files of type **scala** and **sbt** need be formatted with [scala-fmt](https://scalameta.org/scalafmt/) plugin.
+All **scala**- and **sbt**-files need to be formatted with the [scala-fmt](https://scalameta.org/scalafmt/) plugin.
 
-To format all files execute `sbt plugins scalafmtAll`.
+To format all files, execute `sbt plugins scalafmtAll`.
 
-The version of scala format tool can be changed in the file `.scalafmt.conf` and the version of scala plugin can be changed in the file `project/plugins.sbt`.
+The version of the scala format tool can be changed in the file `.scalafmt.conf` and the version of the scala plugin can be changed in the file `project/plugins.sbt`.
 
-To change the code formatter configurations, put all configurations options inside `.scalafmt.conf`. See all configutations here: https://scalameta.org/scalafmt/docs/configuration.html. 
+To change the code formatter configurations, put all configuration options inside `.scalafmt.conf`. See all configuration options [here](https://scalameta.org/scalafmt/docs/configuration.html). 
 
-You can check if formatter is working with command `sbt scalafmtCheck `.
+You can check if the formatter is working with the command `sbt scalafmtCheck `.
 
-All available tasks of the code formatter plugin can be checked here: https://scalameta.org/scalafmt/docs/installation.html#task-keys.
+All available tasks of the code formatter plugin can be checked [here](https://scalameta.org/scalafmt/docs/installation.html#task-keys).
 
 ## Credits
 
