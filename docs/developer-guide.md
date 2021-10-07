@@ -75,6 +75,20 @@ On Windows the file must be renamed to `djinni.bat` to make it executable.
 
     The resulting binary still requires Java to be able to run! [Details on how the self-executing jar works](https://github.com/sbt/sbt-assembly#prepending-a-launch-script).
 
+### Code Formatting
+
+All **scala**- and **sbt**-files need to be formatted with the [scala-fmt](https://scalameta.org/scalafmt/) plugin.
+
+To format all files, execute `sbt scalafmtAll`.
+
+The version of the scala format tool can be changed in the file `.scalafmt.conf` and the version of the scala plugin can be changed in the file `project/plugins.sbt`.
+
+To change the code formatter configurations, put all configuration options inside `.scalafmt.conf`. See all configuration options [here](https://scalameta.org/scalafmt/docs/configuration.html). 
+
+You can check if the formatter is working with the command `sbt scalafmtCheck `.
+
+All available tasks of the code formatter plugin can be checked [here](https://scalameta.org/scalafmt/docs/installation.html#task-keys).
+
 ## Project Structure
 
 ```text
