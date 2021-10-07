@@ -18,8 +18,3 @@ lazy val djinni = (project in file("."))
     assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
     test in assembly := {}
   )
-
-
-
-
-
