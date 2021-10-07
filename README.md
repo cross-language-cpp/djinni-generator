@@ -74,7 +74,7 @@ djinni-generator/1.2.0
 
 All **scala**- and **sbt**-files need to be formatted with the [scala-fmt](https://scalameta.org/scalafmt/) plugin.
 
-To format all files, execute `sbt plugins scalafmtAll`.
+To format all files, execute `sbt scalafmtAll`.
 
 The version of the scala format tool can be changed in the file `.scalafmt.conf` and the version of the scala plugin can be changed in the file `project/plugins.sbt`.
 
