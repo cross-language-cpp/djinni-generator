@@ -45,6 +45,7 @@ jobs:
         run: chmod u+x target/bin/djinni
       - name: Running integration-tests
         run: sbt it:test
+
   formatCheck:
     runs-on: ubuntu-latest
     steps:
@@ -52,9 +53,7 @@ jobs:
       - name: Caching dependencies
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.sbt
-            ~/.ivy2
+          path: ~/.sbt
           key: scala-fmt-deps
-      - name: fmt-check
+      - name: "Format check"
         run: sbt scalafmtCheck
