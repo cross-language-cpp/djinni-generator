@@ -324,14 +324,7 @@ object Main {
       identStyle("ident-cppcli-file", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(file = c) })
     }
 
-    var parseSuccess = false
-
-    argParser.parse(args, ()) match {
-      case Some(_) => parseSuccess = true
-      case None => parseSuccess = false
-    }
-
-    if (!parseSuccess) {
+    if (argParser.parse(args, ()).isEmpty) {
       System.exit(1)
       return
     }
