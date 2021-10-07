@@ -56,5 +56,5 @@ jobs:
             ~/.sbt
             ~/.ivy2
           key: scala-fmt-deps
-      - name: Building
+      - name: fmt-check
         run: sbt scalafmtCheck
