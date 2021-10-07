@@ -68,7 +68,7 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
           )
           writeObjcConstValue(w, head.ty, vMap.apply(head.ident))
           w.nestedN(2) {
-              val skipFirst = SkipFirst()
+            val skipFirst = SkipFirst()
             for (f <- record.fields) skipFirst {
               w.wl
               w.w(s"${idObjc.field(f.ident)}:")
