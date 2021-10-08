@@ -25,9 +25,22 @@ jobs:
         with:
           name: djinni-generator
           path: target/bin/djinni
+  formatCheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Caching dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.sbt
+          key: scala-fmt-deps
+      - name: "Format check generator"
+        run: sbt scalafmtCheck
+      - name: "Format check integration test"
+        run: sbt it:scalafmtCheck
   it:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, formatCheck]
     steps:
       - uses: actions/checkout@v2
       - name: Caching dependencies
@@ -46,14 +59,3 @@ jobs:
       - name: Running integration-tests
         run: sbt it:test
 
-  formatCheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Caching dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.sbt
-          key: scala-fmt-deps
-      - name: "Format check"
-        run: sbt scalafmtCheck
