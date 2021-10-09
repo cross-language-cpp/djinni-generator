@@ -114,15 +114,19 @@ object Main {
         )
       }
 
-      override def showUsageOnError = false
+      override def showUsageOnError = Some(false)
+
       head("djinni generator version", Main.getClass.getPackage.getImplementationVersion)
+
       note("General")
       help("help")
       version("version")
+
       opt[File]("idl").valueName("<in-file>").required().foreach(idlFile = _)
         .text("The IDL file with the type definitions, typically with extension \".djinni\".")
       opt[String]("idl-include-path").valueName("<path> ...").optional().unbounded().foreach(x => idlIncludePaths = idlIncludePaths :+ x)
         .text("An include path to search for Djinni @import directives. Can specify multiple paths.")
+
       note("\nJava")
       opt[File]("java-out").valueName("<out-folder>").foreach(x => javaOutFolder = Some(x))
         .text("The output for the Java files (Generator disabled if unspecified).")
@@ -144,6 +148,7 @@ object Main {
         .text("all generated java classes will implement the interface android.os.Parcelable")
       opt[Boolean]("java-use-final-for-record").valueName("<use-final-for-record>").foreach(x => javaUseFinalForRecord = x)
         .text("Whether generated Java classes for records should be marked 'final' (default: true). ")
+
       note("\nC++")
       opt[File]("cpp-out").valueName("<out-folder>").foreach(x => cppOutFolder = Some(x))
         .text("The output folder for C++ files (Generator disabled if unspecified).")
@@ -173,6 +178,7 @@ object Main {
         .text("Use wide strings in C++ code (default: false)")
       opt[Boolean]("cpp-omit-default-record-constructor").valueName("<true/false>").foreach(x => cppOmitDefaultRecordCtor = x)
         .text("Omit the default constructor for records in C++ code (default: `false`)")
+
       note("\nJNI")
       opt[File]("jni-out").valueName("<out-folder>").foreach(x => jniOutFolder = Some(x))
         .text("The folder for the JNI C++ output files (Generator disabled if unspecified).")
@@ -186,6 +192,7 @@ object Main {
         .text("The namespace name to use for generated JNI C++ classes.")
       opt[Boolean]("jni-generate-main").valueName("<true/false>").foreach(x => jniGenerateMain = x)
         .text("Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)")
+
       note("\nObjective-C")
       opt[File]("objc-out").valueName("<out-folder>").foreach(x => objcOutFolder = Some(x))
         .text("The output folder for Objective-C files (Generator disabled if unspecified).")
@@ -201,6 +208,7 @@ object Main {
         .text("The name of Objective-C Bridging Header used in XCode's Swift projects. The output folder is --objc-header-out.")
       opt[Boolean]("objc-closed-enums").valueName("<true/false>").foreach(x => objcClosedEnums = x)
         .text("All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). ")
+
       note("\nObjective-C++")
       opt[File]("objcpp-out").valueName("<out-folder>").foreach(x => objcppOutFolder = Some(x))
         .text("The output folder for private Objective-C++ files (Generator disabled if unspecified).")
@@ -220,6 +228,7 @@ object Main {
         .text("The prefix path for #import of the extended record Objective-C header (.h) files")
       opt[String]("objcpp-namespace").valueName("<prefix>").foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
+
       note("\nPython")
       opt[File]("py-out").valueName("<out-folder>").foreach(x => pyOutFolder = Some(x))
         .text("The output folder for Python files (Generator disabled if unspecified).")
@@ -231,6 +240,7 @@ object Main {
         .text("The names of the dynamic libraries to be linked with PyCFFI.")
       opt[String]("py-import-prefix").valueName("<import-prefix>").foreach(pyImportPrefix = _)
         .text("The import prefix used within python generated files (default: \"\")")
+
       note("\nC wrapper")
       opt[File]("c-wrapper-out").valueName("<out-folder>").foreach(x => cWrapperOutFolder = Some(x))
         .text("The output folder for C wrapper files (Generator disabled if unspecified).")
@@ -240,6 +250,7 @@ object Main {
         .text("The prefix for #includes of C wrapper header files from C wrapper C++ files.")
       opt[String]("c-wrapper-include-cpp-prefix").valueName("<prefix>").foreach(x => cWrapperIncludeCppPrefix = x)
         .text("The prefix for #includes of C++ header files from C wrapper C++ files.")
+
       note("\nC++/CLI")
       opt[File]("cppcli-out").valueName("<out-folder>").foreach(x => cppCliOutFolder = Some(x))
         .text("The output folder for C++/CLI files (Generator disabled if unspecified).")
@@ -247,6 +258,7 @@ object Main {
         .text("The namespace name to use for generated C++/CLI classes.")
       opt[String]("cppcli-include-cpp-prefix").valueName("<prefix>").foreach(x => cppCliIncludeCppPrefix = x)
         .text("The prefix for #include of the main C++ header files from C++/CLI files.")
+
       note("\nYaml Generation")
       opt[File]("yaml-out").valueName("<out-folder>").foreach(x => yamlOutFolder = Some(x))
         .text("The output folder for YAML files (Generator disabled if unspecified).")
@@ -254,6 +266,7 @@ object Main {
         .text("If specified all types are merged into a single YAML file instead of generating one file per type (relative to --yaml-out).")
       opt[String]("yaml-prefix").valueName("<pre>").foreach(yamlPrefix = _)
         .text("The prefix to add to type names stored in YAML files (default: \"\").")
+
       note("\nOther")
       opt[File]("list-in-files").valueName("<list-in-files>").foreach(x => inFileListPath = Some(x))
         .text("Optional file in which to write the list of input files parsed.")
@@ -311,8 +324,9 @@ object Main {
       identStyle("ident-cppcli-file", "FooBar", c => { cppCliIdentStyle = cppCliIdentStyle.copy(file = c) })
     }
 
-    if (!argParser.parse(args)) {
-      System.exit(1); return
+    if (argParser.parse(args, ()).isEmpty) {
+      System.exit(1)
+      return
     }
 
     val cppHeaderOutFolder = if (cppHeaderOutFolderOptional.isDefined) cppHeaderOutFolderOptional else cppOutFolder
