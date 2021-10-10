@@ -24,8 +24,8 @@ import scala.collection.mutable
 // Python does not have explicit types, must see if needed, currently returnType and toPythonType used
 class PythonMarshal(spec: Spec) extends Marshal(spec) {
   val cMarshal = new CWrapperMarshal(spec)
-  val dh =
-    "dh__" // prefix for py files containing helpers for structured typesw
+  // prefix for py files containing helpers for structured types
+  val dh = "dh__" 
 
   override def typename(tm: MExpr): String = toPythonType(tm)
   def typename(name: String, ty: TypeDef): String =
