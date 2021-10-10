@@ -771,9 +771,9 @@ object Main {
     } else {
       None
     }
-    val idl =
+    val idl : scala.collection.immutable.Seq[djinni.ast.TypeDecl]  =
       try {
-        Parser(idlIncludePaths).parseFile(idlFile, inFileListWriter)
+        Parser(idlIncludePaths).parseFile(idlFile, inFileListWriter).toSeq
       } catch {
         case ex @ (_: FileNotFoundException | _: IOException) =>
           System.err.println("Error reading from --idl file: " + ex.getMessage)

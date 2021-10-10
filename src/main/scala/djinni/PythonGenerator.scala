@@ -872,7 +872,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       processPackedArgs(m, withStmts)
       // check that if python promised to send as arguments non optionals then they are not None
       //checkNonOptionals(m, w)
-      writeWithStmts(withStmts, w) {
+      writeWithStmts(withStmts.toSeq, w) {
         val libArgs = getLibArgsFrom(m, pythonClass)
         val libCall = lib + "." + cMethodWrapper + "_" + m.ident.name + libArgs
         if (m.ret.isEmpty) {
@@ -1504,7 +1504,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
               docLists += { w: IndentWriter =>
                 writeDocConstantsList(w, r.consts)
               }
-            if (writeDocString(w, doc, docLists)) { w.wl }
+            if (writeDocString(w, doc, docLists.toSeq)) { w.wl }
 
             w.wl("c_data_set = MultiSet()")
             w.wl

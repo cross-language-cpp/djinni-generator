@@ -1,12 +1,9 @@
 package djinni
 
+import org.scalatest._
+import matchers.should.Matchers._
+import org.scalatest.funspec._
 import org.scalatest.FunSpec
-import org.scalatest.Matchers.{
-  be,
-  convertToAnyShouldWrapper,
-  equal,
-  noException
-}
 
 import scala.io.Source
 import scala.sys.process._

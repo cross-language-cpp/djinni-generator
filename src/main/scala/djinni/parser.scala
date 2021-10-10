@@ -29,8 +29,12 @@ import djinni.ast._
 import org.apache.commons.io.FilenameUtils
 import java.util.{Map => JMap}
 import org.yaml.snakeyaml.Yaml
-import scala.collection.JavaConversions._
+//import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
+import scala.collection.immutable
 import scala.collection.mutable
+import scala.collection.mutable.Iterable
+import scala.collection.immutable.Iterable
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{Position, Positional}
 
@@ -136,7 +140,7 @@ case class Parser(includePaths: List[String]) {
           val fields = items collect { case f: Field => f }
           val consts = items collect { case c: Const => c }
           val derivingTypes = deriving.getOrElse(Set[DerivingType]())
-          Record(ext, fields, consts, derivingTypes)
+          Record(ext, fields.toSeq, consts, derivingTypes)
         }
       }
     def field: Parser[Field] = doc ~ ident ~ ":" ~ typeRef ^^ {
@@ -335,9 +339,9 @@ case class Parser(includePaths: List[String]) {
       in: java.io.Reader
   ): Either[Error, Seq[TypeDecl]] = {
     val yaml = new Yaml();
-    val tds = mutable.MutableList[TypeDecl]()
+    val tds = mutable.ListBuffer[TypeDecl]()
     for (
-      properties <- yaml.loadAll(in).collect { case doc: JMap[_, _] =>
+      properties <- yaml.loadAll(in).asScala.collect { case doc: Map[_, _] =>
         doc.collect { case (k: String, v: Any) => (k, v) }
       }
     ) {
@@ -346,7 +350,7 @@ case class Parser(includePaths: List[String]) {
       val params = properties
         .get("params")
         .fold(Seq[TypeParam]())(
-          _.asInstanceOf[java.util.ArrayList[String]].collect {
+          _.asInstanceOf[Seq[String]].collect {
             case s: String =>
               TypeParam(
                 Ident(
@@ -373,7 +377,7 @@ case class Parser(includePaths: List[String]) {
           )
       }
     }
-    Right(tds)
+    Right(tds.toList)
   }
 
   def parseExternFile(

@@ -130,7 +130,7 @@ package object resolver {
       val resolvedConsts = new ArrayBuffer[Const]
       for (c <- consts) {
         try {
-          constTypeCheck(c.ty.resolved, c.value, resolvedConsts)
+          constTypeCheck(c.ty.resolved, c.value, resolvedConsts.toSeq)
         } catch {
           case e: AssertionError =>
             throw Error(c.ident.loc, e.getMessage()).toException
