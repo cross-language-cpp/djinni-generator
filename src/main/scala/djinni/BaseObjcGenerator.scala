@@ -1,17 +1,16 @@
-/**
-  * Copyright 2016 Dropbox, Inc.
+/** Copyright 2016 Dropbox, Inc.
   *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
+  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  * use this file except in compliance with the License. You may obtain a copy
+  * of the License at
   *
-  *    http://www.apache.org/licenses/LICENSE-2.0
+  * http://www.apache.org/licenses/LICENSE-2.0
   *
   * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  * License for the specific language governing permissions and limitations
+  * under the License.
   */
 
 package djinni
@@ -36,49 +35,55 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
     w.w(s"${td} const $s${idObjc.const(c.ident)}")
   }
 
-  /**
-    * Gererate the definition of Objc constants.
-    */
-  def generateObjcConstants(w: IndentWriter, consts: Seq[Const], selfName: String,
-                            genType: ObjcConstantType.Value) = {
+  // Generate the definition of Objc constants.
+  def generateObjcConstants(
+      w: IndentWriter,
+      consts: Seq[Const],
+      selfName: String,
+      genType: ObjcConstantType.Value
+  ) = {
     def boxedPrimitive(ty: TypeRef): String = {
       val (_, needRef) = marshal.toObjcType(ty)
       if (needRef) "@" else ""
     }
 
-    def writeObjcConstValue(w: IndentWriter, ty: TypeRef, v: Any): Unit = v match {
-      case l: Long => w.w(boxedPrimitive(ty) + l.toString)
-      case d: Double if marshal.fieldType(ty) == "float" => w.w(boxedPrimitive(ty) + d.toString + "f")
-      case d: Double => w.w(boxedPrimitive(ty) + d.toString)
-      case b: Boolean => w.w(boxedPrimitive(ty) + (if (b) "YES" else "NO"))
-      case s: String => w.w("@" + s)
-      case e: EnumValue => w.w(marshal.typename(ty) + idObjc.enum(e.name))
-      case v: ConstRef => w.w(selfName + idObjc.const (v.name))
-      case z: Map[_, _] => { // Value is record
-      val recordMdef = ty.resolved.base.asInstanceOf[MDef]
-        val record = recordMdef.body.asInstanceOf[Record]
-        val vMap = z.asInstanceOf[Map[String, Any]]
-        val head = record.fields.head
-        w.w(s"[[${marshal.typename(ty)} alloc] initWith${IdentStyle.camelUpper(head.ident)}:")
-        writeObjcConstValue(w, head.ty, vMap.apply(head.ident))
-        w.nestedN(2) {
-          val skipFirst = SkipFirst()
-          for (f <- record.fields) skipFirst {
-            w.wl
-            w.w(s"${idObjc.field(f.ident)}:")
-            writeObjcConstValue(w, f.ty, vMap.apply(f.ident))
+    def writeObjcConstValue(w: IndentWriter, ty: TypeRef, v: Any): Unit =
+      v match {
+        case l: Long => w.w(boxedPrimitive(ty) + l.toString)
+        case d: Double if marshal.fieldType(ty) == "float" =>
+          w.w(boxedPrimitive(ty) + d.toString + "f")
+        case d: Double    => w.w(boxedPrimitive(ty) + d.toString)
+        case b: Boolean   => w.w(boxedPrimitive(ty) + (if (b) "YES" else "NO"))
+        case s: String    => w.w("@" + s)
+        case e: EnumValue => w.w(marshal.typename(ty) + idObjc.enum(e.name))
+        case v: ConstRef  => w.w(selfName + idObjc.const(v.name))
+        case z: Map[_, _] => { // Value is record
+          val recordMdef = ty.resolved.base.asInstanceOf[MDef]
+          val record = recordMdef.body.asInstanceOf[Record]
+          val vMap = z.asInstanceOf[Map[String, Any]]
+          val head = record.fields.head
+          w.w(
+            s"[[${marshal.typename(ty)} alloc] initWith${IdentStyle.camelUpper(head.ident)}:"
+          )
+          writeObjcConstValue(w, head.ty, vMap.apply(head.ident))
+          w.nestedN(2) {
+            val skipFirst = SkipFirst()
+            for (f <- record.fields) skipFirst {
+              w.wl
+              w.w(s"${idObjc.field(f.ident)}:")
+              writeObjcConstValue(w, f.ty, vMap.apply(f.ident))
+            }
           }
+          w.w("]")
         }
-        w.w("]")
       }
-    }
 
     def writeObjcConstMethImpl(c: Const, w: IndentWriter) {
       val label = "+"
       val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
       val ret = marshal.fqFieldType(c.ty) + nullability
       val decl = s"$label ($ret)${idObjc.method(c.ident)}"
-      writeAlignedObjcCall(w, decl, List(), "", p => ("",""))
+      writeAlignedObjcCall(w, decl, List(), "", p => ("", ""))
       w.wl
 
       w.braced {
@@ -109,4 +114,3 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 }
-
