@@ -125,8 +125,8 @@ object Main {
             }
           )
       }
-      
-      override def showUsageOnError = false
+
+      override def showUsageOnError = Some(false)
       head(
         "djinni generator version",
         Main.getClass.getPackage.getImplementationVersion
@@ -276,8 +276,12 @@ object Main {
         .text(
           "Omit the default constructor for records in C++ code (default: `false`)"
         )
-      opt[Boolean]("cpp-omit-default-record-constructor").valueName("<true/false>").foreach(x => cppOmitDefaultRecordCtor = x)
-        .text("Omit the default constructor for records in C++ code (default: `false`)")
+      opt[Boolean]("cpp-omit-default-record-constructor")
+        .valueName("<true/false>")
+        .foreach(x => cppOmitDefaultRecordCtor = x)
+        .text(
+          "Omit the default constructor for records in C++ code (default: `false`)"
+        )
 
       note("\nJNI")
       opt[File]("jni-out")
@@ -314,8 +318,12 @@ object Main {
         .text(
           "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
         )
-      opt[Boolean]("jni-generate-main").valueName("<true/false>").foreach(x => jniGenerateMain = x)
-        .text("Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)")
+      opt[Boolean]("jni-generate-main")
+        .valueName("<true/false>")
+        .foreach(x => jniGenerateMain = x)
+        .text(
+          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
+        )
 
       note("\nObjective-C")
       opt[File]("objc-out")

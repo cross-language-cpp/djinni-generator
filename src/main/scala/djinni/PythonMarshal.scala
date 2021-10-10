@@ -25,7 +25,7 @@ import scala.collection.mutable
 class PythonMarshal(spec: Spec) extends Marshal(spec) {
   val cMarshal = new CWrapperMarshal(spec)
   // prefix for py files containing helpers for structured types
-  val dh = "dh__" 
+  val dh = "dh__"
 
   override def typename(tm: MExpr): String = toPythonType(tm)
   def typename(name: String, ty: TypeDef): String =
