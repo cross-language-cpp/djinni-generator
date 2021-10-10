@@ -125,7 +125,7 @@ object Main {
             }
           )
       }
-
+      
       override def showUsageOnError = false
       head(
         "djinni generator version",
@@ -149,6 +149,7 @@ object Main {
         .text(
           "An include path to search for Djinni @import directives. Can specify multiple paths."
         )
+
       note("\nJava")
       opt[File]("java-out")
         .valueName("<out-folder>")
@@ -275,6 +276,9 @@ object Main {
         .text(
           "Omit the default constructor for records in C++ code (default: `false`)"
         )
+      opt[Boolean]("cpp-omit-default-record-constructor").valueName("<true/false>").foreach(x => cppOmitDefaultRecordCtor = x)
+        .text("Omit the default constructor for records in C++ code (default: `false`)")
+
       note("\nJNI")
       opt[File]("jni-out")
         .valueName("<out-folder>")
@@ -310,6 +314,9 @@ object Main {
         .text(
           "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
         )
+      opt[Boolean]("jni-generate-main").valueName("<true/false>").foreach(x => jniGenerateMain = x)
+        .text("Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)")
+
       note("\nObjective-C")
       opt[File]("objc-out")
         .valueName("<out-folder>")
@@ -351,6 +358,7 @@ object Main {
         .text(
           "All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). "
         )
+
       note("\nObjective-C++")
       opt[File]("objcpp-out")
         .valueName("<out-folder>")
@@ -404,6 +412,7 @@ object Main {
         .valueName("<prefix>")
         .foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
+
       note("\nPython")
       opt[File]("py-out")
         .valueName("<out-folder>")
@@ -456,6 +465,7 @@ object Main {
         .text(
           "The prefix for #includes of C++ header files from C wrapper C++ files."
         )
+
       note("\nC++/CLI")
       opt[File]("cppcli-out")
         .valueName("<out-folder>")
@@ -492,6 +502,7 @@ object Main {
         .text(
           "The prefix to add to type names stored in YAML files (default: \"\")."
         )
+
       note("\nOther")
       opt[File]("list-in-files")
         .valueName("<list-in-files>")
@@ -701,8 +712,9 @@ object Main {
       )
     }
 
-    if (!argParser.parse(args)) {
-      System.exit(1); return
+    if (argParser.parse(args, ()).isEmpty) {
+      System.exit(1)
+      return
     }
 
     val cppHeaderOutFolder =
