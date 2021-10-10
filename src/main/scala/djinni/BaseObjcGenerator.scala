@@ -35,8 +35,7 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
     w.w(s"${td} const $s${idObjc.const(c.ident)}")
   }
 
-  /** Gererate the definition of Objc constants.
-    */
+  // Generate the definition of Objc constants.
   def generateObjcConstants(
       w: IndentWriter,
       consts: Seq[Const],
