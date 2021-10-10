@@ -19,7 +19,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   case class QuotedString(
       str: String
-  ) // For anything that migt require escaping
+  ) // For anything that might require escaping
 
   private def writeYamlFile(
       name: String,
