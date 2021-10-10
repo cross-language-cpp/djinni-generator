@@ -14,8 +14,7 @@ import scala.sys.process._
 import scala.reflect.io.Directory
 import java.io.File
 
-/** Base class for integration tests, providing a few handy helper functions
-  */
+// Base class for integration tests, providing a few handy helper functions
 class IntegrationTest extends FunSpec {
   final val CPP = "cpp"
   final val CPP_HEADERS = "cpp-headers"
