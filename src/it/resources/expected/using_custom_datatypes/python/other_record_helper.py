@@ -42,9 +42,9 @@ class OtherRecordHelper:
 
     @staticmethod
     def _add_callbacks():
-        lib.other_record_add_callback_get_other_record_f1(OtherRecordHelper.get_other_record_f1)
         lib.other_record_add_callback___delete(OtherRecordHelper.__delete)
         lib.other_record_add_callback_create_other_record(OtherRecordHelper.create_other_record)
+        lib.other_record_add_callback_get_other_record_f1(OtherRecordHelper.get_other_record_f1)
 
 OtherRecordHelper._add_callbacks()
 

@@ -773,7 +773,7 @@ object Main {
     }
     val idl =
       try {
-        Parser(idlIncludePaths).parseFile(idlFile, inFileListWriter)
+        Parser(idlIncludePaths).parseFile(idlFile, inFileListWriter).toSeq
       } catch {
         case ex @ (_: FileNotFoundException | _: IOException) =>
           System.err.println("Error reading from --idl file: " + ex.getMessage)
