@@ -535,29 +535,67 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
     it("Should generate json serializers for all data types") {
       val idlFile = "all_datatypes_json"
-      When(s"generating a C++ record from `$idlFile.djinni` with json serialization enabled")
-      val cppHeaderFilenames = CppHeaders("all_datatypes_json.hpp","all_datatypes_json+json.hpp","enum_data.hpp","enum_data+json.hpp","json+extension.hpp")
-      val cmd = djinniParams(idlFile, cpp=true, objc=false, java=false, python=false, cWrapper=false, cppCLI=false, cppJsonSerialization=Some("nlohmann"))
+      When(
+        s"generating a C++ record from `$idlFile.djinni` with json serialization enabled"
+      )
+      val cppHeaderFilenames = CppHeaders(
+        "all_datatypes_json.hpp",
+        "all_datatypes_json+json.hpp",
+        "enum_data.hpp",
+        "enum_data+json.hpp",
+        "json+extension.hpp"
+      )
+      val cmd = djinniParams(
+        idlFile,
+        cpp = true,
+        objc = false,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = false,
+        cppJsonSerialization = Some("nlohmann")
+      )
       djinni(cmd)
 
-      Then(s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}")
+      Then(
+        s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}"
+      )
       assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
 
       Then("the file `generated-files.txt` should contain all generated files")
       assertFileContentEquals(idlFile, "", List("generated-files.txt"))
     }
 
-    it("Should generate json serializers in appropriate namespace when using --cpp-namespace") {
+    it(
+      "Should generate json serializers in appropriate namespace when using --cpp-namespace"
+    ) {
       val idlFile = "all_datatypes_json"
-      val outputPath = "src/it/resources/result/cpp_json_serialization_in_namespace"
-      When("calling the generator with just `--cpp-namespace custom_namespace, --cpp-json-serialization and --cpp-out`")
-      val output = djinni(s"--idl src/it/resources/${idlFile}.djinni --cpp-namespace custom_namespace --cpp-json-serialization nlohmann --cpp-out $outputPath/cpp --cpp-header-out $outputPath/cpp-headers")
-      Then("the generator should successfully generate just objc output and write all generate files to the given path, including headers")
+      val outputPath =
+        "src/it/resources/result/cpp_json_serialization_in_namespace"
+      When(
+        "calling the generator with just `--cpp-namespace custom_namespace, --cpp-json-serialization and --cpp-out`"
+      )
+      val output = djinni(
+        s"--idl src/it/resources/${idlFile}.djinni --cpp-namespace custom_namespace --cpp-json-serialization nlohmann --cpp-out $outputPath/cpp --cpp-header-out $outputPath/cpp-headers"
+      )
+      Then(
+        "the generator should successfully generate just objc output and write all generate files to the given path, including headers"
+      )
 
-      val cppHeaderFilenames = CppHeaders("all_datatypes_json+json.hpp", "enum_data+json.hpp", "my_flags+json.hpp")
+      val cppHeaderFilenames = CppHeaders(
+        "all_datatypes_json+json.hpp",
+        "enum_data+json.hpp",
+        "my_flags+json.hpp"
+      )
 
-      Then(s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}")
-      assertFileContentEquals("cpp_json_serialization_in_namespace", CPP_HEADERS, cppHeaderFilenames)
+      Then(
+        s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}"
+      )
+      assertFileContentEquals(
+        "cpp_json_serialization_in_namespace",
+        CPP_HEADERS,
+        cppHeaderFilenames
+      )
     }
 
   }

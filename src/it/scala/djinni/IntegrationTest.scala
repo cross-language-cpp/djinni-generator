@@ -153,7 +153,7 @@ class IntegrationTest extends FunSpec {
     if (cppOmitDefaultRecordCtor) {
       cmd += " --cpp-omit-default-record-constructor true"
     }
-    if(cppJsonSerialization.isDefined) {
+    if (cppJsonSerialization.isDefined) {
       cmd += s" --cpp-json-serialization ${cppJsonSerialization.get}"
     }
     cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
