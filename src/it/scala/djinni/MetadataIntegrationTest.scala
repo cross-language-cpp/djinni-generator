@@ -1,7 +1,8 @@
 package djinni
 
-import org.scalatest.GivenWhenThen
-import org.scalatest.Matchers.{convertToAnyShouldWrapper, startWith, include}
+import org.scalatest._
+import matchers._
+import should.Matchers._
 
 class MetadataIntegrationTest extends IntegrationTest with GivenWhenThen {
   it("should output version information") {

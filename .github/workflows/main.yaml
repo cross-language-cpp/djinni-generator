@@ -57,5 +57,5 @@ jobs:
       - name: Restoring file permissions of artifact
         run: chmod u+x target/bin/djinni
       - name: Running integration-tests
-        run: sbt it:test
+        run: sbt IntegrationTest/test
 
