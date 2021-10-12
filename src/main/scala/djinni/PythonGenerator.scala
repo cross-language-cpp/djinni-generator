@@ -1022,7 +1022,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       // Function to add callback on cpp side
       w.wl("@staticmethod")
       w.wl("def _add_callbacks():").nested {
-        for (m <- methods) {
+        for (m <- methods.sortBy(x => x.ident.name)) {
           w.wl(
             "lib." + classNameAsMethod + "_add_callback_" + idPython
               .method(m.ident.name) + p(proxyClass + "." + m.ident.name)
@@ -1580,7 +1580,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
           }
           w.wl
           // Callbacks to pass every record field to C, and to allow creating record from C
-          val callbackNames = mutable.Set[String]()
+          val callbackNames = mutable.SortedSet[String]()
           writeRecordCallbacks(ident, r, 0, callbackNames, w)
 
           // Function to give C access to callbacks

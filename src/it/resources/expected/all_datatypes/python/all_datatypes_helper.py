@@ -194,23 +194,23 @@ class AllDatatypesHelper:
 
     @staticmethod
     def _add_callbacks():
-        lib.all_datatypes_add_callback_get_all_datatypes_f10(AllDatatypesHelper.get_all_datatypes_f10)
+        lib.all_datatypes_add_callback___delete(AllDatatypesHelper.__delete)
         lib.all_datatypes_add_callback_create_all_datatypes(AllDatatypesHelper.create_all_datatypes)
         lib.all_datatypes_add_callback_get_all_datatypes_f1(AllDatatypesHelper.get_all_datatypes_f1)
-        lib.all_datatypes_add_callback_get_all_datatypes_f8(AllDatatypesHelper.get_all_datatypes_f8)
-        lib.all_datatypes_add_callback_get_all_datatypes_f2(AllDatatypesHelper.get_all_datatypes_f2)
-        lib.all_datatypes_add_callback_get_all_datatypes_f9(AllDatatypesHelper.get_all_datatypes_f9)
-        lib.all_datatypes_add_callback_get_all_datatypes_f3(AllDatatypesHelper.get_all_datatypes_f3)
+        lib.all_datatypes_add_callback_get_all_datatypes_f10(AllDatatypesHelper.get_all_datatypes_f10)
         lib.all_datatypes_add_callback_get_all_datatypes_f11(AllDatatypesHelper.get_all_datatypes_f11)
         lib.all_datatypes_add_callback_get_all_datatypes_f12(AllDatatypesHelper.get_all_datatypes_f12)
         lib.all_datatypes_add_callback_get_all_datatypes_f13(AllDatatypesHelper.get_all_datatypes_f13)
-        lib.all_datatypes_add_callback_get_all_datatypes_f4(AllDatatypesHelper.get_all_datatypes_f4)
         lib.all_datatypes_add_callback_get_all_datatypes_f14(AllDatatypesHelper.get_all_datatypes_f14)
+        lib.all_datatypes_add_callback_get_all_datatypes_f15(AllDatatypesHelper.get_all_datatypes_f15)
+        lib.all_datatypes_add_callback_get_all_datatypes_f2(AllDatatypesHelper.get_all_datatypes_f2)
+        lib.all_datatypes_add_callback_get_all_datatypes_f3(AllDatatypesHelper.get_all_datatypes_f3)
+        lib.all_datatypes_add_callback_get_all_datatypes_f4(AllDatatypesHelper.get_all_datatypes_f4)
         lib.all_datatypes_add_callback_get_all_datatypes_f5(AllDatatypesHelper.get_all_datatypes_f5)
         lib.all_datatypes_add_callback_get_all_datatypes_f6(AllDatatypesHelper.get_all_datatypes_f6)
-        lib.all_datatypes_add_callback___delete(AllDatatypesHelper.__delete)
         lib.all_datatypes_add_callback_get_all_datatypes_f7(AllDatatypesHelper.get_all_datatypes_f7)
-        lib.all_datatypes_add_callback_get_all_datatypes_f15(AllDatatypesHelper.get_all_datatypes_f15)
+        lib.all_datatypes_add_callback_get_all_datatypes_f8(AllDatatypesHelper.get_all_datatypes_f8)
+        lib.all_datatypes_add_callback_get_all_datatypes_f9(AllDatatypesHelper.get_all_datatypes_f9)
 
 AllDatatypesHelper._add_callbacks()
 

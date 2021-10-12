@@ -77,12 +77,12 @@ class MyRecordHelper:
 
     @staticmethod
     def _add_callbacks():
-        lib.my_record_add_callback_get_my_record_f4(MyRecordHelper.get_my_record_f4)
+        lib.my_record_add_callback___delete(MyRecordHelper.__delete)
+        lib.my_record_add_callback_create_my_record(MyRecordHelper.create_my_record)
         lib.my_record_add_callback_get_my_record_f1(MyRecordHelper.get_my_record_f1)
         lib.my_record_add_callback_get_my_record_f2(MyRecordHelper.get_my_record_f2)
         lib.my_record_add_callback_get_my_record_f3(MyRecordHelper.get_my_record_f3)
-        lib.my_record_add_callback_create_my_record(MyRecordHelper.create_my_record)
-        lib.my_record_add_callback___delete(MyRecordHelper.__delete)
+        lib.my_record_add_callback_get_my_record_f4(MyRecordHelper.get_my_record_f4)
 
 
 MyRecordHelper._add_callbacks()
