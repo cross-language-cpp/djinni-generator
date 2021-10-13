@@ -1,6 +1,5 @@
 package djinni
 
-//import org.scalatest.GivenWhenThen
 import org.scalatest._
 import matchers.should.Matchers._
 
