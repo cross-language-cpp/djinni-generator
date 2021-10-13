@@ -28,7 +28,6 @@ import djinni.syntax._
 import djinni.ast._
 import org.apache.commons.io.FilenameUtils
 import org.yaml.snakeyaml.Yaml
-//import scala.collection.JavaConverters._
 import java.util.{Map => JMap}
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable
