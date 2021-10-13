@@ -349,9 +349,8 @@ case class Parser(includePaths: List[String]) {
         .get("params")
         .fold(Seq[TypeParam]())(
           _.asInstanceOf[java.util.ArrayList[String]]
-          .toArray()
-          .collect {
-            case s: String =>
+            .toArray()
+            .collect { case s: String =>
               TypeParam(
                 Ident(
                   s.asInstanceOf[String],
@@ -359,7 +358,7 @@ case class Parser(includePaths: List[String]) {
                   Loc(fileStack.top, 1, 1)
                 )
               )
-          }
+            }
         )
 
       IdlParser.parseAll(
@@ -375,7 +374,8 @@ case class Parser(includePaths: List[String]) {
               "'typedef' has an unrecognized value"
             )
           )
-          case _ => return Left(Error(Loc(fileStack.top, 1, 1), "No match im match"))
+        case _ =>
+          return Left(Error(Loc(fileStack.top, 1, 1), "No match im match"))
       }
     }
     Right(tds.toSeq)

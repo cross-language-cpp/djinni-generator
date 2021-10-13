@@ -6,7 +6,6 @@ import matchers.should.Matchers._
 
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
-
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
   describe("djinni file generation") {
