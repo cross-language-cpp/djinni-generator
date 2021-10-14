@@ -8,7 +8,6 @@ import djinni.writer.IndentWriter
 import scala.collection
 import collection.JavaConverters._
 import java.util.{Map => JMap}
-import collection.mutable
 class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   val cppMarshal = new CppMarshal(spec)
