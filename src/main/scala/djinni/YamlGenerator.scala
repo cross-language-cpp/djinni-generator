@@ -5,7 +5,6 @@ import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
 import djinni.writer.IndentWriter
-import scala.collection
 import collection.JavaConverters._
 import java.util.{Map => JMap}
 class YamlGenerator(spec: Spec) extends Generator(spec) {
