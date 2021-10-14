@@ -399,7 +399,6 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
     spec.cppJsonSerialization match {
       case Some("nlohmann") => {
-        refs.hpp.add("#include <nlohmann/json.hpp>")
         refs.cpp.add("#include " + q(s"$cppName+json.hpp"))
       }
       case _ =>

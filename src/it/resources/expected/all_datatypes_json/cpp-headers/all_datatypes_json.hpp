@@ -7,7 +7,6 @@
 #include "my_flags.hpp"
 #include <chrono>
 #include <cstdint>
-#include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
 #include <unordered_map>
