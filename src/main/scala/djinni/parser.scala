@@ -31,7 +31,6 @@ import org.yaml.snakeyaml.Yaml
 import java.util.{Map => JMap}
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable
-import scala.collection.mutable.Iterable
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{Position, Positional}
 
