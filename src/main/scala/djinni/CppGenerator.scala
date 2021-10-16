@@ -185,7 +185,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     )
 
     spec.cppJsonSerialization match {
-      case Some("nlohmann") => {
+      case Some("nlohmann_json") => {
         writeNlohmannJsonExtensionFile()
         val jsonRefs = new CppRefs(ident.name, "+json")
         jsonRefs.hpp.add("#include <nlohmann/json.hpp>")
@@ -514,7 +514,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     writeHppFile(cppName, origin, refs.hpp, refs.hppFwds, writeCppPrototype)
 
     spec.cppJsonSerialization match {
-      case Some("nlohmann") => {
+      case Some("nlohmann_json") => {
         writeNlohmannJsonExtensionFile()
         // C++ Json Header
         val jsonRefs = new CppRefs(ident.name, "+json")

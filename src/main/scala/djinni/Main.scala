@@ -530,9 +530,11 @@ object Main {
           "Way of specifying if file generation should be skipped (default: false)"
         )
       opt[String]("cpp-json-serialization")
-        .valueName("<None/nlohmann>")
+        .valueName("<nlohmann_json>")
         .foreach(x => cppJsonSerialization = Some(x))
-        .text("Generate automatic json serializer for DJINNI value types")
+        .text(
+          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json. Requires also header-only hinnant/date for date serialization/deserialization."
+        )
 
       note(
         "\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")"
@@ -799,6 +801,17 @@ object Main {
       }
     }
 
+    // If --cpp-json-serialization is specified, require that the specified value is legal
+    if (cppJsonSerialization.isDefined) {
+      val validJsonSerializers = Array("nlohmann_json")
+      if (!validJsonSerializers.contains(cppJsonSerialization.get)) {
+        System.err.println(
+          s"Error: Invalid value for --cpp-json-serializers '${cppJsonSerialization.get}'. Available serializers: ['${validJsonSerializers
+            .mkString(",")}']."
+        )
+        System.exit(1); return
+      }
+    }
     // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
     resolver.resolve(

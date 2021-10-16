@@ -5,8 +5,10 @@
 
 #include <optional>
 #include <chrono>
+#include <sstream>
 
 #include <nlohmann/json.hpp>
+#include <date/date.h>
 
 namespace nlohmann {
 
@@ -30,13 +32,22 @@ namespace nlohmann {
     };
 
     template <>
-    struct adl_serializer<std::chrono::system_clock::time_point> {
-        static void to_json(json& j, const std::chrono::system_clock::time_point & opt) {
-            // not implemented
+    struct adl_serializer<std::chrono::system_clock::time_point>
+    {
+        static void to_json(json &j, const std::chrono::system_clock::time_point& tp) {
+            j = date::format("%F %T %Z", tp);
         }
 
-        static void from_json(const json& j, std::chrono::system_clock::time_point & opt) {
-            // not implemented
+        static void from_json(const json &j, std::chrono::system_clock::time_point& value) {
+            if (j.is_null()) {
+                auto dur = std::chrono::milliseconds(0);
+                value = std::chrono::time_point<std::chrono::system_clock>(dur);
+            } else {
+                std::istringstream json_time{j.get<std::string>()};
+                std::chrono::system_clock::time_point parsed_time{};
+                // Time saved in UTC, so no need to extract time zone
+                json_time >> date::parse("%F %T", value);
+            }
         }
     };
 }
