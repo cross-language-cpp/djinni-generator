@@ -529,6 +529,8 @@ object Main {
         .text(
           "Way of specifying if file generation should be skipped (default: false)"
         )
+      // json serialization adapted from hiennguyenle/finn
+      // https://github.com/hiennguyenle/finn
       opt[String]("cpp-json-serialization")
         .valueName("<nlohmann_json>")
         .foreach(x => cppJsonSerialization = Some(x))

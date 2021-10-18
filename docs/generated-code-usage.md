@@ -185,3 +185,38 @@ void foo(const my_record& record) {
   my_record cloned = j.get<my_record>();
 }
 ```
+
+### Json support for the date data type ###
+
+Since there are many ways of converting a date and from json, a simple implementation is provided by default which stores the date as the number of milliseconds elapsed since 00:00:00 UTC on January 1, 1970.
+
+This default can be deactivated by adding a -DDJINNI_CUSTOM_JSON_DATE compilation flag to your compiler; in this case, you can implement your own date json serialiser which better matches your requirements.
+
+One such solution using Howard Hinnant's date library could be implemented as follows:
+
+```cpp
+#include <nlohmann/json.hpp>
+#include <date/date.h>
+
+namespace nlohmann {
+    template <>
+    struct adl_serializer<std::chrono::system_clock::time_point>
+    {
+        static void to_json(json &j, const std::chrono::system_clock::time_point& tp) {
+            j = date::format("%F %T %Z", tp);
+        }
+
+        static void from_json(const json &j, std::chrono::system_clock::time_point& value) {
+            if (j.is_null()) {
+                auto dur = std::chrono::milliseconds(0);
+                value = std::chrono::time_point<std::chrono::system_clock>(dur);
+            } else {
+                std::istringstream json_time{j.get<std::string>()};
+                std::chrono::system_clock::time_point parsed_time{};
+                // Time saved in UTC, so no need to extract time zone
+                json_time >> date::parse("%F %T", value);
+            }
+        }
+    };
+}
+```
