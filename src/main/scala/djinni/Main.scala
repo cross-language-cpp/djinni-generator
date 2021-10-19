@@ -535,7 +535,7 @@ object Main {
         .valueName("<nlohmann_json>")
         .foreach(x => cppJsonSerialization = Some(x))
         .text(
-          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json. Requires also header-only hinnant/date for date serialization/deserialization."
+          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json."
         )
 
       note(
