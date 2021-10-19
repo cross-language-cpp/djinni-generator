@@ -1,0 +1,16 @@
+my_enum = enum {
+  FirstEnumValue;
+  SecondEnumValue;
+}
+
+my_flags = flags {
+  flag1;
+  flag2;
+  no_flags = none;
+  all_flags = all;
+}
+
+my_record = record {
+  myEnum: my_enum;
+  myFlags: my_flags;
+}

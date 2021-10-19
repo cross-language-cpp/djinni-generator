@@ -1,0 +1,7 @@
+src/it/resources/result/all_datatypes_json/cpp-headers/enum_data.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/json+extension.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/enum_data+json.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/my_flags.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/my_flags+json.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/all_datatypes_json.hpp
+src/it/resources/result/all_datatypes_json/cpp-headers/all_datatypes_json+json.hpp

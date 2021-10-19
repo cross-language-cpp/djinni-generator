@@ -1,0 +1,33 @@
+enum_data = enum {
+  FirstEnumValue;
+  SecondEnumValue;
+}
+
+# flag comment
+my_flags = flags {
+  # flag option comment
+  flag1;
+  flag2;
+  flag3;
+  no_flags = none;
+  all_flags = all;
+}
+
+all_datatypes_json = record {
+  booleanData: bool;
+  integer8Data: i8;
+  integer16Data: i16;
+  integer32Data: i32;
+  integer64Data: i64;
+  float32Data: f32;
+  float64Data: f64;
+  stringData: string;
+  binaryData: binary;
+  dateData: date;
+  listData: list<bool>;
+  setData: set<bool>;
+  mapData: map<i8, bool>;
+  optionalData: optional<bool>;
+  enum_data: enum_data;
+  myFlags: my_flags;
+}

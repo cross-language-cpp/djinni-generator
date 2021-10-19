@@ -107,6 +107,7 @@ object Main {
     var pycffiDynamicLibList: String = ""
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
+    var cppJsonSerialization: Option[String] = None
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -528,6 +529,14 @@ object Main {
         .text(
           "Way of specifying if file generation should be skipped (default: false)"
         )
+      // json serialization adapted from hiennguyenle/finn
+      // https://github.com/hiennguyenle/finn
+      opt[String]("cpp-json-serialization")
+        .valueName("<nlohmann_json>")
+        .foreach(x => cppJsonSerialization = Some(x))
+        .text(
+          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json."
+        )
 
       note(
         "\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")"
@@ -794,6 +803,17 @@ object Main {
       }
     }
 
+    // If --cpp-json-serialization is specified, require that the specified value is legal
+    if (cppJsonSerialization.isDefined) {
+      val validJsonSerializers = Array("nlohmann_json")
+      if (!validJsonSerializers.contains(cppJsonSerialization.get)) {
+        System.err.println(
+          s"Error: Invalid value for --cpp-json-serializers '${cppJsonSerialization.get}'. Available serializers: ['${validJsonSerializers
+            .mkString(",")}']."
+        )
+        System.exit(1); return
+      }
+    }
     // Resolve names in IDL file, check types.
     System.out.println("Resolving...")
     resolver.resolve(
@@ -911,7 +931,8 @@ object Main {
       cWrapperHeaderOutFolder,
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
-      pyImportPrefix
+      pyImportPrefix,
+      cppJsonSerialization
     )
 
     try {
