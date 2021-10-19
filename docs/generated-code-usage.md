@@ -186,13 +186,13 @@ void foo(const my_record& record) {
 }
 ```
 
-### Json support for the date data type ###
+### Json support for the date data type
 
-Since there are many ways of converting a date and from json, a simple implementation is provided by default which stores the date as the number of milliseconds elapsed since 00:00:00 UTC on January 1, 1970.
+Since there are many ways of converting a date to and from json, a simple implementation is provided by default which stores the date as the number of milliseconds elapsed since 00:00:00 UTC on January 1, 1970.
 
-This default can be deactivated by adding a -DDJINNI_CUSTOM_JSON_DATE compilation flag to your compiler; in this case, you can implement your own date json serialiser which better matches your requirements.
+This default can be deactivated by adding a `-DDJINNI_CUSTOM_JSON_DATE` compilation flag to your compiler; in this case, you can implement your own date json serializer which better matches your requirements.
 
-One such solution using Howard Hinnant's date library could be implemented as follows:
+One such solution using [Howard Hinnant's date library](https://github.com/HowardHinnant/date) could be implemented as follows:
 
 ```cpp
 #include <nlohmann/json.hpp>
