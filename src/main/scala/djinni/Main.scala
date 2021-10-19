@@ -283,6 +283,14 @@ object Main {
         .text(
           "Omit the default constructor for records in C++ code (default: `false`)"
         )
+      // json serialization adapted from hiennguyenle/finn
+      // https://github.com/hiennguyenle/finn
+      opt[String]("cpp-json-serialization")
+        .valueName("<nlohmann_json>")
+        .foreach(x => cppJsonSerialization = Some(x))
+        .text(
+          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json."
+        )
 
       note("\nJNI")
       opt[File]("jni-out")
@@ -528,14 +536,6 @@ object Main {
         .foreach(x => skipGeneration = x)
         .text(
           "Way of specifying if file generation should be skipped (default: false)"
-        )
-      // json serialization adapted from hiennguyenle/finn
-      // https://github.com/hiennguyenle/finn
-      opt[String]("cpp-json-serialization")
-        .valueName("<nlohmann_json>")
-        .foreach(x => cppJsonSerialization = Some(x))
-        .text(
-          "If specified, generate serializers to/from JSON and C++ types using nlohmann/json."
         )
 
       note(
