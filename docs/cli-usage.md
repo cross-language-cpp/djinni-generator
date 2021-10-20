@@ -78,6 +78,7 @@ djinni \
 | `--cpp-nn-check-expression <header>` | The expression to use for building non-nullable pointers |
 | `--cpp-use-wide-strings <true/false>` | Use wide strings in C++ code (default: `false`) |
 | `--cpp-omit-default-record-constructor <true/false>` | Omit the default constructor for records in C++ code (default: `false`) |
+| `--cpp-json-serialization <nlohmann_json>` | If specified, generate serializers to/from JSON and C++ types using [nlohmann/json](https://github.com/nlohmann/json).|
 
 ### JNI
 

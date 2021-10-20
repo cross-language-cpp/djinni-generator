@@ -534,5 +534,84 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       files should contain only (gen)
     }
 
+    it(
+      "should fail if an unsupported json serializer is specified"
+    ) {
+      val outputPath = "src/it/resources/result/unknown_json_serializer"
+      When(
+        "calling the generator with json_serializer `--cpp-json-serialiation arbitrary_unsupported_serializer`"
+      )
+      Then("the generator should fail")
+      a[RuntimeException] should be thrownBy djinni(
+        s"--idl src/it/resources/all_datatypes.djinni --cpp-json-serialization arbitrary_unsupported_serializer --cpp-out $outputPath/cpp"
+      )
+    }
+
+    it("should generate json serializers for all data types") {
+      val idlFile = "all_datatypes_json"
+      When(
+        s"generating a C++ record from `$idlFile.djinni` with json serialization enabled"
+      )
+      val cppHeaderFilenames = CppHeaders(
+        "all_datatypes_json.hpp",
+        "all_datatypes_json+json.hpp",
+        "enum_data.hpp",
+        "enum_data+json.hpp",
+        "my_flags.hpp",
+        "my_flags+json.hpp",
+        "json+extension.hpp"
+      )
+      val cmd = djinniParams(
+        idlFile,
+        cpp = true,
+        objc = false,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = false,
+        cppJsonSerialization = Some("nlohmann_json")
+      )
+      djinni(cmd)
+
+      Then(
+        s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}"
+      )
+      assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
+
+      Then("the file `generated-files.txt` should contain all generated files")
+      assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+    }
+  }
+
+  it(
+    "`should create json serializers with appropriate namespace prefix when --cpp-namespace is specified"
+  ) {
+    val idlFile = "all_json_specialized_datatypes"
+    val outputPath =
+      "src/it/resources/result/all_json_specialized_datatypes_in_custom_namespace"
+    When(
+      "calling the generator with `--cpp-namespace custom_namespace, --cpp-json-serialization nlohmann_json and --cpp-out`"
+    )
+    val output = djinni(
+      s"--idl src/it/resources/${idlFile}.djinni --cpp-namespace custom_namespace --cpp-json-serialization nlohmann_json --cpp-out $outputPath/cpp --cpp-header-out $outputPath/cpp-headers"
+    )
+    Then(
+      "the generated C++ json serializers should use the correct namespace for the datatypes"
+    )
+
+    val cppHeaderFilenames = CppHeaders(
+      "my_record+json.hpp",
+      "my_enum+json.hpp",
+      "my_flags+json.hpp"
+    )
+
+    Then(
+      s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}"
+    )
+    assertFileContentEquals(
+      "all_json_specialized_datatypes_in_custom_namespace",
+      CPP_HEADERS,
+      cppHeaderFilenames
+    )
   }
 }

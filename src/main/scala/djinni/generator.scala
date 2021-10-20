@@ -19,8 +19,10 @@ import djinni.ast._
 import java.io._
 import djinni.generatorTools._
 import djinni.writer.IndentWriter
+
+import scala.annotation.tailrec
 import org.apache.commons.io.FilenameUtils
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import scala.collection.mutable
 import scala.util.matching.Regex
 
@@ -99,7 +101,8 @@ package object generatorTools {
       cWrapperHeaderOutFolder: Option[File],
       cWrapperIncludePrefix: String,
       cWrapperIncludeCppPrefix: String,
-      pyImportPrefix: String
+      pyImportPrefix: String,
+      cppJsonSerialization: Option[String]
   )
 
   def preComma(s: String) = {
@@ -643,9 +646,6 @@ abstract class Generator(spec: Spec) {
       i: Interface
   )
 
-  // --------------------------------------------------------------------------
-  // Render type expression
-
   def withNs(namespace: Option[String], t: String) = namespace match {
     case None     => t
     case Some("") => "::" + t
@@ -653,6 +653,9 @@ abstract class Generator(spec: Spec) {
   }
 
   def withCppNs(t: String) = withNs(Some(spec.cppNamespace), t)
+
+  // --------------------------------------------------------------------------
+  // Render type expression
 
   def writeAlignedCall(
       w: IndentWriter,

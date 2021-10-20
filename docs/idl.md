@@ -324,6 +324,6 @@ will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in 
 # This is a comment
 ```
 
-If comments are placed **on top or inside a type definition**, they will be converted to
-**Javadoc / Doxygen compatible** comments in the generated Java/C++/Objective-C interfaces, or a
-Python **docstring**. Comments are currently not available in C#.
+If comments are placed on top or inside a type definition, they will be converted to
+Javadoc / Doxygen compatible comments in the generated Java, C++, Objective-C and C++/CLI interfaces, or a
+Python docstring.
