@@ -54,7 +54,7 @@ sbt "run --help"  # show all options
 sbt IntegrationTest/test
 ```
 
-For testing, the djinni target needs to exist, so run `sbt assembly` before.
+For testing, the djinni target needs to exist, so run `sbt assembly` before. This is also required when you do development on the generator. Always run `sbt assembly` before doing integration testing!
 
 ### Packaging
 
