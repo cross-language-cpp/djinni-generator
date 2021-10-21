@@ -1,12 +1,9 @@
 package djinni
 
-import org.scalatest.FunSpec
-import org.scalatest.Matchers.{
-  be,
-  convertToAnyShouldWrapper,
-  equal,
-  noException
-}
+import org.scalatest._
+import matchers.should.Matchers._
+import org.scalatest.funspec._
+import scala.language.postfixOps
 
 import scala.io.Source
 import scala.sys.process._
@@ -15,7 +12,7 @@ import scala.reflect.io.Directory
 import java.io.File
 
 // Base class for integration tests, providing a few handy helper functions
-class IntegrationTest extends FunSpec {
+class IntegrationTest extends AnyFunSpec {
   final val CPP = "cpp"
   final val CPP_HEADERS = "cpp-headers"
   final val JAVA = "java"

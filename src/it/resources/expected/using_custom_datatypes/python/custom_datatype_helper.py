@@ -40,9 +40,9 @@ class CustomDatatypeHelper:
 
     @staticmethod
     def _add_callbacks():
-        lib.custom_datatype_add_callback_get_custom_datatype_f1(CustomDatatypeHelper.get_custom_datatype_f1)
-        lib.custom_datatype_add_callback_create_custom_datatype(CustomDatatypeHelper.create_custom_datatype)
         lib.custom_datatype_add_callback___delete(CustomDatatypeHelper.__delete)
+        lib.custom_datatype_add_callback_create_custom_datatype(CustomDatatypeHelper.create_custom_datatype)
+        lib.custom_datatype_add_callback_get_custom_datatype_f1(CustomDatatypeHelper.get_custom_datatype_f1)
 
 CustomDatatypeHelper._add_callbacks()
 

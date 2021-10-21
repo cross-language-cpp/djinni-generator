@@ -51,8 +51,10 @@ sbt "run --help"  # show all options
 ### Running Tests
 
 ```bash
-sbt it:test
+sbt IntegrationTest/test
 ```
+
+For testing, the djinni target needs to exist, so run `sbt assembly` before. This is also required when you do development on the generator. Always run `sbt assembly` before doing integration testing!
 
 ### Packaging
 
@@ -83,7 +85,7 @@ To format all files, execute `sbt scalafmtAll`.
 
 The version of the scala format tool can be changed in the file `.scalafmt.conf` and the version of the scala plugin can be changed in the file `project/plugins.sbt`.
 
-To change the code formatter configurations, put all configuration options inside `.scalafmt.conf`. See all configuration options [here](https://scalameta.org/scalafmt/docs/configuration.html). 
+To change the code formatter configurations, put all configuration options inside `.scalafmt.conf`. See all configuration options [here](https://scalameta.org/scalafmt/docs/configuration.html).
 
 You can check if the formatter is working with the command `sbt scalafmtCheck `.
 
@@ -109,7 +111,7 @@ All available tasks of the code formatter plugin can be checked [here](https://s
     │   │   │   └── ...
     │   │   └── result (12)
     │   │       └── ...
-    │   └── scala 
+    │   └── scala
     │       └── djinni (13)
     │           └── ...
     └── main
@@ -143,7 +145,7 @@ You can preview how the docs will look like:
 # install required dependencies
 pip install -r mkdocs-requirements.txt
 # render a live preview of the docs under http://127.0.0.1:8000
-mkdocs serve 
+mkdocs serve
 ```
 
 ## Release process

@@ -5,9 +5,8 @@ import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
 import djinni.writer.IndentWriter
+import collection.JavaConverters._
 import java.util.{Map => JMap}
-import scala.collection.JavaConversions._
-
 class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   val cppMarshal = new CppMarshal(spec)
@@ -353,7 +352,7 @@ object YamlGenerator {
 
   private def nested(td: ExternTypeDecl, key: String) = {
     td.properties.get(key).collect { case m: JMap[_, _] =>
-      m.collect { case (k: String, v: Any) => (k, v) }
+      m.asScala.collect { case (k: String, v: Any) => (k, v) }
     }
   }
   private def nested[T](

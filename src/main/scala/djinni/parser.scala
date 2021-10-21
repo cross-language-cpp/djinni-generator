@@ -27,9 +27,9 @@ import djinni.ast.Record.DerivingType.DerivingType
 import djinni.syntax._
 import djinni.ast._
 import org.apache.commons.io.FilenameUtils
-import java.util.{Map => JMap}
 import org.yaml.snakeyaml.Yaml
-import scala.collection.JavaConversions._
+import java.util.{Map => JMap}
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{Position, Positional}
@@ -335,10 +335,10 @@ case class Parser(includePaths: List[String]) {
       in: java.io.Reader
   ): Either[Error, Seq[TypeDecl]] = {
     val yaml = new Yaml();
-    val tds = mutable.MutableList[TypeDecl]()
+    val tds = mutable.ListBuffer[TypeDecl]()
     for (
-      properties <- yaml.loadAll(in).collect { case doc: JMap[_, _] =>
-        doc.collect { case (k: String, v: Any) => (k, v) }
+      properties <- yaml.loadAll(in).asScala.collect { case doc: JMap[_, _] =>
+        doc.asScala.collect { case (k: String, v: Any) => (k, v) }
       }
     ) {
       val name = properties("name").toString
@@ -346,8 +346,9 @@ case class Parser(includePaths: List[String]) {
       val params = properties
         .get("params")
         .fold(Seq[TypeParam]())(
-          _.asInstanceOf[java.util.ArrayList[String]].collect {
-            case s: String =>
+          _.asInstanceOf[java.util.ArrayList[String]]
+            .toArray()
+            .collect { case s: String =>
               TypeParam(
                 Ident(
                   s.asInstanceOf[String],
@@ -355,7 +356,7 @@ case class Parser(includePaths: List[String]) {
                   Loc(fileStack.top, 1, 1)
                 )
               )
-          }
+            }
         )
 
       IdlParser.parseAll(
@@ -371,9 +372,11 @@ case class Parser(includePaths: List[String]) {
               "'typedef' has an unrecognized value"
             )
           )
+        case _ =>
+          return Left(Error(Loc(fileStack.top, 1, 1), "No match im match"))
       }
     }
-    Right(tds)
+    Right(tds.toSeq)
   }
 
   def parseExternFile(

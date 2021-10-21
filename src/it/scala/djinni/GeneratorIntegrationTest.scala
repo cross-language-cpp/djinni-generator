@@ -1,7 +1,8 @@
 package djinni
 
-import org.scalatest.GivenWhenThen
-import org.scalatest.Matchers._
+import org.scalatest._
+import matchers.should.Matchers._
+
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
