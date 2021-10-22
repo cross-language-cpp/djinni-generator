@@ -108,7 +108,7 @@ djinni \
 | Argument | Description |
 | -------- | ----------- |
 | `--objcpp-out <out-folder>` | The output folder for private Objective-C++ files (Generator disabled if unspecified). |
-| `--objcpp-header-out <out-folder>` | The folder for the Objective-C++ header files (default: the same as --objcpp-out). |
+| `--objcpp-header-out <out-folder>` | The folder for the Objective-C++ header files (default: the same as `--objcpp-out`). |
 | `--objcpp-ext <ext>` | The filename extension for Objective-C++ files (default: `mm`) |
 | `--objcpp-include-prefix <prefix>` | The prefix for `#import` of Objective-C++ header files from Objective-C++ files. |
 | `--objcpp-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from Objective-C++ files. |

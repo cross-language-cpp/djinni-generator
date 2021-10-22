@@ -65,7 +65,7 @@ Djinni files can also include each other. Adding the line:
 ```
 
 at the beginning of a file will simply include another file. Child file paths are
-relative to the location of the file that contains the @import. Two different djinni files
+relative to the location of the file that contains the `@import`. Two different djinni files
 cannot define the same type. `@import` behaves like `#include` with `#pragma once` in C++, or
 like ObjC's `#import`: if a file is included multiple times through different paths, then it
 will only be processed once.
