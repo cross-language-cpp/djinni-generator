@@ -676,6 +676,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       i: Interface
   ) {
     val refs = new CppRefs(ident.name)
+
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty, true))
       m.ret.foreach((x) => refs.find(x, true))
@@ -686,6 +687,85 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
     val self = marshal.typename(ident, i)
     val methodNamesInScope = i.methods.map(m => idCpp.method(m.ident))
+
+    def isInterfaceLambdaConvertible(interface: Interface): Boolean =
+      interface.methods.length == 1
+
+    def lambdaConvertibleInterfacesInMethod(
+        m: Interface.Method
+    ): Seq[(String, String, Field)] = {
+      m.params.map { (p: Field) =>
+        p.ty.resolved.base match {
+          case df: MDef =>
+            df.body match {
+              case i: Interface =>
+                if (
+                  isInterfaceLambdaConvertible(df.body.asInstanceOf[Interface])
+                ) {
+                  Some((idCpp.ty(df.name), idCpp.local(p.ident), p))
+                } else {
+                  None
+                }
+              case _ => None
+            }
+          case _ => None
+        }
+      }.flatten
+    }
+
+    def hasLambdaConvertibleInterfaceInMethod(m: Interface.Method): Boolean =
+      lambdaConvertibleInterfacesInMethod(m).nonEmpty
+
+    val generateLambdaAdapter =
+      spec.cppAutoLambdasForSingleMethodInterfaces && i.methods.length == 1 && !i.methods.head.static
+    val generateLambdaOverloads =
+      spec.cppAutoLambdasForSingleMethodInterfaces && i.methods
+        .filter(m => hasLambdaConvertibleInterfaceInMethod(m))
+        .nonEmpty
+
+    def convertCompatibleInterfaceArgumentsToLambdas(
+        m: Interface.Method
+    ): Seq[String] = {
+      return m.params.map((p: Field) => {
+        p.ty.resolved.base match {
+          case df: MDef =>
+            df.body match {
+              case i: Interface => {
+                val m2 = i.methods.head
+                val ret = marshal.returnType(m2.ret, methodNamesInScope)
+                val paramTypeListStr = m2.params
+                  .map(p2 => marshal.paramType(p2.ty, methodNamesInScope))
+                  .mkString(",")
+                s"std::function<${ret}(${paramTypeListStr})> ${idCpp.local(p.ident)}Lambda"
+
+              }
+              case _ =>
+                marshal.paramType(p.ty, methodNamesInScope) + " " + idCpp.local(
+                  p.ident
+                )
+            }
+          case _ =>
+            marshal.paramType(p.ty, methodNamesInScope) + " " + idCpp.local(
+              p.ident
+            )
+        }
+      })
+    }
+
+    if (generateLambdaAdapter || generateLambdaOverloads) {
+      refs.hpp.add("#include <functional>")
+    }
+
+    val methodsInfo = i.methods.map(m =>
+      (
+        m,
+        marshal.returnType(m.ret, methodNamesInScope),
+        m.params.map(p =>
+          marshal.paramType(p.ty, methodNamesInScope) + " " + idCpp
+            .local(p.ident)
+        )
+      )
+    )
 
     writeHppFile(
       ident,
@@ -702,14 +782,9 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
           // Constants
           generateHppConstants(w, i.consts)
           // Methods
-          for (m <- i.methods) {
+          for ((m, ret, params) <- methodsInfo) {
             w.wl
             writeMethodDoc(w, m, idCpp.local)
-            val ret = marshal.returnType(m.ret, methodNamesInScope)
-            val params = m.params.map(p =>
-              marshal.paramType(p.ty, methodNamesInScope) + " " + idCpp
-                .local(p.ident)
-            )
             if (m.static) {
               w.wl(
                 s"static $ret ${idCpp.method(m.ident)}${params.mkString("(", ", ", ")")};"
@@ -720,18 +795,94 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                 .mkString("(", ", ", ")")}$constFlag = 0;")
             }
           }
+          // Overloads to convert compatible arguments from std::function to required std::shared_ptr<>
+          if (generateLambdaOverloads) {
+            for ((m, ret, params) <- methodsInfo) {
+              if (hasLambdaConvertibleInterfaceInMethod(m)) {
+                val constFlag = if (m.const) " const" else ""
+                w.wl
+                w.wl(
+                  s"$ret ${idCpp.method(m.ident)} ${convertCompatibleInterfaceArgumentsToLambdas(m)
+                    .mkString("(", ", ", ")")}$constFlag;"
+                )
+              }
+            }
+          }
+        }
+        // Generate interface-to-lambda adapter for interfaces with a single method
+        // if cpp-auto-lambda is specified
+        if (generateLambdaAdapter) {
+          val (m, ret, params) = methodsInfo.head
+          val paramTypeListStr = m.params
+            .map(p => marshal.paramType(p.ty, methodNamesInScope))
+            .mkString(",")
+          val lambdaFunctionSignature =
+            s"std::function<${ret}(${paramTypeListStr})>"
+          w.wl
+          w.wl(s"class ${self}LambdaAdapter : public ${self}").bracedSemi {
+            w.wlOutdent("public:");
+
+            w.wl(
+              s"${self}LambdaAdapter(${lambdaFunctionSignature} callback_)"
+            )
+            w.wl(s": callback(std::move(callback_))").braced {}
+
+            val constFlag = if (m.const) " const" else ""
+            w.wl(s"$ret ${idCpp.method(m.ident)}${params
+              .mkString("(", ", ", ")")} override$constFlag")
+              .braced {
+                w.wl(
+                  s"callback(${m.params.map(p => idCpp.local(p.ident)).mkString(", ")});"
+                )
+              }
+            w.wlOutdent("private:")
+            w.wl(s"${lambdaFunctionSignature} callback;")
+          }
         }
       }
     )
 
     // Cpp only generated in need of Constants
-    if (i.consts.nonEmpty) {
+    if (i.consts.nonEmpty || generateLambdaOverloads) {
+      if (generateLambdaOverloads) {
+        i.methods.foreach(m => {
+          lambdaConvertibleInterfacesInMethod(m).foreach {
+            case (_, _, p: Field) => {
+              val name = p.ty.resolved.base.asInstanceOf[MDef].name
+              refs.cpp.add(s"#include \"${name}.hpp\"")
+            }
+          }
+        })
+      }
       writeCppFile(
         ident,
         origin,
         refs.cpp,
         w => {
-          generateCppConstants(w, i.consts, self)
+          if (i.consts.nonEmpty) {
+            generateCppConstants(w, i.consts, self)
+          }
+          if (generateLambdaOverloads) {
+            for ((m, ret, params) <- methodsInfo) {
+              if (hasLambdaConvertibleInterfaceInMethod(m)) {
+                val constFlag = if (m.const) " const" else ""
+                w.wl(
+                  s"$ret ${self}::${idCpp.method(m.ident)} ${convertCompatibleInterfaceArgumentsToLambdas(m)
+                    .mkString("(", ", ", ")")}$constFlag"
+                ).braced {
+                  val ls = lambdaConvertibleInterfacesInMethod(m)
+                  for ((argType, arg, _) <- ls) {
+                    w.wl(
+                      s"auto ${arg} = std::make_shared<${argType}LambdaAdapter>(${arg}Lambda);"
+                    )
+                  }
+                  w.wl(s"return ${idCpp.method(m.ident)}${m.params
+                    .map(p => idCpp.local(p.ident))
+                    .mkString("(", ", ", ")")};")
+                }
+              }
+            }
+          }
         }
       )
     }

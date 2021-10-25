@@ -108,6 +108,7 @@ object Main {
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
     var cppJsonSerialization: Option[String] = None
+    var cppAutoLambdasForSingleMethodInterfaces: Boolean = false
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -290,6 +291,12 @@ object Main {
         .foreach(x => cppJsonSerialization = Some(x))
         .text(
           "If specified, generate serializers to/from JSON and C++ types using nlohmann/json."
+        )
+      opt[Boolean]("cpp-auto-lambda")
+        .valueName("<true/false>")
+        .foreach(x => cppAutoLambdasForSingleMethodInterfaces = x)
+        .text(
+          "Generate lambdas for single method interfaces (default: `false`)"
         )
 
       note("\nJNI")
@@ -932,7 +939,8 @@ object Main {
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
       pyImportPrefix,
-      cppJsonSerialization
+      cppJsonSerialization,
+      cppAutoLambdasForSingleMethodInterfaces
     )
 
     try {

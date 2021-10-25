@@ -614,4 +614,49 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       cppHeaderFilenames
     )
   }
+
+  it(
+    "`should automatically create lambda adaptors for compatible methods and interfaces if  --cpp-auto-lambda true is specified"
+  ) {
+    val idlFile = "cpp_intefaces_as_lambdas"
+    val outputPath =
+      "src/it/resources/result/cpp_intefaces_as_lambdas"
+    When(
+      "calling the generator with `--cpp-auto-lambda true and --cpp-out`"
+    )
+    val output = djinni(
+      s"--idl src/it/resources/${idlFile}.djinni --cpp-auto-lambda true --cpp-out $outputPath/cpp --cpp-header-out $outputPath/cpp-headers"
+    )
+    Then(
+      "the generated C++ should have overloads which convert lambdas into appropriate interfaces where possible"
+    )
+
+    val cppHeaderFilenames = CppHeaders(
+      "interface_taking_lambda_convertible_callback.hpp",
+      "lambda_convertible_callback.hpp"
+    )
+
+    val cppSourceFilenames = Cpp(
+      "interface_taking_lambda_convertible_callback.cpp"
+    )
+
+    Then(
+      s"the expected header files should be created for cpp: ${cppHeaderFilenames.mkString(", ")}"
+    )
+    assertFileContentEquals(
+      "cpp_intefaces_as_lambdas",
+      CPP_HEADERS,
+      cppHeaderFilenames
+    )
+
+    Then(
+      s"the expected source files should be created for cpp: ${cppSourceFilenames.mkString(", ")}"
+    )
+    assertFileContentEquals(
+      "cpp_intefaces_as_lambdas",
+      CPP,
+      cppSourceFilenames
+    )
+
+  }
 }

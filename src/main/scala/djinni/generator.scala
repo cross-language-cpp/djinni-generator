@@ -102,7 +102,8 @@ package object generatorTools {
       cWrapperIncludePrefix: String,
       cWrapperIncludeCppPrefix: String,
       pyImportPrefix: String,
-      cppJsonSerialization: Option[String]
+      cppJsonSerialization: Option[String],
+      cppAutoLambdasForSingleMethodInterfaces: Boolean
   )
 
   def preComma(s: String) = {

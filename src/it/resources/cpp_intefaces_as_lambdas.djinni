@@ -1,0 +1,8 @@
+lambda_convertible_callback = interface +c {
+    callback_method(success: bool);
+}
+
+interface_taking_lambda_convertible_callback = interface +c +j +o {
+  method_taking_lambda_convertible_callback(valueToSet: f32, callback: lambda_convertible_callback);
+  second_method_taking_lambda_convertible_callback(valueToSet: i32, callback: lambda_convertible_callback);
+}
