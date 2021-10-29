@@ -1,0 +1,7 @@
+@extern "list.yaml"
+
+# record comment
+my_record = record {
+  builtin: list< string >;
+  external: extern_list< string >;
+} deriving (eq,parcelable)

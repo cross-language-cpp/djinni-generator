@@ -1,0 +1,26 @@
+# this is mimicking the the builtin "list" type as an external type
+---
+name: extern_list
+typedef: 'record deriving(eq, parcelable)'
+params: [type]
+prefix: ''
+cpp:
+  typename: 'std::array'
+  header: '<array>'
+  byValue: false
+objc:
+  typename: 'NSArray'
+  header: '<Foundation/Foundation.h>'
+  boxed: 'NSArray'
+  pointer: true
+  generic: true
+  hash: '%s.hash'
+objcpp:
+  translator: '::djinni::List'
+  header: '"djinni/objc/DJMarshal+Private.h"'
+cs:
+  translator: '::djinni::List'
+  header: '"djinni/cppcli/Marshal.hpp"'
+  typename: "System::Collections::Generic::List"
+  reference: true
+  generic: true

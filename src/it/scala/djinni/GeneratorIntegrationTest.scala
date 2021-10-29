@@ -413,6 +413,40 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     }
 
     it(
+      "should be able to include objc generic type information for extern types"
+    ) {
+      Given(
+        "an IDL-file that uses a parameterized extern type that enables the Objective-C option 'generics: true'"
+      )
+      val idlFile = "extern_generics"
+
+      When("generating the Objective-C gluecode")
+      val objcFilenames = ObjC("ITMyRecord.mm")
+      val objcHeaderFilenames = ObjCHeaders("ITMyRecord.h")
+      val objcppFilenames = ObjCpp("ITMyRecord+Private.mm")
+      val objcppHeaderFilenames = ObjCppHeaders("ITMyRecord+Private.h")
+      val cmd = djinniParams(
+        idlFile,
+        cpp = false,
+        objc = true,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = false,
+        cppOmitDefaultRecordCtor = true
+      )
+      djinni(cmd)
+
+      Then(
+        "the generic type parameters should be included in the Objective-C type declarations"
+      )
+      assertFileContentEquals(idlFile, OBJC, objcFilenames)
+      assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
+      assertFileContentEquals(idlFile, OBJCPP, objcppFilenames)
+      assertFileContentEquals(idlFile, OBJCPP_HEADERS, objcppHeaderFilenames)
+    }
+
+    it(
       "should not be able to generate Obj-C output when either a namespace or prefix is missing"
     ) {
       val outputPath = "src/it/resources/result/only_objc_out"
