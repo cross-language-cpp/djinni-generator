@@ -4,7 +4,7 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol ITMyClientInterface
+@protocol ITMyClientInterface <NSObject>
 
 - (BOOL)logString:(nonnull NSString *)str;
 
