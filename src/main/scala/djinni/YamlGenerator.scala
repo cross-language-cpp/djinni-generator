@@ -153,6 +153,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     "header" -> QuotedString(objcMarshal.include(td.ident)),
     "boxed" -> QuotedString(objcMarshal.boxedTypename(td)),
     "pointer" -> objcMarshal.isPointer(td),
+    "generic" -> false,
     "hash" -> QuotedString("%s.hash")
   )
 
@@ -273,6 +274,13 @@ object YamlGenerator {
         "pointer",
         _.asInstanceOf[Boolean]
       ),
+      nested(
+        td,
+        false,
+        "objc",
+        "generic",
+        _.asInstanceOf[Boolean]
+      ) orElse Option.apply[Boolean](false),
       nested(td, isRequired = objcOutRequired, "objc", "hash", _.toString)
     ),
     MExtern.Objcpp(
@@ -346,7 +354,14 @@ object YamlGenerator {
         "cs",
         "reference",
         _.asInstanceOf[Boolean]
-      )
+      ),
+      nested(
+        td,
+        false,
+        "cs",
+        "generic",
+        _.asInstanceOf[Boolean]
+      ) orElse Option.apply[Boolean](false)
     )
   )
 
