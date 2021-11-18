@@ -19,4 +19,3 @@ lazy val djinni = (project in file("."))
     assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
     assembly / test := {}
   )
-  inConfig(IntegrationTest)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings)
