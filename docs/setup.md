@@ -47,5 +47,5 @@ Add the generator as a build requirement in `conanfile.txt`:
 
 ```text
 [build_requires]
-djinni-generator/1.2.0
+djinni-generator/1.3.0
 ```
