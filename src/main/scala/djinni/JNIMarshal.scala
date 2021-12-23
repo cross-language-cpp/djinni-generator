@@ -10,7 +10,10 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
   // For JNI typename() is always fully qualified and describes the mangled Java type to be used in field/method signatures
   override def typename(tm: MExpr): String = javaTypeSignature(tm)
   def typename(name: String, ty: TypeDef) =
-    s"L${undecoratedTypename(name, ty)};"
+    ty match {
+      case e: Enum if e.flags => "Ljava/util/EnumSet;"
+      case _                  => s"L${undecoratedTypename(name, ty)};"
+    }
 
   override def fqTypename(tm: MExpr): String = typename(tm)
   def fqTypename(name: String, ty: TypeDef): String = typename(name, ty)
@@ -89,12 +92,8 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
         case MSet  => "Ljava/util/HashSet;"
         case MMap  => "Ljava/util/HashMap;"
       }
-    case e: MExtern =>
-      e.body match {
-        case e: Enum if e.flags => "Ljava/util/EnumSet;"
-        case _                  => e.jni.typeSignature.get
-      }
-    case MParam(_) => "Ljava/lang/Object;"
+    case e: MExtern => e.jni.typeSignature.get
+    case MParam(_)  => "Ljava/lang/Object;"
     case d: MDef =>
       d.body match {
         case e: Enum if e.flags => "Ljava/util/EnumSet;"
