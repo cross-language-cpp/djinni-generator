@@ -122,7 +122,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
             List(ImportRef("<memory>"))
           }
           spec.cppNnHeader match {
-            case Some(nnHdr) => ImportRef(nnHdr) :: base
+            case Some(nnHdr) => ImportRef(q(nnHdr)) :: base
             case _           => base
           }
       }

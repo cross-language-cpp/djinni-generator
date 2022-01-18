@@ -76,15 +76,40 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
     case e: Enum      => false
   }
 
-  def references(m: Meta, exclude: String): Seq[SymbolReference] = m match {
+  def references(
+      m: Meta,
+      exclude: String,
+      forwardDeclareOnly: Boolean
+  ): Seq[SymbolReference] = m match {
     case d: MDef =>
-      if (d.name != exclude) {
-        List(ImportRef(include(d.name)))
-      } else {
-        List()
+      d.body match {
+        case i: Interface =>
+          if (d.name != exclude) {
+            if (forwardDeclareOnly) {
+              List(
+                ImportRef(include(d.name)),
+                // TODO: Only add reference if two classes reference each other
+                DeclRef(
+                  s"ref class ${typename(d.name, d.body)};",
+                  Some(spec.cppCliNamespace)
+                )
+              )
+            } else {
+              List(ImportRef(include(d.name)))
+            }
+          } else {
+            List()
+          }
+        case _ =>
+          if (d.name != exclude) {
+            List(ImportRef(include(d.name)))
+          } else {
+            List()
+          }
       }
-    case e: MExtern => List(ImportRef(e.cs.header.get))
-    case _          => List()
+    case e: MExtern =>
+      List(ImportRef(e.cs.header.get))
+    case _ => List()
   }
 
   private def toCppCliType(

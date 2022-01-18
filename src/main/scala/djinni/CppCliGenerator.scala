@@ -41,16 +41,21 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       )
     )
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
-      tm.args.foreach(find)
-      find(tm.base)
+    def find(ty: TypeRef, forwardDeclareOnly: Boolean) {
+      find(ty.resolved, forwardDeclareOnly)
     }
-    def find(m: Meta): Unit = for (r <- marshal.references(m, name)) addRefs(r)
+    def find(tm: MExpr, forwardDeclareOnly: Boolean) {
+      tm.args.foreach(x => find(x, forwardDeclareOnly))
+      find(tm.base, forwardDeclareOnly)
+    }
+    def find(m: Meta, forwardDeclareOnly: Boolean): Unit = for (
+      r <- marshal.references(m, name, forwardDeclareOnly)
+    ) addRefs(r)
 
     private def addRefs(r: SymbolReference) = r match {
       case ImportRef(arg) => hpp.add("#include " + arg) // TODO add to `cpp`
-      case DeclRef(_, _)  =>
+      case DeclRef(decl, Some(spec.cppCliNamespace)) => hppFwds.add(decl)
+      case DeclRef(_, _)                             =>
     }
   }
 
@@ -196,9 +201,9 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       r: Record
   ) {
     val refs = new CppCliRefs(ident.name)
-    refs.find(MString) // for: String^ ToString();
-    r.fields.foreach(f => refs.find(f.ty))
-    r.consts.foreach(c => refs.find(c.ty))
+    refs.find(MString, false) // for: String^ ToString();
+    r.fields.foreach(f => refs.find(f.ty, false))
+    r.consts.foreach(c => refs.find(c.ty, false))
 
     def call(f: Field) = {
       f.ty.resolved.base match {
@@ -445,6 +450,9 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
+  def nnCheck(expr: String): String =
+    spec.cppNnCheckExpression.fold(expr)(check => s"$check($expr)")
+
   override def generateInterface(
       origin: String,
       ident: Ident,
@@ -454,12 +462,21 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
   ) {
     val refs = new CppCliRefs(ident.name)
     i.methods.foreach(m => {
-      m.params.foreach(p => refs.find(p.ty))
-      m.ret.foreach(x => refs.find(x))
+      m.params.foreach(p => refs.find(p.ty, true))
+      m.ret.foreach(x => refs.find(x, true))
+    })
+    i.consts.map(c => {
+      refs.find(c.ty, true)
     })
 
     val self = marshal.typename(ident, i)
     val cppSelf = cppMarshal.fqTypename(ident, i)
+
+    spec.cppNnHeader match {
+      case Some(nnHdr) =>
+        refs.hpp.add("#include " + q(nnHdr))
+      case _ =>
+    }
 
     refs.hpp.add("#include <memory>")
 
@@ -710,14 +727,21 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
         val CppOptType = s"$self::CppOptType"
         val CsType = s"$self::CsType"
         w.wl(s"$CppType $self::ToCpp($CsType cs)").braced {
+          // Handle null
           w.w("if (!cs)").braced {
-            w.wl("return nullptr;")
+            if (spec.cppNnType.isEmpty) {
+              w.wl("return nullptr;")
+            } else {
+              w.wl(
+                s"""throw gcnew System::Exception("$self::ToCpp requires non-nil object.");"""
+              )
+            }
           }
           if (i.ext.cpp && !i.ext.cppcli) {
             // C++ only. In this case we *must* unwrap a proxy object - the dynamic_cast will
             // throw bad_cast if we gave it something of the wrong type.
             w.wl(
-              s"return dynamic_cast<$cppProxySelf^>(cs)->djinni_private_get_proxied_cpp_object();"
+              s"return ${nnCheck(s"dynamic_cast<$cppProxySelf^>(cs)->djinni_private_get_proxied_cpp_object()")};"
             )
           } else if (i.ext.cpp || i.ext.cppcli) {
             // C# only, or C# and C++.
@@ -726,11 +750,13 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
               w.wl(s"if (auto cs_ref = dynamic_cast<$cppProxySelf^>(cs))")
                 .braced {
                   w.wl(
-                    "return cs_ref->djinni_private_get_proxied_cpp_object();"
+                    s"return ${nnCheck("cs_ref->djinni_private_get_proxied_cpp_object()")};"
                   )
                 }
             }
-            w.wl(s"return ::djinni::get_cs_proxy<$csProxySelf>(cs);")
+            w.wl(
+              s"return ${nnCheck(s"::djinni::get_cs_proxy<$csProxySelf>(cs)")};"
+            )
           } else {
             // Neither C# nor C++.  Unusable, but generate compilable code.
             w.wl(

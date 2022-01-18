@@ -113,7 +113,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     )
 
     spec.cppNnHeader match {
-      case Some(nnHdr) => refs.privHeader.add("#include " + nnHdr)
+      case Some(nnHdr) => refs.privHeader.add("#include " + q(nnHdr))
       case _           =>
     }
 
