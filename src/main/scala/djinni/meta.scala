@@ -43,7 +43,8 @@ package object meta {
       objcpp: MExtern.Objcpp,
       java: MExtern.Java,
       jni: MExtern.Jni,
-      cs: MExtern.Cs
+      cs: MExtern.Cs,
+      wasm: MExtern.Wasm
   ) extends Meta
   object MExtern {
     // These hold the information marshals need to interface with existing types correctly
@@ -55,7 +56,8 @@ package object meta {
         header: Option[String],
         byValue: Option[
           Boolean
-        ] // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
+        ], // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
+        moveOnly: Boolean
     )
     case class Objc(
         typename: Option[String],
@@ -110,6 +112,11 @@ package object meta {
         generic: Option[
           Boolean
         ] // Set to false to exclude type arguments from the C++/CLI typename. This is false by default. Useful if template arguments are only used in C++.
+    )
+    case class Wasm(
+        typename: String, // The Emscripten type to use (e.g. em::val, int32_t)
+        translator: String, // C++ typename containing toCpp/fromCpp methods
+        header: String // Where to find the translator class
     )
   }
 

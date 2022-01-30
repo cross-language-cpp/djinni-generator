@@ -286,7 +286,9 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
                 w.wl(";")
                 m.ret.fold()(r =>
-                  w.wl(s"return ${objcppMarshal.fromCpp(r, "objcpp_result_")};")
+                  w.wl(
+                    s"return ${objcppMarshal.fromCpp(r, cppMarshal.maybeMove("objcpp_result_", r))};"
+                  )
                 )
               }
             }
@@ -337,7 +339,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                         p =>
                           (
                             idObjc.field(p.ident),
-                            s"(${objcppMarshal.fromCpp(p.ty, "c_" + idCpp.local(p.ident))})"
+                            s"(${objcppMarshal.fromCpp(p.ty, cppMarshal.maybeMove("c_" + idCpp.local(p.ident), p.ty))})"
                           )
                       )
                       w.wl(";")
@@ -570,9 +572,11 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 w.wl(
                   "(void)cpp; // Suppress warnings in relase builds for empty records"
                 )
+
               val first =
                 if (r.fields.isEmpty) ""
                 else IdentStyle.camelUpper("with_" + r.fields.head.ident.name)
+
               val call = s"return [[::$noBaseSelf alloc] init$first"
               writeAlignedObjcCall(
                 w,
@@ -582,7 +586,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 f =>
                   (
                     idObjc.field(f.ident),
-                    s"(${objcppMarshal.fromCpp(f.ty, "cpp." + idCpp.field(f.ident))})"
+                    s"(${objcppMarshal.fromCpp(f.ty, cppMarshal.maybeMove("cpp." + idCpp.field(f.ident), f.ty))})"
                   )
               )
               w.wl(";")

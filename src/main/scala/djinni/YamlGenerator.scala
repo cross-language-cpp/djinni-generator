@@ -15,6 +15,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
   val javaMarshal = new JavaMarshal(spec)
   val jniMarshal = new JNIMarshal(spec)
   val cppCliMarshal = new CppCliMarshal(spec)
+  val wasmMarshal = new WasmGenerator(spec)
 
   case class QuotedString(
       str: String
@@ -74,6 +75,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     w.wl("java:").nested { write(w, java(td)) }
     w.wl("jni:").nested { write(w, jni(td)) }
     w.wl("cs:").nested { write(w, cs(td)) }
+    w.wl("wasm:").nested { write(w, wasm(td)) }
   }
 
   private def write(w: IndentWriter, m: Map[String, Any]) {
@@ -186,6 +188,12 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     "reference" -> cppCliMarshal.isReference(td)
   )
 
+  private def wasm(td: TypeDecl) = Map[String, Any](
+    "translator" -> QuotedString(wasmMarshal.helperName(mexpr(td))),
+    "header" -> QuotedString(wasmMarshal.include(td.ident)),
+    "typename" -> wasmMarshal.wasmType(mexpr(td))
+  )
+
   // TODO: there has to be a way to do all this without the MExpr/Meta conversions?
   private def mexpr(td: TypeDecl) = MExpr(meta(td), List())
 
@@ -261,7 +269,8 @@ object YamlGenerator {
         "cpp",
         "byValue",
         _.asInstanceOf[Boolean]
-      )
+      ),
+      getOptionalField(td, "cpp", "moveOnly", false)
     ),
     MExtern.Objc(
       nested(td, isRequired = objcOutRequired, "objc", "typename", _.toString),
@@ -362,6 +371,11 @@ object YamlGenerator {
         "generic",
         _.asInstanceOf[Boolean]
       ) orElse Option.apply[Boolean](false)
+    ),
+    MExtern.Wasm(
+      getOptionalField(td, "wasm", "typename"),
+      getOptionalField(td, "wasm", "translator"),
+      getOptionalField(td, "wasm", "header")
     )
   )
 
@@ -370,6 +384,7 @@ object YamlGenerator {
       m.asScala.collect { case (k: String, v: Any) => (k, v) }
     }
   }
+
   private def nested[T](
       td: ExternTypeDecl,
       isRequired: Boolean,
@@ -378,12 +393,38 @@ object YamlGenerator {
       convert: Any => T
   ): Option[T] = {
     nested(td, lang)
-      .map(m => m.get(key))
+      .map(m => return m.get(key).asInstanceOf[Option[T]])
       .flatten
       .map(v => convert(v)) match {
       case None if isRequired =>
         throw Error(td.ident.loc, s"missing '$lang' definitions").toException
       case other => other
+    }
+  }
+
+  private def getOptionalField[T](
+      td: ExternTypeDecl,
+      key: String,
+      subKey: String,
+      defVal: T
+  ) = {
+    if (nested(td, key) contains subKey)
+      nested(td, key).get(subKey).asInstanceOf[T]
+    else defVal
+  }
+
+  private def getOptionalField(
+      td: ExternTypeDecl,
+      key: String,
+      subKey: String
+  ) = {
+    try {
+      nested(td, key).get(subKey).toString
+    } catch {
+      case e: java.util.NoSuchElementException => {
+        println(s"Warning: in ${td.origin}, missing field $key/$subKey")
+        "[unspecified]"
+      }
     }
   }
 

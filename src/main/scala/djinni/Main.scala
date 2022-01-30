@@ -1,4 +1,4 @@
-/** Copyright 2014 Dropbox, Inc. Copyright 2021 cross-language-cpp
+/** Copyright 2014 Dropbox, Inc. Copyright 2021 cross-language-cpp.
   *
   * Licensed under the Apache License, Version 2.0 (the "License"); you may not
   * use this file except in compliance with the License. You may obtain a copy
@@ -63,7 +63,7 @@ object Main {
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
-    var jniGenerateMain: Boolean = true
+    var jniGenerateMain: Boolean = false
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
     var cppHeaderExt: String = "hpp"
@@ -108,6 +108,14 @@ object Main {
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
     var cppJsonSerialization: Option[String] = None
+    var wasmOutFolder: Option[File] = None
+    var wasmIncludePrefix: String = ""
+    var wasmIncludeCppPrefix: String = ""
+    var wasmBaseLibIncludePrefix: String = ""
+    var wasmOmitConstants: Boolean = false
+    var wasmNamespace: Option[String] = None
+    var wasmOmitNsAlias: Boolean = false
+    var jsIdentStyle = IdentStyle.jsDefault
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -500,6 +508,49 @@ object Main {
         .text(
           "The prefix for #include of the main C++ header files from C++/CLI files."
         )
+
+      note("\nWASM")
+      opt[File]("wasm-out")
+        .valueName("<out-folder>")
+        .foreach(x => wasmOutFolder = Some(x))
+        .text(
+          "The output for the WASM bridge C++ files (Generator disabled if unspecified)."
+        )
+      opt[String]("wasm-include-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludePrefix = _)
+        .text(
+          "The prefix for #includes of WASM header files from WASM C++ files."
+        )
+      opt[String]("wasm-include-cpp-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludeCppPrefix = _)
+        .text(
+          "The prefix for #includes of the main header files from WASM C++ files."
+        )
+      opt[String]("wasm-base-lib-include-prefix")
+        .valueName("...")
+        .foreach(x => wasmBaseLibIncludePrefix = x)
+        .text(
+          "The WASM base library's include path, relative to the WASM C++ classes."
+        )
+      opt[Boolean]("wasm-omit-constants")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitConstants = x)
+        .text(
+          "Omit the generation of consts and enums in wasm, making them only accessible through TypeScript."
+        )
+      opt[String]("wasm-namespace")
+        .valueName("...")
+        .foreach(x => wasmNamespace = Some(x))
+        .text("The namespace to use for generated Wasm classes.")
+      opt[Boolean]("wasm-omit-namespace-alias")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitNsAlias = x)
+        .text(
+          "Omit the generation of namespace aliases for classes. Namespaces will be prepended to class names instead."
+        )
+
       note("\nYaml Generation")
       opt[File]("yaml-out")
         .valueName("<out-folder>")
@@ -932,7 +983,15 @@ object Main {
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
       pyImportPrefix,
-      cppJsonSerialization
+      cppJsonSerialization,
+      wasmOutFolder,
+      wasmIncludePrefix,
+      wasmIncludeCppPrefix,
+      wasmBaseLibIncludePrefix,
+      wasmOmitConstants,
+      wasmNamespace,
+      wasmOmitNsAlias,
+      jsIdentStyle
     )
 
     try {

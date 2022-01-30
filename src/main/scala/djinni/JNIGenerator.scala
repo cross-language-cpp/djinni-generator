@@ -231,7 +231,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
             ")}",
             f => {
               val name = idCpp.field(f.ident)
-              val param = jniMarshal.fromCpp(f.ty, s"c.$name")
+              val param =
+                jniMarshal.fromCpp(f.ty, cppMarshal.maybeMove(s"c.$name", f.ty))
               s"::djinni::get($param)"
             }
           )
@@ -439,8 +440,10 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                   m.params,
                   ")",
                   p => {
-                    val param =
-                      jniMarshal.fromCpp(p.ty, "c_" + idCpp.local(p.ident))
+                    val param = jniMarshal.fromCpp(
+                      p.ty,
+                      cppMarshal.maybeMove("c_" + idCpp.local(p.ident), p.ty)
+                    )
                     s"::djinni::get($param)"
                   }
                 )
