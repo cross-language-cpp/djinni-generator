@@ -36,6 +36,7 @@ object Main {
     var cppIncludePrefix: String = ""
     var cppExtendedRecordIncludePrefix: String = ""
     var cppFileIdentStyle: IdentConverter = IdentStyle.underLower
+    var cppBaseLibIncludePrefix: String = "djinni/cpp/"
     var cppOptionalTemplate: String = "std::optional"
     var cppOptionalHeader: String = "<optional>"
     var cppEnumHashWorkaround: Boolean = true
@@ -63,6 +64,7 @@ object Main {
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
     var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
+    var jniBaseLibIncludePrefix: String = "djinni/jni/"
     var jniGenerateMain: Boolean = false
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
@@ -87,6 +89,7 @@ object Main {
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcppNamespace: String = "djinni_generated"
+    var objcBaseLibIncludePrefix: String = "djinni/objc/"
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
     var cppCliNamespace: String = ""
@@ -111,7 +114,7 @@ object Main {
     var wasmOutFolder: Option[File] = None
     var wasmIncludePrefix: String = ""
     var wasmIncludeCppPrefix: String = ""
-    var wasmBaseLibIncludePrefix: String = ""
+    var wasmBaseLibIncludePrefix: String = "djinni/wasm/"
     var wasmOmitConstants: Boolean = false
     var wasmNamespace: Option[String] = None
     var wasmOmitNsAlias: Boolean = false
@@ -233,6 +236,12 @@ object Main {
         .valueName("<prefix>")
         .foreach(cppIncludePrefix = _)
         .text("The prefix for #includes of header files from C++ files.")
+      opt[String]("cpp-base-lib-include-prefix")
+        .valueName("...")
+        .foreach(x => cppBaseLibIncludePrefix = x)
+        .text(
+          "The C++ base library's include path, relative to the C++ classes."
+        )
       opt[String]("cpp-namespace")
         .valueName("...")
         .foreach(x => cppNamespace = x)
@@ -329,6 +338,12 @@ object Main {
         .valueName("...")
         .foreach(x => jniNamespace = x)
         .text("The namespace name to use for generated JNI C++ classes.")
+      opt[String]("jni-base-lib-include-prefix")
+        .valueName("...")
+        .foreach(x => jniBaseLibIncludePrefix = x)
+        .text(
+          "The JNI base library's include path, relative to the JNI C++ classes."
+        )
       opt[Boolean]("jni-generate-main")
         .valueName("<true/false>")
         .foreach(x => jniGenerateMain = x)
@@ -437,6 +452,12 @@ object Main {
         .valueName("<prefix>")
         .foreach(objcppNamespace = _)
         .text("The namespace name to use for generated Objective-C++ classes.")
+      opt[String]("objc-base-lib-include-prefix")
+        .valueName("...")
+        .foreach(x => objcBaseLibIncludePrefix = x)
+        .text(
+          "The Objective-C++ base library's include path, relative to the Objective-C++ classes."
+        )
 
       note("\nPython")
       opt[File]("py-out")
@@ -928,6 +949,7 @@ object Main {
       cppNamespace,
       cppIdentStyle,
       cppFileIdentStyle,
+      cppBaseLibIncludePrefix,
       cppOptionalTemplate,
       cppOptionalHeader,
       cppEnumHashWorkaround,
@@ -943,6 +965,7 @@ object Main {
       jniNamespace,
       jniClassIdentStyle,
       jniFileIdentStyle,
+      jniBaseLibIncludePrefix,
       jniGenerateMain,
       cppExt,
       cppHeaderExt,
@@ -960,6 +983,7 @@ object Main {
       objcppIncludeCppPrefix,
       objcppIncludeObjcPrefix,
       objcppNamespace,
+      objcBaseLibIncludePrefix,
       objcSwiftBridgingHeaderWriter,
       cppCliOutFolder,
       cppCliIdentStyle,

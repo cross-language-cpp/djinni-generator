@@ -132,9 +132,13 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
         // This isn't a problem as extern types cannot cause dependency cycles with types being generated here
         case DInterface =>
           List(ImportRef("<memory>"), ImportRef(e.cpp.header.get))
-        case _ => List(ImportRef(e.cpp.header.get))
+        case _ => List(ImportRef(resolveExtCppHdr(e.cpp.header.get)))
       }
     case p: MParam => List()
+  }
+
+  def resolveExtCppHdr(path: String) = {
+    path.replaceAll("\\$", spec.cppBaseLibIncludePrefix)
   }
 
   def cppReferences(
