@@ -89,7 +89,7 @@ djinni \
 | `--jni-include-prefix <prefix>` | The prefix for `#includes` of JNI header files from JNI C++ files. |
 | `--jni-include-cpp-prefix <prefix>` | The prefix for `#includes` of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
-| `--jni-generate-main <true/false>` | Generate a source file (`djinni_jni_main.cpp`) that includes the default `JNI_OnLoad` & `JNI_OnUnload` implementation from the support library. (default: `true`) |
+| `--jni-generate-main <true/false>` | Generate a source file (`djinni_jni_main.cpp`) that includes the default `JNI_OnLoad` & `JNI_OnUnload` implementation from the support library. (default: `false`) |
 
 ### Objective-C
 

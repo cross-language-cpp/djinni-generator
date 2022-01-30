@@ -348,13 +348,13 @@ object Main {
         .valueName("<true/false>")
         .foreach(x => jniGenerateMain = x)
         .text(
-          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
+          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: false)"
         )
       opt[Boolean]("jni-generate-main")
         .valueName("<true/false>")
         .foreach(x => jniGenerateMain = x)
         .text(
-          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
+          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: false)"
         )
 
       note("\nObjective-C")

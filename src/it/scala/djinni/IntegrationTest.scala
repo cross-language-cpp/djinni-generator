@@ -153,7 +153,7 @@ class IntegrationTest extends AnyFunSpec {
     if (cppJsonSerialization.isDefined) {
       cmd += s" --cpp-json-serialization ${cppJsonSerialization.get}"
     }
-    cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
+    cmd += s" --jni-generate-main true --list-out-files $baseOutputPath/$idl/generated-files.txt"
     return cmd
   }
 
