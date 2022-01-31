@@ -36,7 +36,6 @@ object Main {
     var cppIncludePrefix: String = ""
     var cppExtendedRecordIncludePrefix: String = ""
     var cppFileIdentStyle: IdentConverter = IdentStyle.underLower
-    var cppBaseLibIncludePrefix: String = "djinni/cpp/"
     var cppOptionalTemplate: String = "std::optional"
     var cppOptionalHeader: String = "<optional>"
     var cppEnumHashWorkaround: Boolean = true
@@ -537,7 +536,7 @@ object Main {
       opt[String]("wasm-namespace")
         .valueName("...")
         .foreach(x => wasmNamespace = Some(x))
-        .text("The namespace to use for generated Wasm classes.")
+        .text("The namespace to use for generated WASM classes.")
       opt[Boolean]("wasm-omit-namespace-alias")
         .valueName("<true/false>")
         .foreach(x => wasmOmitNsAlias = x)

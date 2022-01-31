@@ -64,9 +64,8 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
             ImportRef(q(spec.objcppIncludePrefix + privateHeaderName(objcName)))
           )
       }
-    case e: MExtern =>
-      List(ImportRef(q(objcBaseLibIncludePrefix + e.objcpp.header.get)))
-    case p: MParam => List()
+    case e: MExtern => List(ImportRef(e.objcpp.header.get))
+    case p: MParam  => List()
   }
 
   def include(m: Meta) = m match {
