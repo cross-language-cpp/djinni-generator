@@ -27,7 +27,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         "pyCffiFilenames",
         "cWrapperFilenames",
         "cWrapperHeaderFilenames",
-        "cppcliFilenames"
+        "cppcliFilenames",
+        "wasmFilenames",
       ),
       (
         "my_enum",
@@ -44,7 +45,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         PyCffi(),
         CWrapper("dh__my_enum.cpp", "dh__my_enum.hpp"),
         CWrapperHeaders("dh__my_enum.h"),
-        CppCli("MyEnum.hpp", "MyEnum.cpp")
+        CppCli("MyEnum.hpp", "MyEnum.cpp"),
+        WASM("my_enum.hpp", "my_enum.cpp"),
       ),
       (
         "my_flags",
@@ -61,7 +63,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         PyCffi(),
         CWrapper("dh__my_flags.cpp", "dh__my_flags.hpp"),
         CWrapperHeaders("dh__my_flags.h"),
-        CppCli("MyFlags.hpp", "MyFlags.cpp")
+        CppCli("MyFlags.hpp", "MyFlags.cpp"),
+        WASM("my_flags.hpp", "my_flags.cpp"),
       ),
       (
         "my_record",
@@ -94,7 +97,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           "dh__my_record.h",
           "dh__set_string.h"
         ),
-        CppCli("MyRecord.hpp", "MyRecord.cpp")
+        CppCli("MyRecord.hpp", "MyRecord.cpp"),
+        WASM("my_record.hpp", "my_record.cpp"),
       ),
       (
         "my_cpp_interface",
@@ -111,7 +115,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         PyCffi("pycffi_lib_build.py"),
         CWrapper("cw__my_cpp_interface.cpp", "cw__my_cpp_interface.hpp"),
         CWrapperHeaders("cw__my_cpp_interface.h"),
-        CppCli("MyCppInterface.hpp", "MyCppInterface.cpp")
+        CppCli("MyCppInterface.hpp", "MyCppInterface.cpp"),
+        WASM("my_cpp_interface.hpp", "my_cpp_interface.cpp"),
       ),
       (
         "my_client_interface",
@@ -128,7 +133,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         PyCffi("pycffi_lib_build.py"),
         CWrapper("cw__my_client_interface.cpp", "cw__my_client_interface.hpp"),
         CWrapperHeaders("cw__my_client_interface.h"),
-        CppCli("MyClientInterface.hpp", "MyClientInterface.cpp")
+        CppCli("MyClientInterface.hpp", "MyClientInterface.cpp"),
+        WASM("my_client_interface.hpp", "my_client_interface.cpp"),
       ),
       (
         "all_datatypes",
@@ -174,6 +180,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           "AllDatatypes.cpp",
           "EnumData.cpp",
           "EnumData.hpp"
+        ),
+        WASM(
+          "all_datatypes.hpp",
+          "all_datatypes.cpp",
+          "enum_data.cpp",
+          "enum_data.hpp"
         )
       ),
       (
@@ -205,7 +217,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           "dh__other_record.hpp"
         ),
         CWrapperHeaders("dh__custom_datatype.h", "dh__other_record.h"),
-        CppCli("CustomDatatype.hpp", "CustomDatatype.cpp")
+        CppCli("CustomDatatype.hpp", "CustomDatatype.cpp"),
+        WASM("custom_datatype.hpp", "custom_datatype.cpp", "other_record.hpp", "other_record.cpp"),
       )
     )
     forAll(djinniTypes) {
@@ -224,7 +237,8 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           pyCffiFilenames: PyCffi,
           cWrapperFilenames: CWrapper,
           cWrapperHeaderFilenames: CWrapperHeaders,
-          cppcliFilenames: CppCli
+          cppcliFilenames: CppCli,
+          wasmFilenames: WASM,
       ) =>
         it(s"should generate valid language bridges for `$idlFile`-types") {
           Given(s"`$idlFile.djinni`")
@@ -310,6 +324,11 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
 
           Then(
+            s"the expected files should be created for WASM: ${wasmFilenames.mkString(", ")}"
+          )
+          assertFileContentEquals(idlFile, WASM, wasmFilenames)
+
+          Then(
             "the file `generated-files.txt` should contain all generated files"
           )
           assertFileContentEquals(idlFile, "", List("generated-files.txt"))
@@ -330,6 +349,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         python = false,
         cWrapper = false,
         cppCLI = false,
+        wasm = false,
         useNNHeader = true
       )
       djinni(cmd)
@@ -357,6 +377,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         python = false,
         cWrapper = false,
         cppCLI = false,
+        wasm = false,
         cppOmitDefaultRecordCtor = true
       )
       djinni(cmd)
@@ -434,6 +455,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         python = false,
         cWrapper = false,
         cppCLI = false,
+        wasm = false,
         cppOmitDefaultRecordCtor = true
       )
       djinni(cmd)
@@ -465,6 +487,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         python = false,
         cWrapper = false,
         cppCLI = true,
+        wasm = false,
         cppOmitDefaultRecordCtor = true
       )
 
@@ -632,6 +655,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         python = false,
         cWrapper = false,
         cppCLI = false,
+        wasm = false,
         cppJsonSerialization = Some("nlohmann_json")
       )
       djinni(cmd)
