@@ -28,7 +28,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         "cWrapperFilenames",
         "cWrapperHeaderFilenames",
         "cppcliFilenames",
-        "wasmFilenames",
+        "wasmFilenames"
       ),
       (
         "my_enum",
@@ -46,7 +46,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         CWrapper("dh__my_enum.cpp", "dh__my_enum.hpp"),
         CWrapperHeaders("dh__my_enum.h"),
         CppCli("MyEnum.hpp", "MyEnum.cpp"),
-        WASM("my_enum.hpp", "my_enum.cpp"),
+        WASM("my_enum.hpp", "my_enum.cpp")
       ),
       (
         "my_flags",
@@ -64,7 +64,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         CWrapper("dh__my_flags.cpp", "dh__my_flags.hpp"),
         CWrapperHeaders("dh__my_flags.h"),
         CppCli("MyFlags.hpp", "MyFlags.cpp"),
-        WASM("my_flags.hpp", "my_flags.cpp"),
+        WASM("my_flags.hpp", "my_flags.cpp")
       ),
       (
         "my_record",
@@ -98,7 +98,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           "dh__set_string.h"
         ),
         CppCli("MyRecord.hpp", "MyRecord.cpp"),
-        WASM("my_record.hpp", "my_record.cpp"),
+        WASM("my_record.hpp", "my_record.cpp")
       ),
       (
         "my_cpp_interface",
@@ -116,7 +116,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         CWrapper("cw__my_cpp_interface.cpp", "cw__my_cpp_interface.hpp"),
         CWrapperHeaders("cw__my_cpp_interface.h"),
         CppCli("MyCppInterface.hpp", "MyCppInterface.cpp"),
-        WASM("my_cpp_interface.hpp", "my_cpp_interface.cpp"),
+        WASM("my_cpp_interface.hpp", "my_cpp_interface.cpp")
       ),
       (
         "my_client_interface",
@@ -134,7 +134,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         CWrapper("cw__my_client_interface.cpp", "cw__my_client_interface.hpp"),
         CWrapperHeaders("cw__my_client_interface.h"),
         CppCli("MyClientInterface.hpp", "MyClientInterface.cpp"),
-        WASM("my_client_interface.hpp", "my_client_interface.cpp"),
+        WASM("my_client_interface.hpp", "my_client_interface.cpp")
       ),
       (
         "all_datatypes",
@@ -218,7 +218,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
         ),
         CWrapperHeaders("dh__custom_datatype.h", "dh__other_record.h"),
         CppCli("CustomDatatype.hpp", "CustomDatatype.cpp"),
-        WASM("custom_datatype.hpp", "custom_datatype.cpp", "other_record.hpp", "other_record.cpp"),
+        WASM(
+          "custom_datatype.hpp",
+          "custom_datatype.cpp",
+          "other_record.hpp",
+          "other_record.cpp"
+        )
       )
     )
     forAll(djinniTypes) {
@@ -238,7 +243,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           cWrapperFilenames: CWrapper,
           cWrapperHeaderFilenames: CWrapperHeaders,
           cppcliFilenames: CppCli,
-          wasmFilenames: WASM,
+          wasmFilenames: WASM
       ) =>
         it(s"should generate valid language bridges for `$idlFile`-types") {
           Given(s"`$idlFile.djinni`")
