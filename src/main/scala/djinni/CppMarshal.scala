@@ -9,7 +9,6 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
   // symbols/names that are declared in the current scope. The TypeRef or MExpr expression
   // will be fully qualified if it clashes with any of these symbols, even if full qualification
   // has not been requested.
-  final val cppBaseLibIncludePrefix = "djinni/cpp/"
 
   override def typename(tm: MExpr): String = toCppType(tm, None, Seq())
   def typename(tm: MExpr, scopeSymbols: Seq[String]): String =
@@ -133,7 +132,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
         // This isn't a problem as extern types cannot cause dependency cycles with types being generated here
         case DInterface =>
           List(ImportRef("<memory>"), ImportRef(e.cpp.header.get))
-        case _ => List(ImportRef(q(cppBaseLibIncludePrefix + e.cpp.header.get)))
+        case _ => List(ImportRef(e.cpp.header.get))
       }
     case p: MParam => List()
   }
