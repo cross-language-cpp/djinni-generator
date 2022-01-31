@@ -26,6 +26,8 @@ djinni \
    --pycffi-dynamic-lib-list mylib \
    --c-wrapper-out C_WRAPPER_OUTPUT_FOLDER \ # Required for Python support
    \
+   --wasm-out WASM_OUTPUT_FOLDER \
+   \
    --idl MY_PROJECT.djinni
 
 ```
@@ -89,7 +91,7 @@ djinni \
 | `--jni-include-prefix <prefix>` | The prefix for `#includes` of JNI header files from JNI C++ files. |
 | `--jni-include-cpp-prefix <prefix>` | The prefix for `#includes` of the main header files from JNI C++ files. |
 | `--jni-namespace ...` | The namespace name to use for generated JNI C++ classes. |
-| `--jni-generate-main <true/false>` | Generate a source file (`djinni_jni_main.cpp`) that includes the default `JNI_OnLoad` & `JNI_OnUnload` implementation from the support library. (default: `false`) |
+| `--jni-generate-main <true/false>` | Generate a source file (`djinni_jni_main.cpp`) that includes the default `JNI_OnLoad` & `JNI_OnUnload` implementation from the support library. (default: `true`) |
 
 ### Objective-C
 
@@ -144,6 +146,13 @@ djinni \
 | `--cppcli-namespace ...`    | The namespace name to use for generated C++/CLI classes. |
 | `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
 
+### WASM (WebAssembly)
+
+| Argument | Description |
+| -------- | ----------- |
+| `--wasm-out <out-folder>` | The output folder for WASM files (Generator disabled if unspecified). |
+| `--wasm-include-prefix <prefix>` | The prefix for `#include` of WASM header files from WASM files. |
+| `--wasm-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from WASM files. |
 
 ### Yaml Generation
 

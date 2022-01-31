@@ -54,7 +54,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     var imports = mutable.TreeSet[String]()
     imports.add(
       "#import " + q(
-        spec.objcBaseLibIncludePrefix + "DJIMarshal+Private.h"
+        objcppMarshal.objcBaseLibIncludePrefix + "DJIMarshal+Private.h"
       )
     )
     imports.add(
@@ -185,12 +185,12 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     if (i.ext.cpp) {
       refs.body.add(
         "#import " + q(
-          spec.objcBaseLibIncludePrefix + "DJICppWrapperCache+Private.h"
+          objcppMarshal.objcBaseLibIncludePrefix + "DJICppWrapperCache+Private.h"
         )
       )
       refs.body.add("#include <utility>")
       refs.body.add(
-        "#import " + q(spec.objcBaseLibIncludePrefix + "DJIError.h")
+        "#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIError.h")
       )
       refs.body.add("#include <exception>")
     }
@@ -201,14 +201,14 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     if (i.ext.objc) {
       refs.body.add(
         "#import " + q(
-          spec.objcBaseLibIncludePrefix + "DJIObjcWrapperCache+Private.h"
+          objcppMarshal.objcBaseLibIncludePrefix + "DJIObjcWrapperCache+Private.h"
         )
       )
     }
 
     if (!i.ext.cpp && !i.ext.objc) {
       refs.body.add(
-        "#import " + q(spec.objcBaseLibIncludePrefix + "DJIError.h")
+        "#import " + q(objcppMarshal.objcBaseLibIncludePrefix + "DJIError.h")
       )
     }
 

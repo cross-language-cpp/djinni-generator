@@ -28,6 +28,7 @@ import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 class WasmGenerator(spec: Spec) extends Generator(spec) {
+  final val wasmBaseLibIncludePrefix = "djinni/wasm/"
 
   val cppMarshal = new CppMarshal(spec)
 
@@ -137,14 +138,11 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
 
   def references(m: Meta, exclude: String = ""): Seq[SymbolReference] =
     m match {
-      case d: MDef    => List(ImportRef(include(d.name)))
-      case e: MExtern => List(ImportRef(resolveExtWasmHdr(e.wasm.header)))
-      case _          => List()
+      case d: MDef => List(ImportRef(include(d.name)))
+      case e: MExtern =>
+        List(ImportRef(q(wasmBaseLibIncludePrefix + e.wasm.header)))
+      case _ => List()
     }
-
-  def resolveExtWasmHdr(path: String) = {
-    path.replaceAll("\\$", spec.wasmBaseLibIncludePrefix);
-  }
 
   class WasmRefs(name: String, cppPrefixOverride: Option[String] = None) {
     var hpp = mutable.TreeSet[String]()
@@ -156,7 +154,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
         cppPrefix + spec.cppFileIdentStyle(name) + "." + spec.cppHeaderExt
       )
     )
-    hpp.add("#include " + q(spec.wasmBaseLibIncludePrefix + "djinni_wasm.hpp"))
+    hpp.add("#include " + q(wasmBaseLibIncludePrefix + "djinni_wasm.hpp"))
     spec.cppNnHeader match {
       case Some(nnHdr) => hpp.add("#include " + nnHdr)
       case _           =>

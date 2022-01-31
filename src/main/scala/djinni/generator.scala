@@ -47,7 +47,6 @@ package object generatorTools {
       cppNamespace: String,
       cppIdentStyle: CppIdentStyle,
       cppFileIdentStyle: IdentConverter,
-      cppBaseLibIncludePrefix: String,
       cppOptionalTemplate: String,
       cppOptionalHeader: String,
       cppEnumHashWorkaround: Boolean,
@@ -63,7 +62,6 @@ package object generatorTools {
       jniNamespace: String,
       jniClassIdentStyle: IdentConverter,
       jniFileIdentStyle: IdentConverter,
-      jniBaseLibIncludePrefix: String,
       jniGenerateMain: Boolean,
       cppExt: String,
       cppHeaderExt: String,
@@ -81,7 +79,6 @@ package object generatorTools {
       objcppIncludeCppPrefix: String,
       objcppIncludeObjcPrefix: String,
       objcppNamespace: String,
-      objcBaseLibIncludePrefix: String,
       objcSwiftBridgingHeaderWriter: Option[Writer],
       cppCliOutFolder: Option[File],
       cppCliIdentStyle: CppCliIdentStyle,
@@ -109,7 +106,6 @@ package object generatorTools {
       wasmOutFolder: Option[File],
       wasmIncludePrefix: String,
       wasmIncludeCppPrefix: String,
-      wasmBaseLibIncludePrefix: String,
       wasmOmitConstants: Boolean,
       wasmNamespace: Option[String],
       wasmOmitNsAlias: Boolean,
@@ -767,13 +763,7 @@ abstract class Generator(spec: Spec) {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
-
-      if (e.flags) {
-        w.wl(ident(o.ident.name) + s" $delim 1 << $shift")
-      } else {
-        w.wl(ident(o.ident.name) + s" $delim $shift" + ",")
-      }
-
+      w.wl(ident(o.ident.name) + (if (e.flags) s" = 1 << $shift" else "") + ",")
       shift += 1
     }
   }

@@ -63,7 +63,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
         )
         w.wl(
           s"#include " + q(
-            spec.jniBaseLibIncludePrefix + "djinni_jni_main.hpp"
+            jniMarshal.jniBaseLibIncludePrefix + "djinni_jni_main.hpp"
           )
         )
       }
@@ -81,7 +81,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       )
     )
     jniHpp.add(
-      "#include " + q(spec.jniBaseLibIncludePrefix + "djinni_support.hpp")
+      "#include " + q(jniMarshal.jniBaseLibIncludePrefix + "djinni_support.hpp")
     )
     spec.cppNnHeader match {
       case Some(nnHdr) => jniHpp.add("#include " + nnHdr)
