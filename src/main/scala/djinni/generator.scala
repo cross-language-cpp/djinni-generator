@@ -763,7 +763,10 @@ abstract class Generator(spec: Spec) {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
-      w.wl(ident(o.ident.name) + (if (e.flags) s" = 1 << $shift" else "") + ",")
+      w.wl(
+        ident(o.ident.name) + (if (e.flags) s" $delim 1 << $shift"
+                               else "") + ","
+      )
       shift += 1
     }
   }
@@ -775,11 +778,16 @@ abstract class Generator(spec: Spec) {
       delim: String = "="
   ) {
     for (
-      o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.AllFlags))
+      o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
       writeDoc(w, o.doc)
       w.w(ident(o.ident.name) + s" $delim ")
-      w.wl(s"(1 << ${normalEnumOptions(e).size}) - 1,")
+      w.w(
+        normalEnumOptions(e)
+          .map(o => ident(o.ident.name))
+          .fold("0")((acc, o) => acc + " | " + o)
+      )
+      w.wl(",")
     }
   }
 
