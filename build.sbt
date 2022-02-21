@@ -3,6 +3,7 @@ import sbtassembly.AssemblyPlugin.defaultUniversalScript
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / organization := "com.github.cross-language-cpp"
 
+val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 lazy val djinni = (project in file("."))
   .configs(IntegrationTest)
   .settings(
@@ -14,7 +15,7 @@ lazy val djinni = (project in file("."))
     libraryDependencies += "org.yaml" % "snakeyaml" % "1.29",
     libraryDependencies += "com.github.scopt" %% "scopt" % "4.0.1",
     libraryDependencies += "commons-io" % "commons-io" % "2.11.0",
-    assembly / assemblyOutputPath := { file("target/bin") / (assembly / assemblyJarName).value },
+    assembly / assemblyOutputPath := { file("target/bin") / s"${(assembly / assemblyJarName).value}${binExt}" },
     assembly / assemblyJarName := s"${name.value}",
     assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
     assembly / test := {}

@@ -64,7 +64,8 @@ class IntegrationTest extends AnyFunSpec {
     *   command-line output of the executed djinni-cli
     */
   def djinni(parameters: String): String = {
-    "target/bin/djinni " + parameters !!
+    val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
+    s"target/bin/djinni${binExt} " + parameters !!
   }
 
   /** Generates the command line parameters to pass to the djinni generator.

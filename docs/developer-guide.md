@@ -71,8 +71,6 @@ You can run the jar like this:
 ./djinni --help
 ```
 
-On Windows the file must be renamed to `djinni.bat` to make it executable.
-
 !!! attention
 
     The resulting binary still requires Java to be able to run! [Details on how the self-executing jar works](https://github.com/sbt/sbt-assembly#prepending-a-launch-script).
