@@ -10,6 +10,7 @@ import scala.sys.process._
 
 import scala.reflect.io.Directory
 import java.io.File
+import java.nio.file.Paths
 
 // Base class for integration tests, providing a few handy helper functions
 class IntegrationTest extends AnyFunSpec {
@@ -64,8 +65,9 @@ class IntegrationTest extends AnyFunSpec {
     *   command-line output of the executed djinni-cli
     */
   def djinni(parameters: String): String = {
-    val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
-    s"target/bin/djinni${binExt} " + parameters !!
+    val binExt =
+      if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
+    toUnixLineSeparator(s"target/bin/djinni${binExt} " + parameters !!)
   }
 
   /** Generates the command line parameters to pass to the djinni generator.
@@ -171,10 +173,27 @@ class IntegrationTest extends AnyFunSpec {
     return djinni(djinniParams(idl))
   }
 
+  /** Transform the string generated on Windows to Linux format in order to
+    * compare it with the test data generated on Linux.
+    * @param str
+    *   the string generated on Windows to be transformed
+    * @return
+    *   the string that \r is removed and \\ is replaced by / from str
+    */
+  def toUnixLineSeparator(
+      str: String
+  ): String = {
+    if (System.lineSeparator != "\n") {
+      str.replace(System.lineSeparator, "\n")
+    } else {
+      str
+    }
+  }
+
   /** Asserts that all expected files have been created & have the expected
     * content. It basically compares the contents of the generator output in
-    * `resources/result/$lang` with the expectations defined in
-    * `resources/expected/$lang`.
+    * `resources/result/$idl/$lang/$filename` with the expectations defined in
+    * `resources/expected/$idl/$lang/$filename`.
     * @param idl
     *   filename of the input-idl (without file extension)
     * @param lang
@@ -183,18 +202,32 @@ class IntegrationTest extends AnyFunSpec {
     * @param filenames
     *   list of expected filenames that should have been generated for the given
     *   language
+    * @param lineTransformation
+    *   function to transform a line, e.g. to transform the line to a Path type
     */
   def assertFileContentEquals(
       idl: String,
       lang: String,
-      filenames: List[String]
+      filenames: List[String],
+      lineTransformation: String => Any = (s: String) => s
   ): Unit = {
     for (filename <- filenames) {
       val resultFile =
         Source.fromFile(s"src/it/resources/result/$idl/$lang/$filename")
       val expectationFile =
         Source.fromFile(s"src/it/resources/expected/$idl/$lang/$filename")
-      resultFile.mkString should equal(expectationFile.mkString)
+      val resultFileLines = resultFile.getLines
+      val expectationFileLines = expectationFile.getLines
+      for (
+        (result, expectation) <- resultFileLines.zipAll(
+          expectationFileLines,
+          "",
+          ""
+        )
+      ) {
+        lineTransformation(result) should equal(lineTransformation(expectation))
+      }
+
       resultFile.close()
       expectationFile.close()
     }

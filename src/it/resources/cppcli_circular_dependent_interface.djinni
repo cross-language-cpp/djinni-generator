@@ -1,0 +1,13 @@
+one_interface = interface +c {
+  method_taking_another_interface(dep: another_interface);
+  method_taking_optional_another_interface(dep: optional<another_interface>);
+  method_returning_another_interface(): another_interface;
+  method_returning_optional_another_interface(): optional<another_interface>;
+}
+
+another_interface = interface +c {
+  method_taking_one_interface(dep: one_interface);
+  method_taking_optional_one_interface(dep: optional<one_interface>);
+  method_returning_one_interface(): one_interface;
+  method_returning_optional_one_interface(): optional<one_interface>;
+}

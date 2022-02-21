@@ -5,6 +5,8 @@ import matchers.should.Matchers._
 
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
+import java.nio.file.Paths
+
 class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
 
   describe("djinni file generation") {
@@ -312,7 +314,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
           Then(
             "the file `generated-files.txt` should contain all generated files"
           )
-          assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+          assertFileContentEquals(
+            idlFile,
+            "",
+            List("generated-files.txt"),
+            s => Paths.get(s)
+          )
         }
     }
 
@@ -340,7 +347,82 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
 
       Then("the file `generated-files.txt` should contain all generated files")
-      assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
+    }
+
+    it(
+      "should be able to generate C++/CLI outputs for interfaces with external dependencies"
+    ) {
+      val idlFile = "cppcli_extern_dependent_interface"
+      When(s"generating C++ language-bridges from `$idlFile.djinni`")
+      val cppcliFilenames =
+        CppCli("DependentInterface.hpp", "DependentInterface.cpp")
+      val cmd = djinniParams(
+        idlFile,
+        cpp = false,
+        objc = false,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = true,
+        useNNHeader = false
+      )
+      djinni(cmd)
+
+      Then(
+        s"the expected created C++/CLI files should be: ${cppcliFilenames.mkString(", ")}"
+      )
+      assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
+
+      Then("the file `generated-files.txt` should contain all generated files")
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
+    }
+
+    it(
+      "should be able to generate C++/CLI outputs for circular dependencies"
+    ) {
+      val idlFile = "cppcli_circular_dependent_interface"
+      When(s"generating C++ language-bridges from `$idlFile.djinni`")
+      val cppcliFilenames = CppCli(
+        "OneInterface.hpp",
+        "OneInterface.cpp",
+        "AnotherInterface.hpp",
+        "AnotherInterface.cpp"
+      )
+      val cmd = djinniParams(
+        idlFile,
+        cpp = false,
+        objc = false,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = true,
+        useNNHeader = false
+      )
+      djinni(cmd)
+
+      Then(
+        s"the expected created C++/CLI files should be: ${cppcliFilenames.mkString(", ")}"
+      )
+      assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
+
+      Then("the file `generated-files.txt` should contain all generated files")
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
     }
 
     it("should be able to generate C++ records without a default constructor") {
@@ -367,7 +449,47 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
 
       Then("the file `generated-files.txt` should contain all generated files")
-      assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
+    }
+
+    it(
+      "should be able to generate C++/CLI outputs with non-null pointers"
+    ) {
+      val idlFile = "cppcli_interface_nonnull"
+      When(s"generating C++ language-bridges from `$idlFile.djinni`")
+      val cppcliFilenames = CppCli(
+        "MyCppInterface.hpp",
+        "MyCppInterface.cpp"
+      )
+      val cmd = djinniParams(
+        idlFile,
+        cpp = false,
+        objc = false,
+        java = false,
+        python = false,
+        cWrapper = false,
+        cppCLI = true,
+        useNNHeader = true
+      )
+      djinni(cmd)
+
+      Then(
+        s"the expected created C++/CLI files should be: ${cppcliFilenames.mkString(", ")}"
+      )
+      assertFileContentEquals(idlFile, CPPCLI, cppcliFilenames)
+
+      Then("the file `generated-files.txt` should contain all generated files")
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
     }
 
     it("should be able to only generate Java output") {
@@ -642,7 +764,12 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
 
       Then("the file `generated-files.txt` should contain all generated files")
-      assertFileContentEquals(idlFile, "", List("generated-files.txt"))
+      assertFileContentEquals(
+        idlFile,
+        "",
+        List("generated-files.txt"),
+        s => Paths.get(s)
+      )
     }
   }
 

@@ -1,0 +1,8 @@
+@extern "cpp_interface_dependency.yml"
+
+dependent_interface = interface +c {
+  method_taking_interface_dependency(dep: interface_dependency);
+  method_taking_optional_interface_dependency(dep: optional<interface_dependency>);
+  method_returning_interface_dependency(): interface_dependency;
+  method_returning_optional_interface_dependency(): optional<interface_dependency>;
+}
