@@ -1,0 +1,2 @@
+src/it/resources/result/cppcli_interface_nonnull/cppcli/MyCppInterface.hpp
+src/it/resources/result/cppcli_interface_nonnull/cppcli/MyCppInterface.cpp

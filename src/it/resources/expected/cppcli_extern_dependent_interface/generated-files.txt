@@ -1,0 +1,2 @@
+src/it/resources/result/cppcli_extern_dependent_interface/cppcli/DependentInterface.hpp
+src/it/resources/result/cppcli_extern_dependent_interface/cppcli/DependentInterface.cpp
