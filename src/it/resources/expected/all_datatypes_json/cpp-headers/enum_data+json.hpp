@@ -8,31 +8,23 @@
 #include <algorithm>
 #include <nlohmann/json.hpp>
 
-namespace nlohmann {
-
-template<>
-struct adl_serializer<::EnumData>
+static void to_json(nlohmann::json& j, enum_data e)
 {
-    static void to_json(json& j, ::EnumData e)
+    static const std::pair<enum_data, nlohmann::json> m[] = {{enum_data::FIRSTENUMVALUE,"FirstEnumValue"},{enum_data::SECONDENUMVALUE,"SecondEnumValue"}};
+    auto it = std::find_if(std::begin(m), std::end(m),
+                           [e](const std::pair<enum_data, nlohmann::json>& ej_pair) -> bool
     {
-        static const std::pair<::EnumData, json> m[] = {{::EnumData::FIRSTENUMVALUE,"FirstEnumValue"},{::EnumData::SECONDENUMVALUE,"SecondEnumValue"}};
-        auto it = std::find_if(std::begin(m), std::end(m),
-                               [e](const std::pair<::EnumData, json>& ej_pair) -> bool
-        {
-            return ej_pair.first == e;
-        });
-        j = ((it != std::end(m)) ? it : std::begin(m))->second;
-    }
-    static void from_json(const json& j, ::EnumData& e)
+        return ej_pair.first == e;
+    });
+    j = ((it != std::end(m)) ? it : std::begin(m))->second;
+}
+static void from_json(const nlohmann::json& j, enum_data& e)
+{
+    static const std::pair<enum_data, nlohmann::json> m[] = {{enum_data::FIRSTENUMVALUE,"FirstEnumValue"},{enum_data::SECONDENUMVALUE,"SecondEnumValue"}};
+    auto it = std::find_if(std::begin(m), std::end(m),
+                           [j](const std::pair<enum_data, nlohmann::json>& ej_pair) -> bool
     {
-        static const std::pair<::EnumData, json> m[] = {{::EnumData::FIRSTENUMVALUE,"FirstEnumValue"},{::EnumData::SECONDENUMVALUE,"SecondEnumValue"}};
-        auto it = std::find_if(std::begin(m), std::end(m),
-                               [j](const std::pair<::EnumData, json>& ej_pair) -> bool
-        {
-            return ej_pair.second == j;
-        });
-        e = ((it != std::end(m)) ? it : std::begin(m))->first;
-    }
-};
-
-}  // namespace nlohmann
+        return ej_pair.second == j;
+    });
+    e = ((it != std::end(m)) ? it : std::begin(m))->first;
+}

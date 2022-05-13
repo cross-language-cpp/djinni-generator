@@ -195,16 +195,15 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
         writeHppJsonFile(
           s"${ident.name}+json",
           origin,
-          "nlohmann",
+          spec.cppNamespace,
           jsonRefs.hpp,
           jsonRefs.hppFwds,
           w => {
-            val namespacedSelf = marshal.fqTypename(ident, e)
             val enumInitializer =
               if (e.flags)
                 normalEnumOptions(e)
                   .map(o =>
-                    s"{${namespacedSelf}::${idCpp.enum(o.ident.name)}," + q(
+                    s"{${ident.name}::${idCpp.enum(o.ident.name)}," + q(
                       s"${o.ident.name}"
                     ) + "}"
                   )
@@ -212,73 +211,71 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
               else
                 e.options
                   .map(o =>
-                    s"{${namespacedSelf}::${idCpp.enum(o.ident.name)}," + q(
+                    s"{${ident.name}::${idCpp.enum(o.ident.name)}," + q(
                       s"${o.ident.name}"
                     ) + "}"
                   )
                   .mkString(",")
-            w.wl("template<>")
-            w.wl(s"struct adl_serializer<${namespacedSelf}>").bracedEnd(";") {
-              w.wl(s"static void to_json(json& j, ${namespacedSelf} e)")
-                .braced {
-                  if (e.flags) {
-                    w.wl(
-                      s"static const std::pair<${namespacedSelf}, json> m[] = {$enumInitializer};"
-                    )
-                    w.wl("j = json::array();")
-                    w.wl("for(const auto& flagOption : m)").braced {
-                      w.wl(
-                        "if(static_cast<unsigned>(e & flagOption.first) != 0)"
-                      ).braced {
-                        w.wl("j.push_back(flagOption.second);")
-                      }
-                    }
-                  } else {
-                    w.wl(
-                      s"static const std::pair<${namespacedSelf}, json> m[] = {$enumInitializer};"
-                    )
-                    w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
-                    w.wl(
-                      s"                       [e](const std::pair<${namespacedSelf}, json>& ej_pair) -> bool"
-                    ).bracedEnd(");") {
-                      w.wl("return ej_pair.first == e;")
-                    }
-                    w.wl(
-                      "j = ((it != std::end(m)) ? it : std::begin(m))->second;"
-                    )
-                  }
-                }
-              w.wl(
-                s"static void from_json(const json& j, ${namespacedSelf}& e)"
-              ).braced {
+
+            w.wl(s"static void to_json(nlohmann::json& j, ${ident.name} e)")
+              .braced {
                 if (e.flags) {
                   w.wl(
-                    s"static const std::pair<${namespacedSelf}, json> m[] = {$enumInitializer};"
+                    s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
                   )
-                  w.wl(s"e = static_cast<${namespacedSelf}>(0);")
-                  w.wl("for(const auto& flagName : j)").braced {
-                    w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
+                  w.wl("j = nlohmann::json::array();")
+                  w.wl("for(const auto& flagOption : m)").braced {
                     w.wl(
-                      s"                       [flagName](const std::pair<${namespacedSelf}, json>& ej_pair) -> bool"
-                    ).bracedEnd(");") {
-                      w.wl("return ej_pair.second == flagName;")
-                    }
-                    w.wl("if(it != std::end(m))").braced {
-                      w.wl("e |= it->first;")
+                      "if(static_cast<unsigned>(e & flagOption.first) != 0)"
+                    ).braced {
+                      w.wl("j.push_back(flagOption.second);")
                     }
                   }
                 } else {
                   w.wl(
-                    s"static const std::pair<${namespacedSelf}, json> m[] = {$enumInitializer};"
+                    s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
                   )
                   w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
                   w.wl(
-                    s"                       [j](const std::pair<${namespacedSelf}, json>& ej_pair) -> bool"
+                    s"                       [e](const std::pair<${ident.name}, nlohmann::json>& ej_pair) -> bool"
                   ).bracedEnd(");") {
-                    w.wl("return ej_pair.second == j;")
+                    w.wl("return ej_pair.first == e;")
                   }
-                  w.wl("e = ((it != std::end(m)) ? it : std::begin(m))->first;")
+                  w.wl(
+                    "j = ((it != std::end(m)) ? it : std::begin(m))->second;"
+                  )
                 }
+              }
+            w.wl(
+              s"static void from_json(const nlohmann::json& j, ${ident.name}& e)"
+            ).braced {
+              if (e.flags) {
+                w.wl(
+                  s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
+                )
+                w.wl(s"e = static_cast<${ident.name}>(0);")
+                w.wl("for(const auto& flagName : j)").braced {
+                  w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
+                  w.wl(
+                    s"                       [flagName](const std::pair<${ident.name}, nlohmann::json>& ej_pair) -> bool"
+                  ).bracedEnd(");") {
+                    w.wl("return ej_pair.second == flagName;")
+                  }
+                  w.wl("if(it != std::end(m))").braced {
+                    w.wl("e |= it->first;")
+                  }
+                }
+              } else {
+                w.wl(
+                  s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
+                )
+                w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
+                w.wl(
+                  s"                       [j](const std::pair<${ident.name}, nlohmann::json>& ej_pair) -> bool"
+                ).bracedEnd(");") {
+                  w.wl("return ej_pair.second == j;")
+                }
+                w.wl("e = ((it != std::end(m)) ? it : std::begin(m))->first;")
               }
             }
           }
@@ -526,53 +523,51 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
         writeHppJsonFile(
           s"$cppName+json",
           origin,
-          "nlohmann",
+          spec.cppNamespace,
           jsonRefs.hpp,
           jsonRefs.hppFwds,
           w => {
-            val recordSelf = marshal.fqTypename(ident, r)
-            w.wl("template <>")
-            w.w(s"struct adl_serializer<$recordSelf> ").bracedEnd(";") {
-              // From JSON
-              w.w(s"static $recordSelf from_json(const json & j) ").braced {
-                w.wl(s"auto result = $recordSelf();")
+            val recordSelf = ident.name
+            // From JSON
+            w.w(
+              s"static void from_json(const nlohmann::json & j, ${recordSelf}& result) "
+            ).braced {
+              for (i <- fields.indices) {
+                val name = idCpp.field(fields(i).ident)
+                fields(i).ty.resolved.base match {
+                  case df: MDef =>
+                    df.defType match {
+                      case DRecord =>
+                        w.w(s"""if (j.contains("$name"))""").braced {
+                          w.wl(s"""result.$name = j.at("$name").get<${marshal
+                            .fqTypename(fields(i).ty)}>();""")
+                        }
+                      case DEnum =>
+                        w.w(s"""if (j.contains("$name"))""").braced {
+                          w.wl(s"""j.at("$name").get_to(result.$name);""")
+                        }
+                      case _ =>
+                    }
+                  case _ =>
+                    w.w(s"""if (j.contains("$name"))""").braced {
+                      w.wl(s"""j.at("$name").get_to(result.$name);""")
+                    }
+                }
+              }
+            }
+            // To JSON
+            w.w(
+              s"static void to_json(nlohmann::json & j, const $recordSelf & item) "
+            ).braced {
+              w.w(s"j = nlohmann::json").bracedEnd(";") {
                 for (i <- fields.indices) {
                   val name = idCpp.field(fields(i).ident)
+                  val comma = if (i < fields.length - 1) "," else ""
                   fields(i).ty.resolved.base match {
-                    case df: MDef =>
-                      df.defType match {
-                        case DRecord =>
-                          w.w(s"""if (j.contains("$name"))""").braced {
-                            w.wl(s"""result.$name = j.at("$name").get<${marshal
-                              .fqTypename(fields(i).ty)}>();""")
-                          }
-                        case DEnum =>
-                          w.w(s"""if (j.contains("$name"))""").braced {
-                            w.wl(s"""j.at("$name").get_to(result.$name);""")
-                          }
-                        case _ =>
-                      }
-                    case _ =>
-                      w.w(s"""if (j.contains("$name"))""").braced {
-                        w.wl(s"""j.at("$name").get_to(result.$name);""")
-                      }
+                    case _ => w.wl(s"""{"$name", item.$name}$comma""")
                   }
                 }
-                w.wl("return result;")
               }
-              // To JSON
-              w.w(s"static void to_json(json & j, const $recordSelf & item) ")
-                .braced {
-                  w.w(s"j = json").bracedEnd(";") {
-                    for (i <- fields.indices) {
-                      val name = idCpp.field(fields(i).ident)
-                      val comma = if (i < fields.length - 1) "," else ""
-                      fields(i).ty.resolved.base match {
-                        case _ => w.wl(s"""{"$name", item.$name}$comma""")
-                      }
-                    }
-                  }
-                }
             }
           }
         )
