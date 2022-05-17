@@ -8,40 +8,32 @@
 #include <algorithm>
 #include <nlohmann/json.hpp>
 
-namespace nlohmann {
-
-template<>
-struct adl_serializer<::MyFlags>
+static void to_json(nlohmann::json& j, my_flags e)
 {
-    static void to_json(json& j, ::MyFlags e)
+    static const std::pair<my_flags, nlohmann::json> m[] = {{my_flags::FLAG1,"flag1"},{my_flags::FLAG2,"flag2"},{my_flags::FLAG3,"flag3"}};
+    j = nlohmann::json::array();
+    for(const auto& flagOption : m)
     {
-        static const std::pair<::MyFlags, json> m[] = {{::MyFlags::FLAG1,"flag1"},{::MyFlags::FLAG2,"flag2"},{::MyFlags::FLAG3,"flag3"}};
-        j = json::array();
-        for(const auto& flagOption : m)
+        if(static_cast<unsigned>(e & flagOption.first) != 0)
         {
-            if(static_cast<unsigned>(e & flagOption.first) != 0)
-            {
-                j.push_back(flagOption.second);
-            }
+            j.push_back(flagOption.second);
         }
     }
-    static void from_json(const json& j, ::MyFlags& e)
+}
+static void from_json(const nlohmann::json& j, my_flags& e)
+{
+    static const std::pair<my_flags, nlohmann::json> m[] = {{my_flags::FLAG1,"flag1"},{my_flags::FLAG2,"flag2"},{my_flags::FLAG3,"flag3"}};
+    e = static_cast<my_flags>(0);
+    for(const auto& flagName : j)
     {
-        static const std::pair<::MyFlags, json> m[] = {{::MyFlags::FLAG1,"flag1"},{::MyFlags::FLAG2,"flag2"},{::MyFlags::FLAG3,"flag3"}};
-        e = static_cast<::MyFlags>(0);
-        for(const auto& flagName : j)
+        auto it = std::find_if(std::begin(m), std::end(m),
+                               [flagName](const std::pair<my_flags, nlohmann::json>& ej_pair) -> bool
         {
-            auto it = std::find_if(std::begin(m), std::end(m),
-                                   [flagName](const std::pair<::MyFlags, json>& ej_pair) -> bool
-            {
-                return ej_pair.second == flagName;
-            });
-            if(it != std::end(m))
-            {
-                e |= it->first;
-            }
+            return ej_pair.second == flagName;
+        });
+        if(it != std::end(m))
+        {
+            e |= it->first;
         }
     }
-};
-
-}  // namespace nlohmann
+}

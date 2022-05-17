@@ -8,26 +8,21 @@
 #include "my_flags+json.hpp"
 #include <nlohmann/json.hpp>
 
-namespace nlohmann {
+namespace custom_namespace {
 
-template <>
-struct adl_serializer<::custom_namespace::MyRecord>  {
-    static ::custom_namespace::MyRecord from_json(const json & j)  {
-        auto result = ::custom_namespace::MyRecord();
-        if (j.contains("myEnum")) {
-            j.at("myEnum").get_to(result.myEnum);
-        }
-        if (j.contains("myFlags")) {
-            j.at("myFlags").get_to(result.myFlags);
-        }
-        return result;
+static void from_json(const nlohmann::json & j, my_record& result)  {
+    if (j.contains("myEnum")) {
+        j.at("myEnum").get_to(result.myEnum);
     }
-    static void to_json(json & j, const ::custom_namespace::MyRecord & item)  {
-        j = json {
-            {"myEnum", item.myEnum},
-            {"myFlags", item.myFlags}
-        };
+    if (j.contains("myFlags")) {
+        j.at("myFlags").get_to(result.myFlags);
     }
-};
+}
+static void to_json(nlohmann::json & j, const my_record & item)  {
+    j = nlohmann::json {
+        {"myEnum", item.myEnum},
+        {"myFlags", item.myFlags}
+    };
+}
 
-}  // namespace nlohmann
+}  // namespace custom_namespace

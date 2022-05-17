@@ -8,31 +8,27 @@
 #include <algorithm>
 #include <nlohmann/json.hpp>
 
-namespace nlohmann {
+namespace custom_namespace {
 
-template<>
-struct adl_serializer<::custom_namespace::MyEnum>
+static void to_json(nlohmann::json& j, my_enum e)
 {
-    static void to_json(json& j, ::custom_namespace::MyEnum e)
+    static const std::pair<my_enum, nlohmann::json> m[] = {{my_enum::FIRSTENUMVALUE,"FirstEnumValue"},{my_enum::SECONDENUMVALUE,"SecondEnumValue"}};
+    auto it = std::find_if(std::begin(m), std::end(m),
+                           [e](const std::pair<my_enum, nlohmann::json>& ej_pair) -> bool
     {
-        static const std::pair<::custom_namespace::MyEnum, json> m[] = {{::custom_namespace::MyEnum::FIRSTENUMVALUE,"FirstEnumValue"},{::custom_namespace::MyEnum::SECONDENUMVALUE,"SecondEnumValue"}};
-        auto it = std::find_if(std::begin(m), std::end(m),
-                               [e](const std::pair<::custom_namespace::MyEnum, json>& ej_pair) -> bool
-        {
-            return ej_pair.first == e;
-        });
-        j = ((it != std::end(m)) ? it : std::begin(m))->second;
-    }
-    static void from_json(const json& j, ::custom_namespace::MyEnum& e)
+        return ej_pair.first == e;
+    });
+    j = ((it != std::end(m)) ? it : std::begin(m))->second;
+}
+static void from_json(const nlohmann::json& j, my_enum& e)
+{
+    static const std::pair<my_enum, nlohmann::json> m[] = {{my_enum::FIRSTENUMVALUE,"FirstEnumValue"},{my_enum::SECONDENUMVALUE,"SecondEnumValue"}};
+    auto it = std::find_if(std::begin(m), std::end(m),
+                           [j](const std::pair<my_enum, nlohmann::json>& ej_pair) -> bool
     {
-        static const std::pair<::custom_namespace::MyEnum, json> m[] = {{::custom_namespace::MyEnum::FIRSTENUMVALUE,"FirstEnumValue"},{::custom_namespace::MyEnum::SECONDENUMVALUE,"SecondEnumValue"}};
-        auto it = std::find_if(std::begin(m), std::end(m),
-                               [j](const std::pair<::custom_namespace::MyEnum, json>& ej_pair) -> bool
-        {
-            return ej_pair.second == j;
-        });
-        e = ((it != std::end(m)) ? it : std::begin(m))->first;
-    }
-};
+        return ej_pair.second == j;
+    });
+    e = ((it != std::end(m)) ? it : std::begin(m))->first;
+}
 
-}  // namespace nlohmann
+}  // namespace custom_namespace
