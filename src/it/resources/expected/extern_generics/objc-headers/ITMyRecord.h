@@ -6,12 +6,28 @@
 /** record comment */
 @interface ITMyRecord : NSObject
 - (nonnull instancetype)initWithBuiltin:(nonnull NSArray<NSString *> *)builtin
-                               external:(nonnull NSArray<NSString *> *)external;
+                               external:(nonnull NSArray<NSString *> *)external
+                        optionalBuiltin:(nullable NSArray<NSString *> *)optionalBuiltin
+                       optionalExternal:(nullable NSArray<NSString *> *)optionalExternal
+                             listOfList:(nonnull NSArray<NSArray<NSString *> *> *)listOfList
+                         listOfExternal:(nonnull NSArray<NSArray<NSString *> *> *)listOfExternal;
 + (nonnull instancetype)myRecordWithBuiltin:(nonnull NSArray<NSString *> *)builtin
-                                   external:(nonnull NSArray<NSString *> *)external;
+                                   external:(nonnull NSArray<NSString *> *)external
+                            optionalBuiltin:(nullable NSArray<NSString *> *)optionalBuiltin
+                           optionalExternal:(nullable NSArray<NSString *> *)optionalExternal
+                                 listOfList:(nonnull NSArray<NSArray<NSString *> *> *)listOfList
+                             listOfExternal:(nonnull NSArray<NSArray<NSString *> *> *)listOfExternal;
 
 @property (nonatomic, readonly, nonnull) NSArray<NSString *> * builtin;
 
 @property (nonatomic, readonly, nonnull) NSArray<NSString *> * external;
+
+@property (nonatomic, readonly, nullable) NSArray<NSString *> * optionalBuiltin;
+
+@property (nonatomic, readonly, nullable) NSArray<NSString *> * optionalExternal;
+
+@property (nonatomic, readonly, nonnull) NSArray<NSArray<NSString *> *> * listOfList;
+
+@property (nonatomic, readonly, nonnull) NSArray<NSArray<NSString *> *> * listOfExternal;
 
 @end

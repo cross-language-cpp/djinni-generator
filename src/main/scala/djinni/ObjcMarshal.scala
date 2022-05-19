@@ -156,9 +156,9 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
                   if (i.ext.objc) (s"id<${e.objc.typename.get}>", false)
                   else (e.objc.typename.get, true)
                 case _ =>
-                  if (needRef) (e.objc.boxed.get, true)
-                  else if (e.objc.generic.get)
+                  if (e.objc.generic.get)
                     (e.objc.typename.get + args(tm), e.objc.pointer.get)
+                  else if (needRef) (e.objc.boxed.get, true)
                   else (e.objc.typename.get, e.objc.pointer.get)
               }
             case p: MParam =>

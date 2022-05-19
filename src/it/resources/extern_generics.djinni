@@ -4,4 +4,8 @@
 my_record = record {
   builtin: list< string >;
   external: extern_list< string >;
+  optional_builtin: optional< list< string > >;
+  optional_external: optional< extern_list< string > >;
+  list_of_list: list< list< string > >;
+  list_of_external: list< extern_list< string > >;
 } deriving (eq,parcelable)

@@ -12,13 +12,21 @@ auto MyRecord::toCpp(ObjcType obj) -> CppType
 {
     assert(obj);
     return {::djinni::List<::djinni::String>::toCpp(obj.builtin),
-            ::djinni::List<::djinni::String>::toCpp(obj.external)};
+            ::djinni::List<::djinni::String>::toCpp(obj.external),
+            ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::toCpp(obj.optionalBuiltin),
+            ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::toCpp(obj.optionalExternal),
+            ::djinni::List<::djinni::List<::djinni::String>>::toCpp(obj.listOfList),
+            ::djinni::List<::djinni::List<::djinni::String>>::toCpp(obj.listOfExternal)};
 }
 
 auto MyRecord::fromCpp(const CppType& cpp) -> ObjcType
 {
     return [[::ITMyRecord alloc] initWithBuiltin:(::djinni::List<::djinni::String>::fromCpp(cpp.builtin))
-                                        external:(::djinni::List<::djinni::String>::fromCpp(cpp.external))];
+                                        external:(::djinni::List<::djinni::String>::fromCpp(cpp.external))
+                                 optionalBuiltin:(::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::fromCpp(cpp.optional_builtin))
+                                optionalExternal:(::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::fromCpp(cpp.optional_external))
+                                      listOfList:(::djinni::List<::djinni::List<::djinni::String>>::fromCpp(cpp.list_of_list))
+                                  listOfExternal:(::djinni::List<::djinni::List<::djinni::String>>::fromCpp(cpp.list_of_external))];
 }
 
 }  // namespace djinni_generated

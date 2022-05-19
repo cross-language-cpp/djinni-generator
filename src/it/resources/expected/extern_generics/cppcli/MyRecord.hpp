@@ -21,8 +21,32 @@ public:
         System::Collections::Generic::List<System::String^>^ get();
     }
 
+    property System::Collections::Generic::List<System::String^>^ OptionalBuiltin
+    {
+        System::Collections::Generic::List<System::String^>^ get();
+    }
+
+    property System::Collections::Generic::List<System::String^>^ OptionalExternal
+    {
+        System::Collections::Generic::List<System::String^>^ get();
+    }
+
+    property System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ ListOfList
+    {
+        System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ get();
+    }
+
+    property System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ ListOfExternal
+    {
+        System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ get();
+    }
+
     MyRecord(System::Collections::Generic::List<System::String^>^ builtin,
-             System::Collections::Generic::List<System::String^>^ external);
+             System::Collections::Generic::List<System::String^>^ external,
+             System::Collections::Generic::List<System::String^>^ optionalBuiltin,
+             System::Collections::Generic::List<System::String^>^ optionalExternal,
+             System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ listOfList,
+             System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ listOfExternal);
 
     System::String^ ToString() override;
 
@@ -40,4 +64,8 @@ internal:
 private:
     System::Collections::Generic::List<System::String^>^ _builtin;
     System::Collections::Generic::List<System::String^>^ _external;
+    System::Collections::Generic::List<System::String^>^ _optionalBuiltin;
+    System::Collections::Generic::List<System::String^>^ _optionalExternal;
+    System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ _listOfList;
+    System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ _listOfExternal;
 };
