@@ -18,9 +18,24 @@ objc:
 objcpp:
   translator: '::djinni::List'
   header: '"djinni/objc/DJMarshal+Private.h"'
+java:
+  typename: 'java.util.ArrayList'
+  boxed: 'java.util.ArrayList'
+  reference: true
+  generic: true
+  hash: '%s.hashCode()'
+  writeToParcel: 'out.writeLong(%s.getTime())'
+  readFromParcel: 'new %s(in.readLong())'
+jni:
+  translator: '::djinni::List'
+  header: '"djinni/jni/Marshal.hpp"'
+  typename: jobject
+  typeSignature: 'Ljava/util/ArrayList;'
 cs:
   translator: '::djinni::List'
   header: '"djinni/cppcli/Marshal.hpp"'
   typename: "System::Collections::Generic::List"
   reference: true
   generic: true
+
+# No C# definitions!
