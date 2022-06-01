@@ -599,6 +599,39 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     }
 
     it(
+      "should be able to include Java generic type information for extern types"
+    ) {
+      Given(
+        "an IDL-file that uses a parameterized extern type that enables the Java option 'generics: true'"
+      )
+      val idlFile = "extern_generics"
+
+      When("generating the Java/JNI gluecode")
+      val javaFilename = Java("MyRecord.java")
+      val jniFilename = Jni("my_record.cpp")
+      val jniHeaderFilename = JniHeaders("my_record.hpp")
+      val cmd = djinniParams(
+        idlFile,
+        cpp = false,
+        objc = false,
+        java = true,
+        python = false,
+        cWrapper = false,
+        cppCLI = false,
+        cppOmitDefaultRecordCtor = true
+      )
+
+      djinni(cmd)
+
+      Then(
+        "the generic type parameters should be included in the Java type declarations"
+      )
+      assertFileContentEquals(idlFile, JAVA, javaFilename)
+      assertFileContentEquals(idlFile, JNI, jniFilename)
+      assertFileContentEquals(idlFile, JNI_HEADERS, jniHeaderFilename)
+    }
+
+    it(
       "should not be able to generate Obj-C output when either a namespace or prefix is missing"
     ) {
       val outputPath = "src/it/resources/result/only_objc_out"

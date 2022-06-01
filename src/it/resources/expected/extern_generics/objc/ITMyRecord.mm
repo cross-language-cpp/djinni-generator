@@ -8,19 +8,35 @@
 
 - (nonnull instancetype)initWithBuiltin:(nonnull NSArray<NSString *> *)builtin
                                external:(nonnull NSArray<NSString *> *)external
+                        optionalBuiltin:(nullable NSArray<NSString *> *)optionalBuiltin
+                       optionalExternal:(nullable NSArray<NSString *> *)optionalExternal
+                             listOfList:(nonnull NSArray<NSArray<NSString *> *> *)listOfList
+                         listOfExternal:(nonnull NSArray<NSArray<NSString *> *> *)listOfExternal
 {
     if (self = [super init]) {
         _builtin = [builtin copy];
         _external = external;
+        _optionalBuiltin = [optionalBuiltin copy];
+        _optionalExternal = optionalExternal;
+        _listOfList = [listOfList copy];
+        _listOfExternal = [listOfExternal copy];
     }
     return self;
 }
 
 + (nonnull instancetype)myRecordWithBuiltin:(nonnull NSArray<NSString *> *)builtin
                                    external:(nonnull NSArray<NSString *> *)external
+                            optionalBuiltin:(nullable NSArray<NSString *> *)optionalBuiltin
+                           optionalExternal:(nullable NSArray<NSString *> *)optionalExternal
+                                 listOfList:(nonnull NSArray<NSArray<NSString *> *> *)listOfList
+                             listOfExternal:(nonnull NSArray<NSArray<NSString *> *> *)listOfExternal
 {
     return [(ITMyRecord*)[self alloc] initWithBuiltin:builtin
-                                             external:external];
+                                             external:external
+                                      optionalBuiltin:optionalBuiltin
+                                     optionalExternal:optionalExternal
+                                           listOfList:listOfList
+                                       listOfExternal:listOfExternal];
 }
 
 - (BOOL)isEqual:(id)other
@@ -30,19 +46,27 @@
     }
     ITMyRecord *typedOther = (ITMyRecord *)other;
     return [self.builtin isEqualToArray:typedOther.builtin] &&
-            [self.external isEqual:typedOther.external];
+            [self.external isEqual:typedOther.external] &&
+            ((self.optionalBuiltin == nil && typedOther.optionalBuiltin == nil) || (self.optionalBuiltin != nil && [self.optionalBuiltin isEqual:typedOther.optionalBuiltin])) &&
+            ((self.optionalExternal == nil && typedOther.optionalExternal == nil) || (self.optionalExternal != nil && [self.optionalExternal isEqual:typedOther.optionalExternal])) &&
+            [self.listOfList isEqualToArray:typedOther.listOfList] &&
+            [self.listOfExternal isEqualToArray:typedOther.listOfExternal];
 }
 
 - (NSUInteger)hash
 {
     return NSStringFromClass([self class]).hash ^
             self.builtin.hash ^
-            (self.external.hash);
+            (self.external.hash) ^
+            self.optionalBuiltin.hash ^
+            self.optionalExternal.hash ^
+            self.listOfList.hash ^
+            self.listOfExternal.hash;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p builtin:%@ external:%@>", self.class, (void *)self, self.builtin, self.external];
+    return [NSString stringWithFormat:@"<%@ %p builtin:%@ external:%@ optionalBuiltin:%@ optionalExternal:%@ listOfList:%@ listOfExternal:%@>", self.class, (void *)self, self.builtin, self.external, self.optionalBuiltin, self.optionalExternal, self.listOfList, self.listOfExternal];
 }
 
 @end

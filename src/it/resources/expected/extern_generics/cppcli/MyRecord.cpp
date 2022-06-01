@@ -6,9 +6,17 @@
 #include <memory>
 
 MyRecord::MyRecord(System::Collections::Generic::List<System::String^>^ builtin,
-                   System::Collections::Generic::List<System::String^>^ external)
+                   System::Collections::Generic::List<System::String^>^ external,
+                   System::Collections::Generic::List<System::String^>^ optionalBuiltin,
+                   System::Collections::Generic::List<System::String^>^ optionalExternal,
+                   System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ listOfList,
+                   System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ listOfExternal)
 : _builtin(builtin)
 , _external(external)
+, _optionalBuiltin(optionalBuiltin)
+, _optionalExternal(optionalExternal)
+, _listOfList(listOfList)
+, _listOfExternal(listOfExternal)
 {}
 
 System::Collections::Generic::List<System::String^>^ MyRecord::Builtin::get()
@@ -21,17 +29,41 @@ System::Collections::Generic::List<System::String^>^ MyRecord::External::get()
     return _external;
 }
 
+System::Collections::Generic::List<System::String^>^ MyRecord::OptionalBuiltin::get()
+{
+    return _optionalBuiltin;
+}
+
+System::Collections::Generic::List<System::String^>^ MyRecord::OptionalExternal::get()
+{
+    return _optionalExternal;
+}
+
+System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ MyRecord::ListOfList::get()
+{
+    return _listOfList;
+}
+
+System::Collections::Generic::List<System::Collections::Generic::List<System::String^>^>^ MyRecord::ListOfExternal::get()
+{
+    return _listOfExternal;
+}
+
 System::String^ MyRecord::ToString()
 {
-    return System::String::Format("MyRecord {{Builtin{0}, External{1}}}",
+    return System::String::Format("MyRecord {{Builtin{0}, External{1}, OptionalBuiltin{2}, OptionalExternal{3}, ListOfList{4}, ListOfExternal{5}}}",
                                   Builtin,
-                                  External);
+                                  External,
+                                  OptionalBuiltin,
+                                  OptionalExternal,
+                                  ListOfList,
+                                  ListOfExternal);
 }
 
 bool MyRecord::Equals(MyRecord^ other) {
     if (ReferenceEquals(nullptr, other)) return false;
     if (ReferenceEquals(this, other)) return true;
-    return Builtin->Equals(other->Builtin) && External->Equals(other->External);
+    return Builtin->Equals(other->Builtin) && External->Equals(other->External) && OptionalBuiltin.Equals(other->OptionalBuiltin) && OptionalExternal.Equals(other->OptionalExternal) && ListOfList->Equals(other->ListOfList) && ListOfExternal->Equals(other->ListOfExternal);
 }
 
 bool MyRecord::Equals(System::Object^ obj) {
@@ -43,6 +75,10 @@ bool MyRecord::Equals(System::Object^ obj) {
 int MyRecord::GetHashCode() {
     auto hashCode = Builtin->GetHashCode();
     hashCode = (hashCode * 397) ^ External->GetHashCode();
+    hashCode = (hashCode * 397) ^ OptionalBuiltin.GetHashCode();
+    hashCode = (hashCode * 397) ^ OptionalExternal.GetHashCode();
+    hashCode = (hashCode * 397) ^ ListOfList->GetHashCode();
+    hashCode = (hashCode * 397) ^ ListOfExternal->GetHashCode();
     return hashCode;
 }
 
@@ -50,11 +86,19 @@ MyRecord::CppType MyRecord::ToCpp(MyRecord::CsType cs)
 {
     ASSERT(cs != nullptr);
     return {::djinni::List<::djinni::String>::ToCpp(cs->Builtin),
-            ::djinni::List<::djinni::String>::ToCpp(cs->External)};
+            ::djinni::List<::djinni::String>::ToCpp(cs->External),
+            ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::ToCpp(cs->OptionalBuiltin),
+            ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::ToCpp(cs->OptionalExternal),
+            ::djinni::List<::djinni::List<::djinni::String>>::ToCpp(cs->ListOfList),
+            ::djinni::List<::djinni::List<::djinni::String>>::ToCpp(cs->ListOfExternal)};
 }
 
 MyRecord::CsType MyRecord::FromCpp(const MyRecord::CppType& cpp)
 {
     return gcnew MyRecord(::djinni::List<::djinni::String>::FromCpp(cpp.builtin),
-                          ::djinni::List<::djinni::String>::FromCpp(cpp.external));
+                          ::djinni::List<::djinni::String>::FromCpp(cpp.external),
+                          ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::FromCpp(cpp.optional_builtin),
+                          ::djinni::Optional<std::optional, ::djinni::List<::djinni::String>>::FromCpp(cpp.optional_external),
+                          ::djinni::List<::djinni::List<::djinni::String>>::FromCpp(cpp.list_of_list),
+                          ::djinni::List<::djinni::List<::djinni::String>>::FromCpp(cpp.list_of_external));
 }
