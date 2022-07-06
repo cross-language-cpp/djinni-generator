@@ -86,6 +86,7 @@ object Main {
     var objcppIncludeCppPrefix: String = ""
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
+    var objcStrictProtocol: Boolean = true
     var objcppNamespace: String = "djinni_generated"
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
@@ -375,6 +376,13 @@ object Main {
         .text(
           "All generated Objective-C enums will be NS_CLOSED_ENUM (default: false). "
         )
+      opt[Boolean]("objc-strict-protocols")
+        .valueName("<true/false>")
+        .foreach(x => objcStrictProtocol = x)
+        .text(
+          "All generated @protocol will implement <NSObject> (default: true). "
+        )
+
 
       note("\nObjective-C++")
       opt[File]("objcpp-out")
@@ -916,6 +924,7 @@ object Main {
       cppCliIncludeCppPrefix,
       objcSwiftBridgingHeaderName,
       objcClosedEnums,
+      objcStrictProtocol,
       outFileListWriter,
       skipGeneration,
       yamlOutFolder,

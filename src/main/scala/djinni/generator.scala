@@ -86,6 +86,7 @@ package object generatorTools {
       cppCliIncludeCppPrefix: String,
       objcSwiftBridgingHeaderName: Option[String],
       objcClosedEnums: Boolean,
+      objcStrictProtocol: Boolean,
       outFileListWriter: Option[Writer],
       skipGeneration: Boolean,
       yamlOutFolder: Option[File],
