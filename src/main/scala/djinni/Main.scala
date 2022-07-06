@@ -383,7 +383,6 @@ object Main {
           "All generated @protocol will implement <NSObject> (default: true). "
         )
 
-
       note("\nObjective-C++")
       opt[File]("objcpp-out")
         .valueName("<out-folder>")
