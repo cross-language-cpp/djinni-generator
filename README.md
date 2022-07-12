@@ -64,12 +64,14 @@ brew install djinni
 
 The generator is available at [conan-center](https://conan.io/center/djinni-generator) for Windows, Linux & macOS.
 
-Add the generator as a build requirement in `conanfile.txt`:
+Add the generator/version as a build requirement in `conanfile.txt`:
 
 ```text
 [build_requires]
-djinni-generator/1.3.1
+djinni-generator/1.x.x
 ```
+
+Please adopt the version number as wanted, e.g. `djinni-generator/1.3.2`
 
 ## Credits
 
