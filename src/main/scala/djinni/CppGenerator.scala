@@ -217,7 +217,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                   )
                   .mkString(",")
 
-            w.wl(s"static void to_json(nlohmann::json& j, ${ident.name} e)")
+            w.wl(s"static inline void to_json(nlohmann::json& j, ${ident.name} e)")
               .braced {
                 if (e.flags) {
                   w.wl(
@@ -247,7 +247,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                 }
               }
             w.wl(
-              s"static void from_json(const nlohmann::json& j, ${ident.name}& e)"
+              s"static inline void from_json(const nlohmann::json& j, ${ident.name}& e)"
             ).braced {
               if (e.flags) {
                 w.wl(
@@ -530,7 +530,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             val recordSelf = ident.name
             // From JSON
             w.w(
-              s"static void from_json(const nlohmann::json & j, ${recordSelf}& result) "
+              s"static inline void from_json(const nlohmann::json & j, ${recordSelf}& result) "
             ).braced {
               for (i <- fields.indices) {
                 val name = idCpp.field(fields(i).ident)
@@ -557,7 +557,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             }
             // To JSON
             w.w(
-              s"static void to_json(nlohmann::json & j, const $recordSelf & item) "
+              s"static inline void to_json(nlohmann::json & j, const $recordSelf & item) "
             ).braced {
               w.w(s"j = nlohmann::json").bracedEnd(";") {
                 for (i <- fields.indices) {
