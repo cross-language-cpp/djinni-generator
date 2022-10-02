@@ -71,7 +71,6 @@ jobs:
       - name: Restoring file permissions of artifact
         run: chmod u+x target/bin/djinni
       - uses: "marvinpinto/action-automatic-releases@latest"
-      - name: "Create current-latest pre-release"
         with:
           title: "Latest development build"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
