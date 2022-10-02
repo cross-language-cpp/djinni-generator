@@ -59,10 +59,10 @@ jobs:
       - name: Running integration-tests
         run: sbt IntegrationTest/test
 
-  draftNextRelease:
+  publishPreRelease:
     runs-on: ubuntu-latest
     needs: [it]
-    if: github.ref == 'refs/heads/cd-deploy'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/download-artifact@v2
         with:
