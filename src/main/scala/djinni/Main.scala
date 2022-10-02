@@ -130,7 +130,7 @@ object Main {
 
       override def showUsageOnError = Some(false)
       head(
-        "djinni generator version",
+        "djinni generator version:",
         Main.getClass.getPackage.getImplementationVersion
       )
       note("General")
