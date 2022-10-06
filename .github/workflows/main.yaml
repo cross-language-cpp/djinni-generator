@@ -59,3 +59,23 @@ jobs:
       - name: Running integration-tests
         run: sbt IntegrationTest/test
 
+  publishPreRelease:
+    runs-on: ubuntu-latest
+    needs: [it]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: djinni-generator
+          path: target/bin
+      - name: Restoring file permissions of artifact
+        run: chmod u+x target/bin/djinni
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          title: "Latest development build"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: current-latest
+          files: |
+            target/bin/djinni
+
