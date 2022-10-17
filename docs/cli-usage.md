@@ -26,6 +26,8 @@ djinni \
    --pycffi-dynamic-lib-list mylib \
    --c-wrapper-out C_WRAPPER_OUTPUT_FOLDER \ # Required for Python support
    \
+   --wasm-out WASM_OUTPUT_FOLDER \
+   \
    --idl MY_PROJECT.djinni
 
 ```
@@ -145,6 +147,16 @@ djinni \
 | `--cppcli-namespace ...`               | The namespace name to use for generated C++/CLI classes.                   |
 | `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
 
+### WASM (WebAssembly)
+
+| Argument | Description |
+| -------- | ----------- |
+| `--wasm-out <out-folder>` | The output folder for WASM files (Generator disabled if unspecified). |
+| `--wasm-include-prefix <prefix>` | The prefix for `#include` of WASM header files from WASM files. |
+| `--wasm-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from WASM files. |
+| `--wasm-omit-constants <true/false>` | Omit the generation of consts and enums in wasm, making them only accessible through TypeScript. |
+| `--wasm-namespace ...` | The namespace to use for generated WASM classes. |
+| `--wasm-omit-namespace-alias <true/false>` | Omit the generation of namespace aliases for classes. Namespaces will be prepended to class names instead. |
 
 ### Yaml Generation
 

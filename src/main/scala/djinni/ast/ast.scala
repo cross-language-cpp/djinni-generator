@@ -63,10 +63,11 @@ case class Ext(
     cpp: Boolean,
     objc: Boolean,
     py: Boolean,
-    cppcli: Boolean
+    cppcli: Boolean,
+    js: Boolean
 ) {
   def any(): Boolean = {
-    java || cpp || objc || py || cppcli
+    java || cpp || objc || py || cppcli || js
   }
 }
 
@@ -118,7 +119,8 @@ object Interface {
       ret: Option[TypeRef],
       doc: Doc,
       static: Boolean,
-      const: Boolean
+      const: Boolean,
+      lang: Ext
   )
 }
 

@@ -1,4 +1,4 @@
-/** Copyright 2014 Dropbox, Inc. Copyright 2021 cross-language-cpp
+/** Copyright 2014 Dropbox, Inc. Copyright 2021 cross-language-cpp.
   *
   * Licensed under the Apache License, Version 2.0 (the "License"); you may not
   * use this file except in compliance with the License. You may obtain a copy
@@ -109,6 +109,13 @@ object Main {
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
     var cppJsonSerialization: Option[String] = None
+    var wasmOutFolder: Option[File] = None
+    var wasmIncludePrefix: String = ""
+    var wasmIncludeCppPrefix: String = ""
+    var wasmOmitConstants: Boolean = false
+    var wasmNamespace: Option[String] = None
+    var wasmOmitNsAlias: Boolean = false
+    var jsIdentStyle = IdentStyle.jsDefault
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -326,13 +333,13 @@ object Main {
         .valueName("<true/false>")
         .foreach(x => jniGenerateMain = x)
         .text(
-          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
+          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: false)"
         )
       opt[Boolean]("jni-generate-main")
         .valueName("<true/false>")
         .foreach(x => jniGenerateMain = x)
         .text(
-          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: true)"
+          "Generate a source file (djinni_jni_main.cpp) that includes the default JNI_OnLoad & JNI_OnUnload implementation from the djinni-support-lib. (default: false)"
         )
 
       note("\nObjective-C")
@@ -507,6 +514,43 @@ object Main {
         .text(
           "The prefix for #include of the main C++ header files from C++/CLI files."
         )
+
+      note("\nWASM")
+      opt[File]("wasm-out")
+        .valueName("<out-folder>")
+        .foreach(x => wasmOutFolder = Some(x))
+        .text(
+          "The output for the WASM bridge C++ files (Generator disabled if unspecified)."
+        )
+      opt[String]("wasm-include-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludePrefix = _)
+        .text(
+          "The prefix for #includes of WASM header files from WASM C++ files."
+        )
+      opt[String]("wasm-include-cpp-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludeCppPrefix = _)
+        .text(
+          "The prefix for #includes of the main header files from WASM C++ files."
+        )
+      opt[Boolean]("wasm-omit-constants")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitConstants = x)
+        .text(
+          "Omit the generation of consts and enums in wasm, making them only accessible through TypeScript."
+        )
+      opt[String]("wasm-namespace")
+        .valueName("...")
+        .foreach(x => wasmNamespace = Some(x))
+        .text("The namespace to use for generated WASM classes.")
+      opt[Boolean]("wasm-omit-namespace-alias")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitNsAlias = x)
+        .text(
+          "Omit the generation of namespace aliases for classes. Namespaces will be prepended to class names instead."
+        )
+
       note("\nYaml Generation")
       opt[File]("yaml-out")
         .valueName("<out-folder>")
@@ -940,7 +984,14 @@ object Main {
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
       pyImportPrefix,
-      cppJsonSerialization
+      cppJsonSerialization,
+      wasmOutFolder,
+      wasmIncludePrefix,
+      wasmIncludeCppPrefix,
+      wasmOmitConstants,
+      wasmNamespace,
+      wasmOmitNsAlias,
+      jsIdentStyle
     )
 
     try {

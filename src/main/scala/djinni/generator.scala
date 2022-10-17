@@ -103,7 +103,14 @@ package object generatorTools {
       cWrapperIncludePrefix: String,
       cWrapperIncludeCppPrefix: String,
       pyImportPrefix: String,
-      cppJsonSerialization: Option[String]
+      cppJsonSerialization: Option[String],
+      wasmOutFolder: Option[File],
+      wasmIncludePrefix: String,
+      wasmIncludeCppPrefix: String,
+      wasmOmitConstants: Boolean,
+      wasmNamespace: Option[String],
+      wasmOmitNsAlias: Boolean,
+      jsIdentStyle: JsIdentStyle
   )
 
   def preComma(s: String) = {
@@ -158,6 +165,7 @@ package object generatorTools {
       enum: IdentConverter,
       const: IdentConverter
   )
+
   case class CppCliIdentStyle(
       ty: IdentConverter,
       typeParam: IdentConverter,
@@ -168,6 +176,16 @@ package object generatorTools {
       enum: IdentConverter,
       const: IdentConverter,
       file: IdentConverter
+  )
+
+  case class JsIdentStyle(
+      ty: IdentConverter,
+      typeParam: IdentConverter,
+      method: IdentConverter,
+      field: IdentConverter,
+      local: IdentConverter,
+      enum: IdentConverter,
+      const: IdentConverter
   )
 
   object IdentStyle {
@@ -191,6 +209,7 @@ package object generatorTools {
       enum = underCaps,
       const = underCaps
     )
+
     val cppDefault = CppIdentStyle(
       ty = camelUpper,
       enumType = camelUpper,
@@ -201,6 +220,7 @@ package object generatorTools {
       enum = underCaps,
       const = underCaps
     )
+
     val objcDefault = ObjcIdentStyle(
       ty = camelUpper,
       typeParam = camelUpper,
@@ -210,6 +230,7 @@ package object generatorTools {
       enum = camelUpper,
       const = camelUpper
     )
+
     val pythonDefault = PythonIdentStyle(
       ty = underLower,
       className = camelUpper,
@@ -231,6 +252,16 @@ package object generatorTools {
       enum = camelUpper,
       const = camelUpper,
       file = camelUpper
+    )
+
+    val jsDefault = JsIdentStyle(
+      camelUpper,
+      camelUpper,
+      camelLower,
+      camelLower,
+      camelLower,
+      underCaps,
+      underCaps
     )
 
     val styles = Map(
@@ -401,6 +432,12 @@ package object generatorTools {
         }
         new CffiGenerator(spec).generate(idl)
       }
+      if (spec.wasmOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("WASM", spec.wasmOutFolder.get)
+        }
+        new WasmGenerator(spec).generate(idl)
+      }
       None
     } catch {
       case GenerateException(message) => Some(message)
@@ -527,6 +564,7 @@ abstract class Generator(spec: Spec) {
   val idObjc = spec.objcIdentStyle
   val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
+  val idJs = spec.jsIdentStyle
 
   def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
     ns match {
@@ -705,30 +743,46 @@ abstract class Generator(spec: Spec) {
 
   def normalEnumOptions(e: Enum) = e.options.filter(_.specialFlag.isEmpty)
 
-  def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter) {
-    for (
-      o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))
-    ) {
+  def writeEnumOptionNone(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter,
+      delim: String = "="
+  ) {
+    for (o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.NoFlags))) {
       writeDoc(w, o.doc)
-      w.wl(ident(o.ident.name) + " = 0,")
+      w.wl(ident(o.ident.name) + s" $delim 0,")
     }
   }
 
-  def writeEnumOptions(w: IndentWriter, e: Enum, ident: IdentConverter) {
+  def writeEnumOptions(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter,
+      delim: String = "="
+  ) {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
-      w.wl(ident(o.ident.name) + (if (e.flags) s" = 1 << $shift" else "") + ",")
+      w.wl(
+        ident(o.ident.name) + (if (e.flags) s" $delim 1 << $shift"
+                               else "") + ","
+      )
       shift += 1
     }
   }
 
-  def writeEnumOptionAll(w: IndentWriter, e: Enum, ident: IdentConverter) {
+  def writeEnumOptionAll(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter,
+      delim: String = "="
+  ) {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
       writeDoc(w, o.doc)
-      w.w(ident(o.ident.name) + " = ")
+      w.w(ident(o.ident.name) + s" $delim ")
       w.w(
         normalEnumOptions(e)
           .map(o => ident(o.ident.name))
