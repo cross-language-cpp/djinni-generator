@@ -14,6 +14,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
   val objcppMarshal = new ObjcppMarshal(spec)
   val javaMarshal = new JavaMarshal(spec)
   val jniMarshal = new JNIMarshal(spec)
+  val cWrapperMarshal = new CWrapperMarshal(spec)
   val cppCliMarshal = new CppCliMarshal(spec)
 
   case class QuotedString(
@@ -74,6 +75,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     w.wl("java:").nested { write(w, java(td)) }
     w.wl("jni:").nested { write(w, jni(td)) }
     w.wl("cs:").nested { write(w, cs(td)) }
+    w.wl("cwrapper:").nested { write(w, cwrapper(td)) }
   }
 
   private def write(w: IndentWriter, m: Map[String, Any]) {
@@ -184,6 +186,10 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     "header" -> QuotedString(cppCliMarshal.include(td.ident)),
     "typename" -> cppCliMarshal.fqParamType(mexpr(td)),
     "reference" -> cppCliMarshal.isReference(td)
+  )
+
+  private def cwrapper(td: TypeDecl) = Map[String, Any](
+    "typename" -> QuotedString(cWrapperMarshal.fqTypename(td.ident, td.body)),
   )
 
   // TODO: there has to be a way to do all this without the MExpr/Meta conversions?
