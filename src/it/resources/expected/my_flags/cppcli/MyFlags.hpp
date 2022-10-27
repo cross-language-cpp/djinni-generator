@@ -10,8 +10,8 @@
 public enum class MyFlags {
     NoFlags = 0,
     /** flag option comment */
-    Flag1 = 1 << 0,
-    Flag2 = 1 << 1,
-    Flag3 = 1 << 2,
+    Flag1 = 1u << 0,
+    Flag2 = 1u << 1,
+    Flag3 = 1u << 2,
     AllFlags = 0 | Flag1 | Flag2 | Flag3,
 };

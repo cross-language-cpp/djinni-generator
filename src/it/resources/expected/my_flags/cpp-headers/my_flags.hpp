@@ -9,9 +9,9 @@
 enum class MyFlags : unsigned {
     NO_FLAGS = 0,
     /** flag option comment */
-    FLAG1 = 1 << 0,
-    FLAG2 = 1 << 1,
-    FLAG3 = 1 << 2,
+    FLAG1 = 1u << 0,
+    FLAG2 = 1u << 1,
+    FLAG3 = 1u << 2,
     ALL_FLAGS = 0 | FLAG1 | FLAG2 | FLAG3,
 };
 constexpr MyFlags operator|(MyFlags lhs, MyFlags rhs) noexcept {
