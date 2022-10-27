@@ -8,8 +8,8 @@ typedef NS_OPTIONS(NSUInteger, ITMyFlags)
 {
     ITMyFlagsNoFlags = 0,
     /** flag option comment */
-    ITMyFlagsFlag1 = 1 << 0,
-    ITMyFlagsFlag2 = 1 << 1,
-    ITMyFlagsFlag3 = 1 << 2,
+    ITMyFlagsFlag1 = 1u << 0,
+    ITMyFlagsFlag2 = 1u << 1,
+    ITMyFlagsFlag3 = 1u << 2,
     ITMyFlagsAllFlags = 0 | ITMyFlagsFlag1 | ITMyFlagsFlag2 | ITMyFlagsFlag3,
 };
