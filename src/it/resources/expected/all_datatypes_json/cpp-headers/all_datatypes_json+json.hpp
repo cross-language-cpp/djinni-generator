@@ -65,7 +65,7 @@ inline void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
         j.at("myFlags").get_to(result.myFlags);
     }
 }
-static inline void to_json(nlohmann::json & j, const all_datatypes_json & item)  {
+inline void to_json(nlohmann::json & j, const all_datatypes_json & item)  {
     j = nlohmann::json {
         {"booleanData", item.booleanData},
         {"integer8Data", item.integer8Data},
