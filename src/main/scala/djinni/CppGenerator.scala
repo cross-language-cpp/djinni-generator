@@ -248,7 +248,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
               }
             }
             w.wl(
-              s"static inline void from_json(const nlohmann::json& j, ${ident.name}& e)"
+              s"inline void from_json(const nlohmann::json& j, ${ident.name}& e)"
             ).braced {
               if (e.flags) {
                 w.wl(
