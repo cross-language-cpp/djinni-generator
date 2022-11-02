@@ -218,7 +218,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                   .mkString(",")
 
             w.wl(
-              s"static inline void to_json(nlohmann::json& j, ${ident.name} e)"
+              s"inline void to_json(nlohmann::json& j, ${ident.name} e)"
             ).braced {
               if (e.flags) {
                 w.wl(
