@@ -531,7 +531,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             val recordSelf = ident.name
             // From JSON
             w.w(
-              s"static inline void from_json(const nlohmann::json & j, ${recordSelf}& result) "
+              s"inline void from_json(const nlohmann::json & j, ${recordSelf}& result) "
             ).braced {
               for (i <- fields.indices) {
                 val name = idCpp.field(fields(i).ident)
