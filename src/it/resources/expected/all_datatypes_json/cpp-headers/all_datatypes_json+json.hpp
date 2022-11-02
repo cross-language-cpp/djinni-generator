@@ -15,7 +15,7 @@
 #include <unordered_set>
 #include <vector>
 
-static inline void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
+inline void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
     if (j.contains("booleanData")) {
         j.at("booleanData").get_to(result.booleanData);
     }
