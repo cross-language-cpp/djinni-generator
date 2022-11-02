@@ -558,7 +558,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             }
             // To JSON
             w.w(
-              s"static inline void to_json(nlohmann::json & j, const $recordSelf & item) "
+              s"inline void to_json(nlohmann::json & j, const $recordSelf & item) "
             ).braced {
               w.w(s"j = nlohmann::json").bracedEnd(";") {
                 for (i <- fields.indices) {
