@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <nlohmann/json.hpp>
 
-static inline void to_json(nlohmann::json& j, my_flags e)
+inline void to_json(nlohmann::json& j, my_flags e)
 {
     static const std::pair<my_flags, nlohmann::json> m[] = {{my_flags::FLAG1,"flag1"},{my_flags::FLAG2,"flag2"},{my_flags::FLAG3,"flag3"}};
     j = nlohmann::json::array();
