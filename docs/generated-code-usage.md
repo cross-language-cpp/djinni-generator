@@ -202,11 +202,11 @@ namespace nlohmann {
     template <>
     struct adl_serializer<std::chrono::system_clock::time_point>
     {
-        static inline void to_json(json &j, const std::chrono::system_clock::time_point& tp) {
+        static void to_json(json &j, const std::chrono::system_clock::time_point& tp) {
             j = date::format("%F %T %Z", tp);
         }
 
-        static inline void from_json(const json &j, std::chrono::system_clock::time_point& value) {
+        static void from_json(const json &j, std::chrono::system_clock::time_point& value) {
             if (j.is_null()) {
                 auto dur = std::chrono::milliseconds(0);
                 value = std::chrono::time_point<std::chrono::system_clock>(dur);
