@@ -18,7 +18,7 @@ static inline void to_json(nlohmann::json& j, enum_data e)
     });
     j = ((it != std::end(m)) ? it : std::begin(m))->second;
 }
-static inline void from_json(const nlohmann::json& j, enum_data& e)
+inline void from_json(const nlohmann::json& j, enum_data& e)
 {
     static const std::pair<enum_data, nlohmann::json> m[] = {{enum_data::FIRSTENUMVALUE,"FirstEnumValue"},{enum_data::SECONDENUMVALUE,"SecondEnumValue"}};
     auto it = std::find_if(std::begin(m), std::end(m),
