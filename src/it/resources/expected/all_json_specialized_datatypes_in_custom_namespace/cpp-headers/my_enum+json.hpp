@@ -10,7 +10,7 @@
 
 namespace custom_namespace {
 
-static inline void to_json(nlohmann::json& j, my_enum e)
+inline void to_json(nlohmann::json& j, my_enum e)
 {
     static const std::pair<my_enum, nlohmann::json> m[] = {{my_enum::FIRSTENUMVALUE,"FirstEnumValue"},{my_enum::SECONDENUMVALUE,"SecondEnumValue"}};
     auto it = std::find_if(std::begin(m), std::end(m),
