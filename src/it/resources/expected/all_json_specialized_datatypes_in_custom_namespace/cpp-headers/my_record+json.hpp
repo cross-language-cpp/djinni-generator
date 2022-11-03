@@ -10,7 +10,7 @@
 
 namespace custom_namespace {
 
-static inline void from_json(const nlohmann::json & j, my_record& result)  {
+inline void from_json(const nlohmann::json & j, my_record& result)  {
     if (j.contains("myEnum")) {
         j.at("myEnum").get_to(result.myEnum);
     }
