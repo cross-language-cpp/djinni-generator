@@ -10,7 +10,7 @@
 
 namespace custom_namespace {
 
-static void from_json(const nlohmann::json & j, my_record& result)  {
+inline void from_json(const nlohmann::json & j, my_record& result)  {
     if (j.contains("myEnum")) {
         j.at("myEnum").get_to(result.myEnum);
     }
@@ -18,7 +18,7 @@ static void from_json(const nlohmann::json & j, my_record& result)  {
         j.at("myFlags").get_to(result.myFlags);
     }
 }
-static void to_json(nlohmann::json & j, const my_record & item)  {
+inline void to_json(nlohmann::json & j, const my_record & item)  {
     j = nlohmann::json {
         {"myEnum", item.myEnum},
         {"myFlags", item.myFlags}

@@ -217,37 +217,38 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                   )
                   .mkString(",")
 
-            w.wl(s"static void to_json(nlohmann::json& j, ${ident.name} e)")
-              .braced {
-                if (e.flags) {
-                  w.wl(
-                    s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
-                  )
-                  w.wl("j = nlohmann::json::array();")
-                  w.wl("for(const auto& flagOption : m)").braced {
-                    w.wl(
-                      "if(static_cast<unsigned>(e & flagOption.first) != 0)"
-                    ).braced {
-                      w.wl("j.push_back(flagOption.second);")
-                    }
-                  }
-                } else {
-                  w.wl(
-                    s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
-                  )
-                  w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
-                  w.wl(
-                    s"                       [e](const std::pair<${ident.name}, nlohmann::json>& ej_pair) -> bool"
-                  ).bracedEnd(");") {
-                    w.wl("return ej_pair.first == e;")
-                  }
-                  w.wl(
-                    "j = ((it != std::end(m)) ? it : std::begin(m))->second;"
-                  )
-                }
-              }
             w.wl(
-              s"static void from_json(const nlohmann::json& j, ${ident.name}& e)"
+              s"inline void to_json(nlohmann::json& j, ${ident.name} e)"
+            ).braced {
+              if (e.flags) {
+                w.wl(
+                  s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
+                )
+                w.wl("j = nlohmann::json::array();")
+                w.wl("for(const auto& flagOption : m)").braced {
+                  w.wl(
+                    "if(static_cast<unsigned>(e & flagOption.first) != 0)"
+                  ).braced {
+                    w.wl("j.push_back(flagOption.second);")
+                  }
+                }
+              } else {
+                w.wl(
+                  s"static const std::pair<${ident.name}, nlohmann::json> m[] = {$enumInitializer};"
+                )
+                w.wl("auto it = std::find_if(std::begin(m), std::end(m),")
+                w.wl(
+                  s"                       [e](const std::pair<${ident.name}, nlohmann::json>& ej_pair) -> bool"
+                ).bracedEnd(");") {
+                  w.wl("return ej_pair.first == e;")
+                }
+                w.wl(
+                  "j = ((it != std::end(m)) ? it : std::begin(m))->second;"
+                )
+              }
+            }
+            w.wl(
+              s"inline void from_json(const nlohmann::json& j, ${ident.name}& e)"
             ).braced {
               if (e.flags) {
                 w.wl(
@@ -530,7 +531,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             val recordSelf = ident.name
             // From JSON
             w.w(
-              s"static void from_json(const nlohmann::json & j, ${recordSelf}& result) "
+              s"inline void from_json(const nlohmann::json & j, ${recordSelf}& result) "
             ).braced {
               for (i <- fields.indices) {
                 val name = idCpp.field(fields(i).ident)
@@ -557,7 +558,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             }
             // To JSON
             w.w(
-              s"static void to_json(nlohmann::json & j, const $recordSelf & item) "
+              s"inline void to_json(nlohmann::json & j, const $recordSelf & item) "
             ).braced {
               w.w(s"j = nlohmann::json").bracedEnd(";") {
                 for (i <- fields.indices) {

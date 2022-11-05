@@ -10,7 +10,7 @@
 
 namespace custom_namespace {
 
-static void to_json(nlohmann::json& j, my_flags e)
+inline void to_json(nlohmann::json& j, my_flags e)
 {
     static const std::pair<my_flags, nlohmann::json> m[] = {{my_flags::FLAG1,"flag1"},{my_flags::FLAG2,"flag2"}};
     j = nlohmann::json::array();
@@ -22,7 +22,7 @@ static void to_json(nlohmann::json& j, my_flags e)
         }
     }
 }
-static void from_json(const nlohmann::json& j, my_flags& e)
+inline void from_json(const nlohmann::json& j, my_flags& e)
 {
     static const std::pair<my_flags, nlohmann::json> m[] = {{my_flags::FLAG1,"flag1"},{my_flags::FLAG2,"flag2"}};
     e = static_cast<my_flags>(0);

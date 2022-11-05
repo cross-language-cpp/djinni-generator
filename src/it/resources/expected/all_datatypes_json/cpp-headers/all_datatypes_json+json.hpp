@@ -15,7 +15,7 @@
 #include <unordered_set>
 #include <vector>
 
-static void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
+inline void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
     if (j.contains("booleanData")) {
         j.at("booleanData").get_to(result.booleanData);
     }
@@ -65,7 +65,7 @@ static void from_json(const nlohmann::json & j, all_datatypes_json& result)  {
         j.at("myFlags").get_to(result.myFlags);
     }
 }
-static void to_json(nlohmann::json & j, const all_datatypes_json & item)  {
+inline void to_json(nlohmann::json & j, const all_datatypes_json & item)  {
     j = nlohmann::json {
         {"booleanData", item.booleanData},
         {"integer8Data", item.integer8Data},
