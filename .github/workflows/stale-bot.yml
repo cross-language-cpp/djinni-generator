@@ -23,7 +23,6 @@ jobs:
           close-issue-message: 'This issue was closed because it has been stalled for 7 days with no activity.'
           days-before-stale: 60
           days-before-close: 7
-          close-issue-reason: stale
           close-issue-label: stale
           exempt-issue-labels: idea
           exempt-pr-labels: idea
