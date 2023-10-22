@@ -105,6 +105,21 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
     refs.header.add("#import <Foundation/Foundation.h>")
 
+    def getLocalIdentifiers(parameters: Seq[Field]): Seq[String] = {
+      parameters.map(item => {
+        idObjc.local(item.ident)
+      })
+    }
+
+    def appendNSSwiftName(call: String, parameters: Seq[Field], w: IndentWriter): Unit = {
+      val identifiers : Seq[String] = getLocalIdentifiers(parameters)
+      if (identifiers.nonEmpty){
+        val concatenatedString = s"    NS_SWIFT_NAME(${call}(${identifiers.mkString("", ":", ":")}))"
+        w.wl
+        w.w(concatenatedString)
+      }
+    }
+
     def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter) {
       val label = if (method.static) "+" else "-"
       val ret = marshal.returnType(method.ret)
@@ -120,6 +135,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
             s"(${marshal.paramType(p.ty)})${idObjc.local(p.ident)}"
           )
       )
+      if (spec.objcPreventObjcFunctionRenameInSwift) appendNSSwiftName(idObjc.method(method.ident), method.params, w)
     }
 
     // Generate the header file for Interface

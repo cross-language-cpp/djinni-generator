@@ -87,6 +87,7 @@ object Main {
     var objcppIncludeObjcPrefixOptional: Option[String] = None
     var objcFileIdentStyleOptional: Option[IdentConverter] = None
     var objcStrictProtocol: Boolean = true
+    var objcPreventObjcFunctionRenameInSwift: Boolean = false
     var objcppNamespace: String = "djinni_generated"
     var cppCliOutFolder: Option[File] = None
     var cppCliIdentStyle = IdentStyle.csDefault
@@ -381,6 +382,12 @@ object Main {
         .foreach(x => objcStrictProtocol = x)
         .text(
           "All generated @protocol will implement <NSObject> (default: true). "
+        )
+      opt[Boolean](name = "objc-prevent-objc-function-rename-in-swift")
+        .valueName("<true/false>")
+        .foreach(x => objcPreventObjcFunctionRenameInSwift = x)
+        .text(
+          "All generated methods with parameters in @interface will use NS_SWIFT_NAME macro to prevent renaming in SWIFT (default: false)"
         )
 
       note("\nObjective-C++")
@@ -924,6 +931,7 @@ object Main {
       objcSwiftBridgingHeaderName,
       objcClosedEnums,
       objcStrictProtocol,
+      objcPreventObjcFunctionRenameInSwift,
       outFileListWriter,
       skipGeneration,
       yamlOutFolder,
