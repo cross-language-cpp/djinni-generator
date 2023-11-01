@@ -1,0 +1,55 @@
+
+# enum comment
+#
+# @deprecated Use something else
+my_enum = enum {
+   # @deprecated Use something else
+   option1;
+   # not deprecated
+   option2;
+}
+
+# flags comment
+#
+# @deprecated Use someother flags
+my_flags = flags {
+   # @deprecated Use someother flag
+   flag1;
+   # not deprecated
+   flag2;
+}
+
+# record comment
+#
+# @deprecated Use someother record
+my_record = record {
+  # @deprecated Use someother attribute
+  attribute: string;
+  # not deprecated
+  another: string;
+  # @deprecated Use someother attribute
+  again: string;
+
+  # @deprecated Use someother constant
+  const version: i32 = 1;
+}
+
+# interface comment
+#
+# @deprecated Use someother interface
+my_interface = interface +c {
+  # @deprecated Use someother method
+  method_a(value:i32);
+  # @deprecated Use someother method
+  const method_b(value:i32);
+  # @deprecated Use someother method
+  static method_c(value:i32);
+  # not deprecated
+  method_d();
+
+  # really im not
+  method_e();
+  
+  # @deprecated Use someother constant
+  const version: i32 = 1;
+}

@@ -837,4 +837,102 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       cppHeaderFilenames
     )
   }
+
+  it(
+    "should generate C++14 deprecation attributes from @deprecated notes in comments"
+  ) {
+    Given(
+      "an IDL-file that documents deprecation using @deprecated in comments"
+    )
+    val idlFile = "deprecation"
+
+    When("generating the C++ headers")
+    val cppHeaderFilenames = CppHeaders(
+      "my_record.hpp",
+      "my_enum.hpp",
+      "my_flags.hpp",
+      "my_interface.hpp"
+    )
+    val cmd = djinniParams(
+      idlFile,
+      cpp = true,
+      objc = false,
+      java = false,
+      python = false,
+      cWrapper = false,
+      cppCLI = false,
+      cppOmitDefaultRecordCtor = true
+    )
+
+    djinni(cmd)
+
+    Then(
+      "the @deprecated comments are generated as C++14 [[deprecated]] attributes"
+    )
+    assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
+  }
+
+  it(
+    "should generate @Deprecated annotations for Java from @deprecated notes in comments"
+  ) {
+    Given(
+      "an IDL-file that documents deprecation using @deprecated in comments"
+    )
+    val idlFile = "deprecation"
+
+    When("generating Java source")
+    val javaFilenames =
+      Java("MyRecord.java", "MyEnum.java", "MyFlags.java", "MyInterface.java")
+    val cmd = djinniParams(
+      idlFile,
+      cpp = false,
+      objc = false,
+      java = true,
+      python = false,
+      cWrapper = false,
+      cppCLI = false,
+      cppOmitDefaultRecordCtor = true
+    )
+
+    djinni(cmd)
+
+    Then(
+      "the @deprecated comments are generated as @Deprecated annotations"
+    )
+    assertFileContentEquals(idlFile, JAVA, javaFilenames)
+  }
+
+  it(
+    "should generate __deprecated attributes for ObjC from @deprecated notes in comments"
+  ) {
+    Given(
+      "an IDL-file that documents deprecation using @deprecated in comments"
+    )
+    val idlFile = "deprecation"
+
+    When("generating ObjC source")
+    val objcHeaderFilenames = ObjCHeaders(
+      "ITMyRecord.h",
+      "ITMyEnum.h",
+      "ITMyFlags.h",
+      "ITMyInterface.h"
+    )
+    val cmd = djinniParams(
+      idlFile,
+      cpp = false,
+      objc = true,
+      java = false,
+      python = false,
+      cWrapper = false,
+      cppCLI = false,
+      cppOmitDefaultRecordCtor = true
+    )
+
+    djinni(cmd)
+
+    Then(
+      "the @deprecated comments are generated as __deprecated attributes"
+    )
+    assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
+  }
 }

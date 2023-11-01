@@ -53,6 +53,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       refs.header,
       w => {
         writeDoc(w, doc)
+        writeDocAttributes(w, doc)
         w.wl(if (e.flags) {
           s"typedef NS_OPTIONS(NSUInteger, $self)"
         } else {
@@ -81,6 +82,22 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     val ret = marshal.fqFieldType(c.ty) + nullability
     val decl = s"$label ($ret)${idObjc.method(c.ident)}"
     writeAlignedObjcCall(w, decl, List(), ";", p => ("", ""))
+  }
+
+  def deprecatedAttr(doc: Doc): String = {
+    deprecatedText(doc) match {
+      case Some("")      => " __deprecated"
+      case Some(message) => s" __deprecated_msg(\"$message\")"
+      case None          => ""
+    }
+  }
+
+  def writeDocAttributes(w: IndentWriter, doc: Doc) {
+    deprecatedText(doc) match {
+      case Some("")      => w.wl("__deprecated")
+      case Some(message) => w.wl(s" __deprecated_msg(\"$message\")")
+      case None          =>
+    }
   }
 
   /** Generate Interface
@@ -133,10 +150,12 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
           writeDoc(w, c.doc)
           w.w(s"extern ")
           writeObjcConstVariableDecl(w, c, self)
+          w.w(deprecatedAttr(c.doc))
           w.wl(s";")
         }
         w.wl
         writeDoc(w, doc)
+        writeDocAttributes(w, doc)
         if (i.ext.objc) {
           if (spec.objcStrictProtocol) {
             w.wl(s"@protocol $self <NSObject>")
@@ -150,6 +169,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
           w.wl
           writeMethodDoc(w, m, idObjc.local)
           writeObjcFuncDecl(m, w)
+          w.w(deprecatedAttr(m.doc))
           w.wl(";")
         }
         for (c <- i.consts if !marshal.canBeConstVariable(c)) {
@@ -237,6 +257,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       refs.header,
       w => {
         writeDoc(w, doc)
+        writeDocAttributes(w, doc)
         w.wl(s"@interface $self : NSObject")
 
         def writeInitializer(sign: String, prefix: String) {
@@ -269,8 +290,10 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
           writeDoc(w, f.doc)
           val nullability =
             marshal.nullability(f.ty.resolved).fold("")(", " + _)
+          val deprecated =
+            deprecatedAttr(f.doc)
           w.wl(s"@property (nonatomic, readonly${nullability}) ${marshal
-            .fqFieldType(f.ty)} ${idObjc.field(f.ident)};")
+            .fqFieldType(f.ty)} ${idObjc.field(f.ident)}${deprecated};")
         }
         if (r.derivingTypes.contains(DerivingType.Ord)) {
           w.wl
@@ -285,6 +308,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
             writeDoc(w, c.doc)
             w.w(s"extern ")
             writeObjcConstVariableDecl(w, c, noBaseSelf)
+            w.w(deprecatedAttr(c.doc))
             w.wl(s";")
           }
         }
