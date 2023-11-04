@@ -108,6 +108,16 @@ object Main {
     var pycffiOutFolder: Option[File] = None
     var pyImportPrefix: String = ""
     var cppJsonSerialization: Option[String] = None
+    var wasmOutFolder: Option[File] = None
+    var wasmIncludePrefix: String = ""
+    var wasmIncludeCppPrefix: String = ""
+    var wasmBaseLibIncludePrefix: String = ""
+    var wasmOmitConstants: Boolean = false
+    var wasmNamespace: Option[String] = None
+    var wasmOmitNsAlias: Boolean = false
+    var jsIdentStyle = IdentStyle.jsDefault
+    var tsOutFolder: Option[File] = None
+    var tsModule: String = "module"
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -543,6 +553,57 @@ object Main {
         .text(
           "Way of specifying if file generation should be skipped (default: false)"
         )
+      note("wasm\n")
+      opt[File]("wasm-out")
+        .valueName("<out-folder>")
+        .foreach(x => wasmOutFolder = Some(x))
+        .text(
+          "The output for the WASM bridge C++ files (Generator disabled if unspecified)."
+        )
+      opt[String]("wasm-include-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludePrefix = _)
+        .text(
+          "The prefix for #includes of WASM header files from WASM C++ files."
+        )
+      opt[String]("wasm-include-cpp-prefix")
+        .valueName("<prefix>")
+        .foreach(wasmIncludeCppPrefix = _)
+        .text(
+          "The prefix for #includes of the main header files from WASM C++ files."
+        )
+      opt[String]("wasm-base-lib-include-prefix")
+        .valueName("...")
+        .foreach(x => wasmBaseLibIncludePrefix = x)
+        .text(
+          "The WASM base library's include path, relative to the WASM C++ classes."
+        )
+      opt[Boolean]("wasm-omit-constants")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitConstants = x)
+        .text(
+          "Omit the generation of consts and enums in wasm, making them only accessible through TypeScript."
+        )
+      opt[String]("wasm-namespace")
+        .valueName("...")
+        .foreach(x => wasmNamespace = Some(x))
+        .text("The namespace to use for generated Wasm classes.")
+      opt[Boolean]("wasm-omit-namespace-alias")
+        .valueName("<true/false>")
+        .foreach(x => wasmOmitNsAlias = x)
+        .text(
+          "Omit the generation of namespace aliases for classes. Namespaces will be prepended to class names instead."
+        )
+      opt[File]("ts-out")
+        .valueName("<out-folder>")
+        .foreach(x => tsOutFolder = Some(x))
+        .text(
+          "The output for the TypeScript interface files (Generator disabled if unspecified)."
+        )
+      opt[String]("ts-module")
+        .valueName("<name>")
+        .foreach(tsModule = _)
+        .text("TypeScript declaration module name (default: \"module\").")
 
       note(
         "\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")"
@@ -829,7 +890,9 @@ object Main {
       objcppOutRequired = objcppOutFolder.isDefined,
       javaOutRequired = javaOutFolder.isDefined,
       jniOutRequired = jniOutFolder.isDefined,
-      cppCliOutRequired = cppCliOutFolder.isDefined
+      cppCliOutRequired = cppCliOutFolder.isDefined,
+      wasmOutRequired = wasmOutFolder.isDefined,
+      tsOutRequired = wasmOutFolder.isDefined
     ) match {
       case Some(err) =>
         System.err.println(err)
@@ -938,7 +1001,18 @@ object Main {
       cWrapperIncludePrefix,
       cWrapperIncludeCppPrefix,
       pyImportPrefix,
-      cppJsonSerialization
+      cppJsonSerialization,
+      wasmOutFolder,
+      wasmIncludePrefix,
+      wasmIncludeCppPrefix,
+      wasmBaseLibIncludePrefix,
+      wasmOmitConstants,
+      wasmNamespace,
+      wasmOmitNsAlias,
+      jsIdentStyle,
+      tsOutFolder,
+      tsModule,
+      idlFile.getName.stripSuffix(".djinni")
     )
 
     try {

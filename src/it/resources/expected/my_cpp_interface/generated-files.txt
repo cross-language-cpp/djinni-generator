@@ -16,3 +16,6 @@ src/it/resources/result/my_cpp_interface/cwrapper-headers/cw__my_cpp_interface.h
 src/it/resources/result/my_cpp_interface/cwrapper/cw__my_cpp_interface.hpp
 src/it/resources/result/my_cpp_interface/cwrapper/cw__my_cpp_interface.cpp
 src/it/resources/result/my_cpp_interface/cffi/pycffi_lib_build.py
+src/it/resources/result/my_cpp_interface/wasm/my_cpp_interface.hpp
+src/it/resources/result/my_cpp_interface/wasm/my_cpp_interface.cpp
+src/it/resources/result/my_cpp_interface/ts/module.ts

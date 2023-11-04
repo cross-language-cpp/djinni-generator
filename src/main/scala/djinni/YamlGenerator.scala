@@ -17,6 +17,8 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
   val javaMarshal = new JavaMarshal(spec)
   val jniMarshal = new JNIMarshal(spec)
   val cppCliMarshal = new CppCliMarshal(spec)
+  val wasmMarshal = new WasmGenerator(spec)
+  val tsMarshal = new TsGenerator(spec)
 
   case class QuotedString(
       str: String
@@ -76,6 +78,8 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     w.wl("java:").nested { write(w, java(td)) }
     w.wl("jni:").nested { write(w, jni(td)) }
     w.wl("cs:").nested { write(w, cs(td)) }
+    w.wl("wasm:").nested { write(w, wasm(td)) }
+    w.wl("ts:").nested { write(w, ts(td)) }
   }
 
   private def write(w: IndentWriter, m: Map[String, Any]): Unit = {
@@ -122,7 +126,12 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     def ext(e: Ext): String =
       (if (e.cpp) " +c" else "") + (if (e.objc) " +o" else "") + (if (e.java)
                                                                     " +j"
-                                                                  else "")
+                                                                  else
+                                                                    "") + (if (
+                                                                             e.js
+                                                                           ) " +w"
+                                                                           else
+                                                                             "")
     def deriving(r: Record) = {
       if (r.derivingTypes.isEmpty) {
         ""
@@ -188,6 +197,18 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     "reference" -> cppCliMarshal.isReference(td)
   )
 
+  private def wasm(td: TypeDecl) = Map[String, Any](
+    "translator" -> QuotedString(wasmMarshal.helperName(mexpr(td))),
+    "header" -> QuotedString(wasmMarshal.include(td.ident)),
+    "typename" -> wasmMarshal.wasmType(mexpr(td))
+  )
+
+  private def ts(td: TypeDecl) = Map[String, Any](
+    "typename" -> tsMarshal.toTsType(mexpr(td), /*addNullability*/ false),
+    "module" -> QuotedString("./" + spec.tsModule)
+    //, "generic" -> false
+  )
+
   // TODO: there has to be a way to do all this without the MExpr/Meta conversions?
   private def mexpr(td: TypeDecl) = MExpr(meta(td), List())
 
@@ -251,7 +272,9 @@ object YamlGenerator {
       objcppOutRequired: Boolean,
       javaOutRequired: Boolean,
       jniOutRequired: Boolean,
-      cppCliOutRequired: Boolean
+      cppCliOutRequired: Boolean,
+      wasmOutRequired: Boolean,
+      tsOutRequired: Boolean
   ): MExtern = MExtern(
     td.ident.name.stripPrefix(
       td.properties("prefix").toString
@@ -268,7 +291,8 @@ object YamlGenerator {
         "cpp",
         "byValue",
         _.asInstanceOf[Boolean]
-      )
+      ),
+      nested(td, isRequired = false, "cpp", "moveOnly", _.asInstanceOf[Boolean])
     ),
     MExtern.Objc(
       nested(td, isRequired = objcOutRequired, "objc", "typename", _.toString),
@@ -369,6 +393,16 @@ object YamlGenerator {
         "generic",
         _.asInstanceOf[Boolean]
       ) orElse Option.apply[Boolean](false)
+    ),
+    MExtern.Wasm(
+      getOptionalField(td, "wasm", "typename"),
+      getOptionalField(td, "wasm", "translator"),
+      getOptionalField(td, "wasm", "header")
+    ),
+    MExtern.Ts(
+      getOptionalField(td, "ts", "typename"),
+      getOptionalField(td, "ts", "module"),
+      getOptionalField(td, "ts", "generic", false)
     )
   )
 
@@ -377,6 +411,33 @@ object YamlGenerator {
       m.asScala.collect { case (k: String, v: Any) => (k, v) }
     }
   }
+
+  private def getOptionalField[T](
+      td: ExternTypeDecl,
+      key: String,
+      subKey: String,
+      defVal: T
+  ) = {
+    if ((nested(td, key) getOrElse (Map[String, Any]())) contains subKey)
+      (nested(td, key) getOrElse (Map[String, Any]()))(subKey).asInstanceOf[T]
+    else defVal
+  }
+
+  private def getOptionalField(
+      td: ExternTypeDecl,
+      key: String,
+      subKey: String
+  ) = {
+    try {
+      (nested(td, key) getOrElse (Map[String, Any]()))(subKey).toString
+    } catch {
+      case e: java.util.NoSuchElementException => {
+        println(s"Warning: in ${td.origin}, missing field $key/$subKey")
+        "[unspecified]"
+      }
+    }
+  }
+
   private def nested[T](
       td: ExternTypeDecl,
       isRequired: Boolean,
@@ -389,7 +450,10 @@ object YamlGenerator {
       .flatten
       .map(v => convert(v)) match {
       case None if isRequired =>
-        throw Error(td.ident.loc, s"missing '$lang' definitions").toException
+        throw Error(
+          td.ident.loc,
+          s"missing requried: $isRequired '$lang' definitions for $td, $lang, $key, $convert"
+        ).toException
       case other => other
     }
   }

@@ -271,15 +271,17 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
           }
         }
         case None =>
-          if (isOptionalInterface(tm)) {
-            // otherwise, interfaces are always plain old shared_ptr
-            expr(tm.args.head)
-          } else {
-            val args =
-              if (tm.args.isEmpty) ""
-              else tm.args.map(expr).mkString("<", ", ", ">")
-            base(tm.base) + args
+          val ty = if (isOptionalInterface(tm)) { tm.args.head }
+          else { tm }
+          val prefix = if (!isInterface(ty)) { "" }
+          else { /* isInterface */
+            if (isOptional(tm)) { "/*nullable*/ " }
+            else { "/*not-null*/ " }
           }
+          val args =
+            if (ty.args.isEmpty) ""
+            else ty.args.map(expr).mkString("<", ", ", ">")
+          prefix + base(ty.base) + args
       }
     }
     expr(tm)
@@ -319,4 +321,29 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
     val valueType = cppType
     if (byValue(tm)) valueType else refType
   }
+
+  private def moveOnly(tm: MExpr): Boolean = tm.base match {
+    case d: MDef =>
+      d.body match {
+        case r: Record => r.fields.exists(t => moveOnly(t.ty.resolved))
+        case _         => false
+      }
+    case e: MExtern =>
+      e.defType match {
+        case DRecord => e.cpp.moveOnly.getOrElse(false)
+        case _       => false
+      }
+    case MOptional => moveOnly(tm.args.head)
+    case _         => false
+  }
+
+  def maybeMove(expr: String, tm: MExpr) = {
+    if (moveOnly(tm))
+      s"std::move($expr)"
+    else
+      expr
+  }
+
+  def maybeMove(expr: String, ty: TypeRef): String =
+    maybeMove(expr, ty.resolved)
 }

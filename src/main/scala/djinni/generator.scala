@@ -102,7 +102,18 @@ package object generatorTools {
       cWrapperIncludePrefix: String,
       cWrapperIncludeCppPrefix: String,
       pyImportPrefix: String,
-      cppJsonSerialization: Option[String]
+      cppJsonSerialization: Option[String],
+      wasmOutFolder: Option[File],
+      wasmIncludePrefix: String,
+      wasmIncludeCppPrefix: String,
+      wasmBaseLibIncludePrefix: String,
+      wasmOmitConstants: Boolean,
+      wasmNamespace: Option[String],
+      wasmOmitNsAlias: Boolean,
+      jsIdentStyle: JsIdentStyle,
+      tsOutFolder: Option[File],
+      tsModule: String,
+      moduleName: String
   )
 
   def preComma(s: String): String = {
@@ -167,6 +178,15 @@ package object generatorTools {
       enum: IdentConverter,
       const: IdentConverter,
       file: IdentConverter
+  )
+  case class JsIdentStyle(
+      ty: IdentConverter,
+      typeParam: IdentConverter,
+      method: IdentConverter,
+      field: IdentConverter,
+      local: IdentConverter,
+      enum: IdentConverter,
+      const: IdentConverter
   )
 
   object IdentStyle {
@@ -233,6 +253,16 @@ package object generatorTools {
       enum = camelUpper,
       const = camelUpper,
       file = camelUpper
+    )
+
+    val jsDefault = JsIdentStyle(
+      ty = camelUpper,
+      typeParam = camelUpper,
+      method = camelLower,
+      field = camelLower,
+      local = camelLower,
+      enum = underCaps,
+      const = underCaps
     )
 
     val styles: Map[String, String => String] = Map(
@@ -403,6 +433,18 @@ package object generatorTools {
         }
         new CffiGenerator(spec).generate(idl)
       }
+      if (spec.wasmOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("WASM", spec.wasmOutFolder.get)
+        }
+        new WasmGenerator(spec).generate(idl)
+      }
+      if (spec.tsOutFolder.isDefined) {
+        if (!spec.skipGeneration) {
+          createFolder("TypeScript", spec.tsOutFolder.get)
+        }
+        new TsGenerator(spec).generate(idl)
+      }
       None
     } catch {
       case GenerateException(message) => Some(message)
@@ -530,6 +572,7 @@ abstract class Generator(spec: Spec) {
   val idObjc = spec.objcIdentStyle
   val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
+  val idJs = spec.jsIdentStyle
 
   def wrapNamespace(
       w: IndentWriter,
@@ -716,26 +759,27 @@ abstract class Generator(spec: Spec) {
   def writeEnumOptionNone(
       w: IndentWriter,
       e: Enum,
-      ident: IdentConverter
+      ident: IdentConverter,
+      delim: String = "="
   ): Unit = {
-    for (
-      o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))
-    ) {
+    for (o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.NoFlags))) {
       writeDoc(w, o.doc)
-      w.wl(ident(o.ident.name) + " = 0,")
+      w.wl(ident(o.ident.name) + s" $delim 0,")
     }
   }
 
   def writeEnumOptions(
       w: IndentWriter,
       e: Enum,
-      ident: IdentConverter
+      ident: IdentConverter,
+      delim: String = "="
   ): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
       w.wl(
-        ident(o.ident.name) + (if (e.flags) s" = 1u << $shift" else "") + ","
+        ident(o.ident.name) + (if (e.flags) s" $delim 1 << $shift"
+                               else s" $delim $shift") + ","
       )
       shift += 1
     }
@@ -744,16 +788,17 @@ abstract class Generator(spec: Spec) {
   def writeEnumOptionAll(
       w: IndentWriter,
       e: Enum,
-      ident: IdentConverter
+      ident: IdentConverter,
+      delim: String = "="
   ): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
       writeDoc(w, o.doc)
-      w.w(ident(o.ident.name) + " = ")
+      w.w(ident(o.ident.name) + s" $delim ")
       w.w(
-        normalEnumOptions(e)
-          .map(o => ident(o.ident.name))
+        normalEnumOptions(e).zipWithIndex
+          .map { case (o, i) => s"(1 << $i)" }
           .fold("0")((acc, o) => acc + " | " + o)
       )
       w.wl(",")

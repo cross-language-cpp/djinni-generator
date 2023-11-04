@@ -28,6 +28,8 @@ class IntegrationTest extends AnyFunSpec {
   final val CWRAPPER = "cwrapper"
   final val CWRAPPER_HEADERS = "cwrapper-headers"
   final val CPPCLI = "cppcli"
+  final val WASM = "wasm"
+  final val TS = "ts"
 
   type Cpp = List[String]
   def Cpp(params: String*) = List(params: _*)
@@ -57,6 +59,10 @@ class IntegrationTest extends AnyFunSpec {
   def CWrapperHeaders(params: String*) = List(params: _*)
   type CppCli = List[String]
   def CppCli(params: String*) = List(params: _*)
+  type Wasm = List[String]
+  def Wasm(params: String*) = List(params: _*)
+  type Ts = List[String]
+  def Ts(params: String*) = List(params: _*)
 
   /** Executes the djinni generator with the given parameters
     * @param parameters
@@ -108,6 +114,7 @@ class IntegrationTest extends AnyFunSpec {
       python: Boolean = true,
       cWrapper: Boolean = true,
       cppCLI: Boolean = true,
+      wasm: Boolean = true,
       useNNHeader: Boolean = false,
       cppOmitDefaultRecordCtor: Boolean = false,
       cppJsonSerialization: Option[String] = None
@@ -144,6 +151,10 @@ class IntegrationTest extends AnyFunSpec {
     if (cppCLI) {
       cmd += s" --cppcli-out $baseOutputPath/$idl/$CPPCLI"
       cmd += s" --cppcli-include-cpp-prefix ../$CPP_HEADERS/"
+    }
+    if (wasm) {
+      cmd += s" --wasm-out $baseOutputPath/$idl/$WASM"
+      cmd += s" --ts-out $baseOutputPath/$idl/$TS"
     }
     if (useNNHeader) {
       cmd += " --cpp-nn-header nn.hpp"

@@ -8,9 +8,9 @@
 /** enum comment */
 enum class MyEnum : int {
     /** enum option comment */
-    OPTION1,
-    OPTION2,
-    OPTION3,
+    OPTION1 = 0,
+    OPTION2 = 1,
+    OPTION3 = 2,
 };
 
 namespace std {

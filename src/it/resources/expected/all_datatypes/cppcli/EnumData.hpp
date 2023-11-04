@@ -6,6 +6,6 @@
 #include "../cpp-headers/enum_data.hpp"
 
 public enum class EnumData {
-    A,
-    B,
+    A = 0,
+    B = 1,
 };

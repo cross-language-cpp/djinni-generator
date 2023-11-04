@@ -14,3 +14,6 @@ src/it/resources/result/my_client_interface/cwrapper-headers/cw__my_client_inter
 src/it/resources/result/my_client_interface/cwrapper/cw__my_client_interface.hpp
 src/it/resources/result/my_client_interface/cwrapper/cw__my_client_interface.cpp
 src/it/resources/result/my_client_interface/cffi/pycffi_lib_build.py
+src/it/resources/result/my_client_interface/wasm/my_client_interface.hpp
+src/it/resources/result/my_client_interface/wasm/my_client_interface.cpp
+src/it/resources/result/my_client_interface/ts/module.ts

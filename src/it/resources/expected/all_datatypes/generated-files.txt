@@ -38,3 +38,8 @@ src/it/resources/result/all_datatypes/cwrapper/dh__map_int8_t_bool.cpp
 src/it/resources/result/all_datatypes/cwrapper-headers/dh__all_datatypes.h
 src/it/resources/result/all_datatypes/cwrapper/dh__all_datatypes.hpp
 src/it/resources/result/all_datatypes/cwrapper/dh__all_datatypes.cpp
+src/it/resources/result/all_datatypes/wasm/enum_data.hpp
+src/it/resources/result/all_datatypes/wasm/enum_data.cpp
+src/it/resources/result/all_datatypes/wasm/all_datatypes.hpp
+src/it/resources/result/all_datatypes/wasm/all_datatypes.cpp
+src/it/resources/result/all_datatypes/ts/module.ts
