@@ -153,7 +153,7 @@ The available data types for a record, argument, or return value, and their equi
 
 ✱ *Primitives will be boxed in Java and Objective-C.*
 
-Additional possible data types are: 
+Additional possible data types are:
 
 - Enumerations / Flags
 - Other record types. This is generated with a by-value semantic, i.e. the copy method will
@@ -164,7 +164,7 @@ Additional possible data types are:
 An IDL file can contain 4 kinds of declarations: enums, flags, records, and interfaces.
 
 * [**Enums**](#enums) become C++ enum classes, Java enums, ObjC `NS_ENUM`s, Python `IntEnum`s, or C# `System.Enum`s.
-* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`, 
+* [**Flags**](#flags) become C++ enum classes with convenient bit-oriented operators, Java enums with `EnumSet`,
   ObjC `NS_OPTIONS`, Python `IntFlag`s, or C# `System.Enum`s with the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
 * [**Records**](#records) are pure-data value objects.
 * [**Interfaces**](#interfaces) are objects with defined methods to call (in C++, passed by `shared_ptr`). Djinni
@@ -198,7 +198,7 @@ my_flags = flags {
 
 Flags are translated to C++ `enum class`es with underlying type `unsigned` and a generated set of
 overloaded bitwise operators for convenience, ObjC `NS_OPTIONS` with underlying type `NSUInteger`,
-Java `EnumSet<>`, Python `IntFlag`, and C# `System.Enum`s with the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0). 
+Java `EnumSet<>`, Python `IntFlag`, and C# `System.Enum`s with the [`[Flags]` Attribute](https://docs.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-5.0).
 Contrary to the above enums, the enumerants of flags represent single bits instead of integral values.
 
 In the above example the elements marked with `none` and `all` are given special meaning.  In C++,
@@ -286,7 +286,7 @@ produces code allowing an interface implemented in C++ to be transparently used 
 Java Python or C# and vice versa.
 
 #### Special Methods for C++ Only
-`+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which 
+`+c` interfaces (implementable only in C++) can have methods flagged with the special keywords const and static which
 have special effects in C++:
 
    special_methods = interface +c {
@@ -295,12 +295,12 @@ have special effects in C++:
    }
 
 - `const` methods will be declared as const in C++, though this cannot be enforced on callers in other languages, which lack this feature.
-- `static` methods will become a static method of the C++ class, which can be called from other languages without an object.  
+- `static` methods will become a static method of the C++ class, which can be called from other languages without an object.
   This is often useful for factory methods to act as a cross-language constructor.
 
 #### Exception Handling
 When an interface implemented in C++ throws a `std::exception`, it will be translated to a
-`java.lang.RuntimeException` in Java, an `NSException` in Objective-C, a `RuntimeError` in Python, 
+`java.lang.RuntimeException` in Java, an `NSException` in Objective-C, a `RuntimeError` in Python,
 or a `System.Exception` in C#.
 The `what()` message will be translated as well.
 
@@ -327,3 +327,43 @@ will be `RecordWithConst::CONST_VALUE` in C++, `RecordWithConst.CONST_VALUE` in 
 If comments are placed on top or inside a type definition, they will be converted to
 Javadoc / Doxygen compatible comments in the generated Java, C++, Objective-C and C++/CLI interfaces, or a
 Python docstring.
+
+## Deprecation Comments
+
+It's possible to add deprecation comments to IDL types and methods.
+
+The comment in the IDL file has to start the `# @deprecated reason/hing message` .
+
+This will generate the corresponding deprecation annotation in the target language.
+
+```idl
+# @deprecated Use someother interface
+my_interface = interface +c { .... }
+```
+
+Such a comment will generate code like
+
+C++:
+
+```cpp
+class [[deprecated("reason/hing message")]] MyInterface { ... }
+```
+
+Java:
+
+```java
+/**
+ * interface comment
+ *
+ * @deprecated Use someother interface
+ */
+@Deprecated
+public abstract class MyInterface { ... }
+```
+
+Objective-C:
+
+```objc
+ __deprecated_msg("Use someother interface")
+@interface ITMyInterface : NSObject
+```
