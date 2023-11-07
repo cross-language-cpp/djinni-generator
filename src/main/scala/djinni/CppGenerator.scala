@@ -85,6 +85,22 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     })
   }
 
+  def writeDeprecated(w: IndentWriter, doc: Doc) {
+    deprecatedText(doc) match {
+      case None     =>
+      case Some("") => w.wl("[[deprecated]]")
+      case Some(s)  => w.wl(s"[[deprecated(\"$s\")]]")
+    }
+  }
+
+  def deprecatedAttr(doc: Doc) = {
+    deprecatedText(doc) match {
+      case None     => ""
+      case Some("") => " [[deprecated]]"
+      case Some(s)  => s" [[deprecated(\"$s\")]]"
+    }
+  }
+
   class CppRefs(name: String, extension: String = "") {
     var hpp = mutable.TreeSet[String]()
     var hppFwds = mutable.TreeSet[String]()
@@ -122,6 +138,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     val flagsType = "unsigned"
     val enumType = "int"
     val underlyingType = if (e.flags) flagsType else enumType
+    val deprecatedType = deprecatedAttr(doc);
 
     writeHppFile(
       ident,
@@ -130,7 +147,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       refs.hppFwds,
       w => {
         writeDoc(w, doc)
-        w.w(s"enum class $self : $underlyingType").bracedSemi {
+        w.w(s"enum class${deprecatedType} $self : $underlyingType").bracedSemi {
           writeEnumOptionNone(w, e, idCpp.enum)
           writeEnumOptions(w, e, idCpp.enum)
           writeEnumOptionAll(w, e, idCpp.enum)
@@ -317,6 +334,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       // Write code to the header file
       w.wl
       writeDoc(w, c.doc)
+      writeDeprecated(w, c.doc)
       w.wl(s"static ${constFieldType} ${idCpp.const(c.ident)}${constValue}")
     }
   }
@@ -416,6 +434,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
 
     val fields = r.fields
+    val deprecationType = deprecatedAttr(doc) + " "
 
     // C++ Header
     def writeCppPrototype(w: IndentWriter) {
@@ -426,11 +445,12 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       }
       writeDoc(w, doc)
       writeCppTypeParams(w, params)
-      w.w("struct " + actualSelf + cppFinal).bracedSemi {
+      w.w("struct" + deprecationType + actualSelf + cppFinal).bracedSemi {
         generateHppConstants(w, r.consts)
         // Field definitions.
         for (f <- r.fields) {
           writeDoc(w, f.doc)
+          writeDeprecated(w, f.doc)
           w.wl(marshal.fieldType(f.ty) + " " + idCpp.field(f.ident) + ";")
         }
 
@@ -691,7 +711,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       w => {
         writeDoc(w, doc)
         writeCppTypeParams(w, typeParams)
-        w.w(s"class $self").bracedSemi {
+        w.w("class" + deprecatedAttr(doc) + s" $self").bracedSemi {
           w.wlOutdent("public:")
           // Destructor
           w.wl(s"virtual ~$self() {}")
@@ -701,6 +721,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
           for (m <- i.methods) {
             w.wl
             writeMethodDoc(w, m, idCpp.local)
+            writeDeprecated(w, m.doc)
             val ret = marshal.returnType(m.ret, methodNamesInScope)
             val params = m.params.map(p =>
               marshal.paramType(p.ty, methodNamesInScope) + " " + idCpp

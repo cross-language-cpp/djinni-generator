@@ -76,6 +76,10 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
+  def writeDocAnnotations(w: IndentWriter, doc: Doc) {
+    writeDeprecated(w, doc, "@Deprecated")
+  }
+
   def generateJavaConstants(
       w: IndentWriter,
       consts: Seq[Const],
@@ -113,6 +117,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
 
     for (c <- consts) {
       writeDoc(w, c.doc)
+      writeDocAnnotations(w, c.doc)
       javaAnnotationHeader.foreach(w.wl)
       marshal.nullityAnnotation(c.ty).foreach(w.wl)
 
@@ -138,12 +143,14 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       refs.java,
       w => {
         writeDoc(w, doc)
+        writeDocAnnotations(w, doc)
         javaAnnotationHeader.foreach(w.wl)
         w.w(
           s"${javaClassAccessModifierString}enum ${marshal.typename(ident, e)}"
         ).braced {
           for (o <- normalEnumOptions(e)) {
             writeDoc(w, o.doc)
+            writeDocAnnotations(w, o.doc)
             w.wl(idJava.enum(o.ident) + ",")
           }
           w.wl(";")
@@ -180,6 +187,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
         val javaClass = marshal.typename(ident, i)
         val typeParamList = javaTypeParams(typeParams)
         writeDoc(w, doc)
+        writeDocAnnotations(w, doc)
 
         javaAnnotationHeader.foreach(w.wl)
 
@@ -202,6 +210,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
           for (m <- i.methods if !m.static) {
             skipFirst { w.wl }
             writeMethodDoc(w, m, idJava.local)
+            writeDocAnnotations(w, m.doc)
             val ret = marshal.returnType(m.ret)
             val params = m.params.map(p => {
               val nullityAnnotation =
@@ -221,6 +230,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
           for (m <- i.methods if m.static) {
             skipFirst { w.wl }
             writeMethodDoc(w, m, idJava.local)
+            writeDocAnnotations(w, m.doc)
             val ret = marshal.returnType(m.ret)
             val returnPrefix = if (ret == "void") "" else "return "
             val params = m.params.map(p => {
@@ -390,6 +400,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       refs.java,
       w => {
         writeDoc(w, doc)
+        writeDocAnnotations(w, doc)
         javaAnnotationHeader.foreach(w.wl)
         val self = marshal.typename(javaName, r)
 
@@ -441,6 +452,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
           for (f <- r.fields) {
             w.wl
             writeDoc(w, f.doc)
+            writeDocAnnotations(w, f.doc)
             marshal.nullityAnnotation(f.ty).foreach(w.wl)
             w.w(
               "public " + marshal.returnType(Some(f.ty)) + " " + idJava

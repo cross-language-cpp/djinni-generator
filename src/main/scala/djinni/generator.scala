@@ -769,4 +769,23 @@ abstract class Generator(spec: Spec) {
         w.wl(" */")
     }
   }
+
+  def deprecatedText(doc: Doc): Option[String] = {
+    val pattern = """\s*@deprecated\(?(.*?)\)?$""".r
+    for (l <- doc.lines) {
+      l match {
+        case pattern(message) =>
+          return Some(message.trim())
+        case _ => // no match
+      }
+    }
+    return None
+  }
+
+  def writeDeprecated(w: IndentWriter, doc: Doc, annotation: String) {
+    deprecatedText(doc) match {
+      case Some(message) => w.wl(annotation.replace("<message>", message))
+      case None          =>
+    }
+  }
 }
