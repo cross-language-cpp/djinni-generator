@@ -332,7 +332,7 @@ Python docstring.
 
 It's possible to add deprecation comments to IDL types and methods.
 
-The comment in the IDL file has to start the `# @deprecated reason/hing message` .
+The comment in the IDL file has to start the `# @deprecated reason/hint message` .
 
 This will generate the corresponding deprecation annotation in the target language.
 
