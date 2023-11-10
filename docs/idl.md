@@ -337,7 +337,7 @@ The comment in the IDL file has to start the `# @deprecated reason/hint message`
 This will generate the corresponding deprecation annotation in the target language.
 
 ```idl
-# @deprecated Use someother interface
+# @deprecated Use some_other interface
 my_interface = interface +c { .... }
 ```
 
