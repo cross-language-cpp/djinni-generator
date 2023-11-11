@@ -26,15 +26,18 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
   val jniMarshal = new JNIMarshal(spec)
   val cppMarshal = new CppMarshal(spec)
   val javaMarshal = new JavaMarshal(spec)
-  val jniBaseLibClassIdentStyle: String => String = IdentStyle.prefix("H", IdentStyle.camelUpper)
+  val jniBaseLibClassIdentStyle: String => String =
+    IdentStyle.prefix("H", IdentStyle.camelUpper)
   val jniBaseLibFileIdentStyle = jniBaseLibClassIdentStyle
 
-  val writeJniCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
-    spec.jniOutFolder.get,
-    spec.jniNamespace,
-    spec.jniFileIdentStyle,
-    spec.jniIncludePrefix
-  ) _
+  val writeJniCppFile
+      : (String, String, Iterable[String], IndentWriter => Unit) => Unit =
+    writeCppFileGeneric(
+      spec.jniOutFolder.get,
+      spec.jniNamespace,
+      spec.jniFileIdentStyle,
+      spec.jniIncludePrefix
+    ) _
   def writeJniHppFile(
       name: String,
       origin: String,
@@ -74,7 +77,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     var jniHpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
     var jniCpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    val cppPrefix: String = cppPrefixOverride.getOrElse(spec.jniIncludeCppPrefix)
+    val cppPrefix: String =
+      cppPrefixOverride.getOrElse(spec.jniIncludeCppPrefix)
     jniHpp.add(
       "#include " + q(
         cppPrefix + spec.cppFileIdentStyle(name) + "." + spec.cppHeaderExt
@@ -93,13 +97,19 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta): Unit = for (r <- jniMarshal.references(m, name)) r match {
-      case ImportRef(arg) => jniCpp.add("#include " + arg)
-      case _              =>
-    }
+    def find(m: Meta): Unit = for (r <- jniMarshal.references(m, name))
+      r match {
+        case ImportRef(arg) => jniCpp.add("#include " + arg)
+        case _              =>
+      }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new JNIRefs(ident.name)
     val jniHelper = jniMarshal.helperClass(ident)
     val cppSelf = cppMarshal.fqTypename(ident, e)
@@ -631,7 +641,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def typeParamsSignature(params: Seq[TypeParam]): String = if (params.isEmpty) ""
+  def typeParamsSignature(params: Seq[TypeParam]): String = if (params.isEmpty)
+    ""
   else
     params.map(p => spec.jniClassIdentStyle(p.ident)).mkString("<", ", ", ">")
 

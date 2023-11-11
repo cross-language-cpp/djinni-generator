@@ -118,7 +118,9 @@ package object resolver {
     }
   }
 
+  @SuppressWarnings(Array("unused")) // scope
   private def resolveEnum(scope: Scope, e: Enum): Unit = {
+    val _ = scope // mark unused as used, TODO, check remove
     val dupeChecker = new DupeChecker("enum option")
     for (o <- e.options) {
       dupeChecker.check(o.ident)

@@ -193,7 +193,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       extraAddCallback: String,
       extraCallBackImpl: IndentWriter => Unit
   ): Unit = {
-
+    val _ = (tm, ident, elTyRef) // unused, TODO: remove
     // GET ELEMENT/ GET VALUE
     var ret = getRetType
     var defArgs = Seq("cself, " + elIndex).mkString("(", ", ", ")")
@@ -330,6 +330,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       origin: String,
       python: mutable.TreeSet[String]
   ): Unit = {
+    val _ = classAsMethodName // unused, TODO: remove
     val helperClass = idPython.className(fileName) + "Helper"
     val proxyName = idPython.className(fileName) + "Proxy"
     val next =
@@ -625,6 +626,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   }
 
   def getLibArgsTo(m: Interface.Method, pythonClass: String): String = {
+    val _ = pythonClass // unused, TODO: remove
     m.params
       .map(p => marshal.convertTo(p.ident.name, p.ty))
       .mkString("(", ", ", ")")
@@ -707,7 +709,9 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def writeWithStmts(withStmts: Seq[String], w: IndentWriter)(f: => Unit): Unit = {
+  def writeWithStmts(withStmts: Seq[String], w: IndentWriter)(
+      f: => Unit
+  ): Unit = {
     if (withStmts.nonEmpty) {
       val len = withStmts.length
 
@@ -756,6 +760,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       libCall: String,
       w: IndentWriter
   ): Unit = {
+    val _ = self // unused, TODO: remove
     val returnStmt: String = ret.resolved.base match {
       case MString | MBinary =>
         checkForExceptionFromPython(
@@ -1005,6 +1010,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       ext: Ext,
       w: IndentWriter
   ): Unit = {
+    val _ = ext // unused, TODO, check remove
     val proxyClass = pythonClass + "CallbacksHelper"
     val helperClass = pythonClass + "Helper"
     val classNameAsMethod = idPython.method(ident.name)
@@ -1103,13 +1109,16 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       ty: TypeRef,
       v: Any,
       selfName: String
-  ): Unit = v match {
-    case l: Long      => w.w(l.toString)
-    case d: Double    => w.w(d.toString)
-    case b: Boolean   => w.w(if (b) "True" else "False")
-    case s: String    => w.w(s)
-    case _: EnumValue => throw new NotImplementedError()
-    case v: ConstRef  => w.w(selfName + "." + idPython.const(v))
+  ): Unit = {
+    val _ = ty // used, TODO, check remove
+    v match {
+      case l: Long      => w.w(l.toString)
+      case d: Double    => w.w(d.toString)
+      case b: Boolean   => w.w(if (b) "True" else "False")
+      case s: String    => w.w(s)
+      case _: EnumValue => throw new NotImplementedError()
+      case v: ConstRef  => w.w(selfName + "." + idPython.const(v))
+    }
   }
 
   def generateNonRecursiveConstants(
@@ -1118,6 +1127,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       selfName: String,
       genRecord: Boolean
   ): Unit = {
+    val _ = genRecord // unused, TODO, check remove
     for (c <- consts) {
       if (!c.value.isInstanceOf[Map[_, _]]) { // is not a record
         w.w(idPython.const(c.ident) + " = ")
@@ -1372,6 +1382,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       number: Int,
       w: IndentWriter
   ): IndentWriter = {
+    val _ = (prefix, number) // unused, TODO, check remove
     val recordClassName = idPython.className(ident.name)
     val skipFirst = SkipFirst()
     w.wl("py_rec = " + recordClassName + "(").nested {
@@ -1497,7 +1508,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
         // Record Definition
         w.wl("class " + recordClassName + (if (r.ext.py) "Base" else "") + ":")
           .nested {
-            var docLists = mutable.ArrayBuffer[IndentWriter => Unit]()
+            val docLists = mutable.ArrayBuffer[IndentWriter => Unit]()
             if (r.fields.exists(_.doc.lines.nonEmpty))
               docLists += { w: IndentWriter => writeDocFieldsList(w, r.fields) }
             if (r.consts.exists(_.doc.lines.nonEmpty))

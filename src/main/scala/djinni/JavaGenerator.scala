@@ -134,7 +134,12 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new JavaRefs()
 
     writeJavaFile(
@@ -676,7 +681,11 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     if (params.isEmpty) ""
     else params.map(p => idJava.typeParam(p.ident)).mkString("<", ", ", ">")
 
-  def writeParcelable(w: IndentWriter, self: String, r: Record): IndentWriter = {
+  def writeParcelable(
+      w: IndentWriter,
+      self: String,
+      r: Record
+  ): IndentWriter = {
     // Generates the methods and the constructor to implement the interface android.os.Parcelable
 
     // CREATOR

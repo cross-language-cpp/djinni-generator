@@ -10,7 +10,10 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
     val (name, _) = toObjcType(tm)
     name
   }
-  def typename(name: String, ty: TypeDef): String = idObjc.ty(name)
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO: remove
+    idObjc.ty(name)
+  }
 
   override def fqTypename(tm: MExpr): String = typename(tm)
   def fqTypename(name: String, ty: TypeDef): String = typename(name, ty)
@@ -57,7 +60,8 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
   override def fromCpp(tm: MExpr, expr: String): String =
     throw new AssertionError("direct cpp to objc conversion not possible")
 
-  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] =
+  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] = {
+    val _ = exclude // unused, TODO: remove
     m match {
       case _: MOpaque =>
         List(ImportRef("<Foundation/Foundation.h>"))
@@ -88,9 +92,13 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
       case e: MExtern => List(ImportRef(e.objc.header.get))
       case _: MParam  => List()
     }
+  }
 
-  def headerName(ident: String): String = idObjc.ty(ident) + "." + spec.objcHeaderExt
-  def include(ident: String): String = q(spec.objcIncludePrefix + headerName(ident))
+  def headerName(ident: String): String =
+    idObjc.ty(ident) + "." + spec.objcHeaderExt
+  def include(ident: String): String = q(
+    spec.objcIncludePrefix + headerName(ident)
+  )
 
   def isPointer(td: TypeDecl): Boolean = td.body match {
     case _: Interface => true

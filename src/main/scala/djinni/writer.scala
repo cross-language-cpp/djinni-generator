@@ -70,9 +70,9 @@ package object writer {
     def nestedN(amount: Int): ((=> Unit) => Unit) = nested_(amount, _)
 
     private def nested_(amount: Int, f: => Unit): Unit = {
-      for (i <- 0 until amount) increase()
+      for (_ <- 0 until amount) increase()
       f
-      for (i <- 0 until amount) decrease()
+      for (_ <- 0 until amount) decrease()
     }
 
     def bracedEnd(end: String)(f: => Unit): Unit = {

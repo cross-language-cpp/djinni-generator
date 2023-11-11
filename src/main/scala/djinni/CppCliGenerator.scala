@@ -62,12 +62,14 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
   def withCppCliNs(namespace: String, t: String): String =
     withNs(Some(namespace), t)
 
-  val writeCppCliCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
-    spec.cppCliOutFolder.get,
-    spec.cppCliNamespace,
-    spec.cppCliIdentStyle.file,
-    ""
-  ) _
+  val writeCppCliCppFile
+      : (String, String, Iterable[String], IndentWriter => Unit) => Unit =
+    writeCppFileGeneric(
+      spec.cppCliOutFolder.get,
+      spec.cppCliNamespace,
+      spec.cppCliIdentStyle.file,
+      ""
+    ) _
 
   def writeCppCliHppFile(
       name: String,
@@ -164,7 +166,12 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
 
     writeCppCliHppFile(

@@ -56,40 +56,44 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
   override def fqReturnType(ret: Option[TypeRef]): String =
     throw new NotImplementedError()
 
-  def cFieldType(tm: MExpr, forHeader: Boolean): String = ctypename(tm, forHeader)
+  def cFieldType(tm: MExpr, forHeader: Boolean): String =
+    ctypename(tm, forHeader)
   override def fieldType(tm: MExpr): String = ctypename(tm, false)
   override def fqFieldType(tm: MExpr): String = throw new NotImplementedError()
 
 //  override def toCpp(tm: MExpr, expr: String): String = throw new AssertionError("cpp to cpp conversion")
 //  override def fromCpp(tm: MExpr, expr: String): String = throw new AssertionError("cpp to cpp conversion")
 
-  def references(m: Meta, exclude: String): Seq[SymbolReference] = m match {
-    case p: MPrimitive =>
-      p.idlName match {
-        case "i8" | "i16" | "i32" | "i64" =>
-          List(ImportRef("<stdint.h>" + pythonCdefIgnore))
-        case "bool" => List(ImportRef("<stdbool.h>" + pythonCdefIgnore))
-        case _      => List()
-      }
-    case MDate => List(ImportRef("<chrono>" + pythonSetSourceIgnore))
-    case MBinary =>
-      List(
-        ImportRef("<vector>" + pythonSetSourceIgnore),
-        ImportRef("<stdint.h>" + pythonCdefIgnore)
-      )
-    case MOptional => List(ImportRef(spec.cppOptionalHeader))
-    case d: MDef =>
-      d.defType match {
-        case DInterface => List(ImportRef(q(cw + d.name + ".hpp")))
-        case DRecord    => List(ImportRef(q(dh + d.name + ".hpp")))
-        case DEnum =>
-          List(
-            ImportRef(q(d.name + ".hpp")),
-            ImportRef(q(dh + d.name + ".hpp"))
-          )
-      }
-    case _: MExtern => throw new NotImplementedError()
-    case _          => List()
+  def references(m: Meta, exclude: String): Seq[SymbolReference] = {
+    val _ = exclude // unused, TODO: remove
+    m match {
+      case p: MPrimitive =>
+        p.idlName match {
+          case "i8" | "i16" | "i32" | "i64" =>
+            List(ImportRef("<stdint.h>" + pythonCdefIgnore))
+          case "bool" => List(ImportRef("<stdbool.h>" + pythonCdefIgnore))
+          case _      => List()
+        }
+      case MDate => List(ImportRef("<chrono>" + pythonSetSourceIgnore))
+      case MBinary =>
+        List(
+          ImportRef("<vector>" + pythonSetSourceIgnore),
+          ImportRef("<stdint.h>" + pythonCdefIgnore)
+        )
+      case MOptional => List(ImportRef(spec.cppOptionalHeader))
+      case d: MDef =>
+        d.defType match {
+          case DInterface => List(ImportRef(q(cw + d.name + ".hpp")))
+          case DRecord    => List(ImportRef(q(dh + d.name + ".hpp")))
+          case DEnum =>
+            List(
+              ImportRef(q(d.name + ".hpp")),
+              ImportRef(q(dh + d.name + ".hpp"))
+            )
+        }
+      case _: MExtern => throw new NotImplementedError()
+      case _          => List()
+    }
   }
 
   // Types that need RAII will be placed in unique pointers at acquisition time, and released when the language
@@ -107,8 +111,8 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     case MOptional =>
       tm.args.head.base match {
         case _: MPrimitive => true
-        case MDate          => true
-        case _              => needsRAII(tm.args.head)
+        case MDate         => true
+        case _             => needsRAII(tm.args.head)
       }
     case _: MExtern => throw new NotImplementedError()
     case _          => false
@@ -118,7 +122,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     case MString | MBinary => true
     case MOptional =>
       tm.args.head.base match {
-        case _: MPrimitive    => true
+        case _: MPrimitive     => true
         case MString | MBinary => true
         case MDate             => true
         case _                 => false
@@ -202,7 +206,6 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     case _ => throw new NotImplementedError()
   }
 
-  
   private def toCIdlType(tm: MExpr): String = {
     def baseToIdl(m: Meta): String = m match {
       case p: MPrimitive => p.cName
@@ -217,7 +220,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
       case MOptional =>
         tm.args.head.base match {
           case _: MPrimitive => "boxed"
-          case _              => "optional"
+          case _             => "optional"
         }
       case _ => m.asInstanceOf[MOpaque].idlName
     }

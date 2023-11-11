@@ -40,7 +40,12 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new ObjcRefs()
 
     refs.header.add("#import <Foundation/Foundation.h>")

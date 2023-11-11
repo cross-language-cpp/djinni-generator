@@ -52,7 +52,10 @@ case class Parser(includePaths: List[String]) {
       ("@" ~> directive) ~ ("\"" ~> filePath <~ "\"") ^^ {
         case "import" ~ x => IdlFileRef(importFile(x))
         case "extern" ~ x => ExternFileRef(importFile(x))
-         case unexpected => throw new IllegalArgumentException(s"Unexpected directive: $unexpected")
+        case unexpected =>
+          throw new IllegalArgumentException(
+            s"Unexpected directive: $unexpected"
+          )
       }
     }
 
@@ -87,7 +90,8 @@ case class Parser(includePaths: List[String]) {
           InternTypeDecl(ident, typeParams, body, doc, origin)
       }
 
-    def ext(default: Ext): Parser[Ext] = (rep1("+" ~> ident) >> checkExts) | success(default)
+    def ext(default: Ext): Parser[Ext] =
+      (rep1("+" ~> ident) >> checkExts) | success(default)
     def extRecord: Parser[Ext] = ext(
       Ext(java = false, cpp = false, objc = false, py = false, cppcli = false)
     )

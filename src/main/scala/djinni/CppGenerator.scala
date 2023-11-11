@@ -28,12 +28,14 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
   val marshal = new CppMarshal(spec)
 
-  val writeCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
-    spec.cppOutFolder.get,
-    spec.cppNamespace,
-    spec.cppFileIdentStyle,
-    spec.cppIncludePrefix
-  ) _
+  val writeCppFile
+      : (String, String, Iterable[String], IndentWriter => Unit) => Unit =
+    writeCppFileGeneric(
+      spec.cppOutFolder.get,
+      spec.cppNamespace,
+      spec.cppFileIdentStyle,
+      spec.cppIncludePrefix
+    ) _
   def writeHppFile(
       name: String,
       origin: String,
@@ -127,7 +129,12 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new CppRefs(ident.name)
     val self = marshal.typename(ident, e)
 
@@ -315,7 +322,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
   def generateHppConstants(w: IndentWriter, consts: Seq[Const]): Unit = {
     for (c <- consts) {
       // set value in header if can constexpr (only primitives)
-      var constexpr = shouldConstexpr(c)
+      val constexpr = shouldConstexpr(c)
       var constValue = ";"
       if (constexpr) {
         constValue = c.value match {

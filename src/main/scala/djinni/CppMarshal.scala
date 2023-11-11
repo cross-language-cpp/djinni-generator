@@ -187,8 +187,9 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
       ty: TypeRef,
       namespace: Option[String] = None,
       scopeSymbols: Seq[String] = Seq()
-  ): String =
+  ): String = {
     toCppType(ty.resolved, namespace, scopeSymbols)
+  }
 
   private def toCppType(
       tm: MExpr,

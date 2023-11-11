@@ -28,12 +28,18 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   val dh = "dh__"
 
   override def typename(tm: MExpr): String = toPythonType(tm)
-  def typename(name: String, ty: TypeDef): String =
+  @SuppressWarnings(Array("unused"))
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO, check remove
     throw new NotImplementedError() //idPython.ty(name)
+  }
 
   override def fqTypename(tm: MExpr): String = throw new NotImplementedError()
-  def fqTypename(name: String, ty: TypeDef): String =
+  @SuppressWarnings(Array("unused"))
+  def fqTypename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO, check remove
     throw new NotImplementedError()
+  }
 
   override def paramType(tm: MExpr): String = typename(tm)
   override def fqParamType(tm: MExpr): String = throw new NotImplementedError()
@@ -192,7 +198,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     return refs
   }
 
-   // see if this works wutg getIdlName
+  // see if this works wutg getIdlName
   private def toPythonType(tm: MExpr): String = {
     def base(m: Meta): String = m match {
       case p: MPrimitive => p.cName
@@ -244,7 +250,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
 
   def isPrimitive(ty: TypeRef): Boolean = ty.resolved.base match {
     case _: MPrimitive => true
-    case _              => false
+    case _             => false
   }
 
   // TODO: pyName, isPacked and getPacked have been removed on a different branch (keep them removed when rebasing)

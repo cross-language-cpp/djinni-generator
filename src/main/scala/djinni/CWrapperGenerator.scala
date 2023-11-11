@@ -46,7 +46,11 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getDefArgs(m: Interface.Method, self: String, forHeader: Boolean): String = {
+  def getDefArgs(
+      m: Interface.Method,
+      self: String,
+      forHeader: Boolean
+  ): String = {
     if (m.static || self == "") {
       marshal.cArgDecl(
         m.params.map(p =>
@@ -65,7 +69,11 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getCArgTypes(m: Interface.Method, self: String, forHeader: Boolean): String = {
+  def getCArgTypes(
+      m: Interface.Method,
+      self: String,
+      forHeader: Boolean
+  ): String = {
     marshal.cArgDecl(
       Seq(self) ++ m.params.map(p => marshal.cParamType(p.ty, forHeader))
     )
@@ -239,6 +247,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
+    val _ = retType // unused, TODO, check remove
     val elTyRef = getContainerElTypeRef(tm, 0, ident)
     val addToList = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     declareObjectUniquePointerHandle(tm, classAsMethodName, w)
@@ -325,6 +334,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
+    val _ = retType // unused, TODO, check remove
     val addToMap = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     val keyTyRef = getContainerElTypeRef(tm, 0, ident)
     val valTyRef = getContainerElTypeRef(tm, 1, ident)
@@ -396,6 +406,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
+    val _ = retType // unused, TODO, check remove
     marshal.callback(idCpp.method(classAsMethodName + "__create"))
     val addToMap = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     val keyTyRef = getContainerElTypeRef(tm, 0, ident)
@@ -426,8 +437,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       getReturnType: String,
       addCArgs: String
   ): Unit = {
+    val _ = (tm, ident, retType) // unused, TODO, check remove
     val handle = "DjinniObjectHandle *"
-
     var ret = ""
     var cArgs = ""
     if (getName != "") {
@@ -460,8 +471,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       getReturnType: String,
       addCArgs: String
   ): Unit = {
+    val _ = (tm, ident, retType) // unused, TODO, check remove
     val handle = "struct DjinniObjectHandle *"
-
     var ret = ""
     var cArgs = ""
     if (getName != "") {
@@ -548,6 +559,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       deleteMethod: String,
       w: IndentWriter
   ): Unit = {
+    val _ = handle // unused, TODO, check remove
     w.wl(
       "djinni::Handle" + t(optHandle) + " " + djinniWrapper + "::fromCpp" + p(
         spec.cppOptionalTemplate + t(retType) + " dc"
@@ -577,6 +589,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       deleteMethod: String,
       w: IndentWriter
   ): Unit = {
+    val _ = reinterpret // unused, TODO, check remove
     w.wl(
       spec.cppOptionalTemplate + t(retTypeStr) + djinniWrapper + "::toCpp" + p(
         "djinni::Handle" + t(optHandle) + " dh"
@@ -607,6 +620,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       retType: String,
       w: IndentWriter
   ): Unit = {
+    val _ = (handle, optHandle) // unused, TODO, check remove
     w.wl(
       "static " + "djinni::Handle" + t(cppHandle) + " fromCpp" + p(
         cppMarshal.fqParamType(tm) + " dc"
@@ -639,6 +653,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = handle + " *"
@@ -761,6 +776,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = "DjinniObjectHandle *"
@@ -932,6 +948,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = "DjinniObjectHandle *"
@@ -1107,6 +1124,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       methods: Seq[Interface.Method],
       w: IndentWriter
   ): Unit = {
+    val _ = cClassWrapper // unused, TODO, check remove
     for (m <- methods) {
       val ret = marshal.cReturnType(m.ret, false)
       val cArgs = getCArgTypes(m, marshal.djinniObjectHandle + " * ", false)
@@ -1262,6 +1280,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       number: Int,
       w: IndentWriter
   ): IndentWriter = {
+    val _ = (prefix, number) // unused, TODO, check remove
     val recordAsMethodName = idCpp.method(ident.name)
 
     for (f <- r.fields) {
@@ -1361,6 +1380,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       create: Boolean,
       f: IndentWriter => Unit
   ): Unit = {
+    val _ = cppClass // unused, TODO, check remove
     if (create)
       createFile(
         spec.cWrapperHeaderOutFolder.get,
@@ -1398,6 +1418,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       create: Boolean,
       f: IndentWriter => Unit
   ): Unit = {
+    val _ = cppClass // unused, TODO, check remove
     // hpp file contains definition of DjinniStruct wrapper over cpp shared_ptr
     // meant to facilitate interuse of interfaces across files
     if (create)
@@ -1544,6 +1565,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       className: String
   ): Unit = {
+    val _ = ident // unused, TODO, check remove
     w.wl("struct " + marshal.wrappedName(className) + " final {").nested {
       w.wl(
         marshal.wrappedName(className) + p(

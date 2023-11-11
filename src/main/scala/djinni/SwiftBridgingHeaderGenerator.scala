@@ -23,7 +23,12 @@ import java.io._
 class SwiftBridgingHeaderGenerator(spec: Spec) extends Generator(spec) {
   val marshal = new ObjcMarshal(spec)
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     spec.objcSwiftBridgingHeaderWriter.get.write(
       "#import \"" + marshal.headerName(ident) + "\"\n"
     )
@@ -56,8 +61,10 @@ class SwiftBridgingHeaderGenerator(spec: Spec) extends Generator(spec) {
 
 object SwiftBridgingHeaderGenerator {
 
-  val bridgingHeaderName: String => String = (s: String) => s.split('-').mkString("_")
-  val bridgingHeaderVariables: String => String = (s: String) => s.split('-').mkString("")
+  val bridgingHeaderName: String => String = (s: String) =>
+    s.split('-').mkString("_")
+  val bridgingHeaderVariables: String => String = (s: String) =>
+    s.split('-').mkString("")
 
   def writeAutogenerationWarning(name: String, writer: Writer): Unit = {
     val bridgingHeaderVarName = bridgingHeaderName(name)

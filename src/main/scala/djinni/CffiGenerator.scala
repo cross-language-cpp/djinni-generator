@@ -23,7 +23,12 @@ class CffiGenerator(spec: Spec) extends Generator(spec) {
   val marshal = new PythonMarshal(spec)
   val cffi: String = spec.pycffiPackageName + "_cffi"
 
-  def writeCffiFile(ident: String, origin: String, f: IndentWriter => Unit): Unit = {
+  def writeCffiFile(
+      ident: String,
+      origin: String,
+      f: IndentWriter => Unit
+  ): Unit = {
+    val _ = (ident, origin) // unused, TODO: remove
     createFileOnce(
       spec.pycffiOutFolder.get,
       "pycffi_lib_build" + ".py",

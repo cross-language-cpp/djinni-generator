@@ -31,10 +31,16 @@ abstract class Marshal(spec: Spec) {
   def fqFieldType(tm: MExpr): String
   def fqFieldType(ty: TypeRef): String = fqFieldType(ty.resolved)
   // Generate code for an expression that transforms an expression `expr` of the non-C++ type `tm` to its C++ counterpart
-  def toCpp(tm: MExpr, expr: String): String = ""
+  def toCpp(tm: MExpr, expr: String): String = {
+    val _ = (tm, expr) // unused, TODO: remove
+    ""
+  }
   def toCpp(ty: TypeRef, expr: String): String = toCpp(ty.resolved, expr)
   // Generate code for an expression that transforms an expression `expr` of the C++ type `tm` to its non-C++ counterpart
-  def fromCpp(tm: MExpr, expr: String): String = ""
+  def fromCpp(tm: MExpr, expr: String): String = {
+    val _ = (tm, expr) // unused, TODO: remove
+    ""
+  }
   def fromCpp(ty: TypeRef, expr: String): String = fromCpp(ty.resolved, expr)
 
   implicit def identToString(ident: Ident): String = ident.name
@@ -44,11 +50,13 @@ abstract class Marshal(spec: Spec) {
   protected val idPython = spec.pyIdentStyle
   protected val idCs = spec.cppCliIdentStyle
 
-  protected def withNs(namespace: Option[String], t: String): String = namespace match {
-    case None     => t
-    case Some("") => "::" + t
-    case Some(s)  => "::" + s + "::" + t
-  }
+  protected def withNs(namespace: Option[String], t: String): String =
+    namespace match {
+      case None     => t
+      case Some("") => "::" + t
+      case Some(s)  => "::" + s + "::" + t
+    }
 
-  protected def withCppNs(t: String): String = withNs(Some(spec.cppNamespace), t)
+  protected def withCppNs(t: String): String =
+    withNs(Some(spec.cppNamespace), t)
 }

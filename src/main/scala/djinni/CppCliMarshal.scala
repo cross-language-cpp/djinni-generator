@@ -26,7 +26,10 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
     toCppCliType(tm, None, Seq(), needsHandle = true)
   def typename(ty: TypeRef, needsHandle: Boolean): String =
     toCppCliType(ty, None, Seq(), needsHandle)
-  def typename(name: String, ty: TypeDef): String = idCs.ty(name)
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = ty // unused, TODO: remove
+    idCs.ty(name)
+  }
 
   override def fqTypename(tm: meta.MExpr): String =
     toCppCliType(tm, Some(spec.cppCliNamespace), Seq(), needsHandle = true)
@@ -67,6 +70,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def include(ident: String, isExtendedRecord: Boolean = false): String = {
+    val _ = isExtendedRecord // unused, TODO: remove
     q(spec.cppCliIdentStyle.file(ident) + "." + spec.cppHeaderExt)
   }
 

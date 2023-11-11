@@ -61,7 +61,7 @@ object Main {
     var jniIncludePrefix: String = ""
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
-    var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
+    val jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
     var jniGenerateMain: Boolean = true
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"

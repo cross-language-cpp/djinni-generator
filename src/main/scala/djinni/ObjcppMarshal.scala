@@ -13,16 +13,18 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
   override def typename(tm: MExpr): String = throw new AssertionError(
     "not applicable"
   )
-  def typename(name: String, ty: TypeDef): String = throw new AssertionError(
-    "not applicable"
-  )
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO: remove
+    throw new AssertionError("not applicable")
+  }
 
   override def fqTypename(tm: MExpr): String = throw new AssertionError(
     "not applicable"
   )
-  def fqTypename(name: String, ty: TypeDef): String = throw new AssertionError(
-    "not applicable"
-  )
+  def fqTypename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO: remove
+    throw new AssertionError("not applicable")
+  }
 
   override def paramType(tm: MExpr): String = throw new AssertionError(
     "not applicable"

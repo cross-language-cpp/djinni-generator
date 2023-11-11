@@ -40,7 +40,8 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
   private def helperClass(tm: MExpr): String =
     helperName(tm) + helperTemplates(tm)
 
-  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] =
+  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] = {
+    val _ = exclude // unused, TODO: remove
     m match {
       case _: MOpaque =>
         List(ImportRef(q(jniBaseLibIncludePrefix + "Marshal.hpp")))
@@ -48,6 +49,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
       case e: MExtern => List(ImportRef(e.jni.header.get))
       case _          => List()
     }
+  }
 
   def include(ident: String): String = q(
     spec.jniIncludePrefix + spec.jniFileIdentStyle(
@@ -69,6 +71,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
 
   // The mangled Java typename without the "L...;" decoration useful only for class reflection on our own type
   def undecoratedTypename(name: String, ty: TypeDef): String = {
+    val _ = ty // unused, TODO: remove
     val javaClassName = idJava.ty(name)
     spec.javaPackage.fold(javaClassName)(p =>
       p.replaceAllLiterally(".", "/") + "/" + javaClassName
@@ -101,7 +104,10 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
       }
   }
 
-  def javaMethodSignature(params: Iterable[Field], ret: Option[TypeRef]): String = {
+  def javaMethodSignature(
+      params: Iterable[Field],
+      ret: Option[TypeRef]
+  ): String = {
     params.map(f => typename(f.ty)).mkString("(", "", ")") + ret.fold("V")(
       typename
     )

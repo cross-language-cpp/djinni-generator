@@ -170,16 +170,19 @@ package object generatorTools {
   )
 
   object IdentStyle {
-    val camelUpper: String => String = (s: String) => s.split('_').map(firstUpper).mkString
+    val camelUpper: String => String = (s: String) =>
+      s.split('_').map(firstUpper).mkString
     val camelLower: String => String = (s: String) => {
       val parts = s.split('_')
       parts.head + parts.tail.map(firstUpper).mkString
     }
     val underLower: String => String = (s: String) => s
-    val underUpper: String => String = (s: String) => s.split('_').map(firstUpper).mkString("_")
+    val underUpper: String => String = (s: String) =>
+      s.split('_').map(firstUpper).mkString("_")
     val underCaps: String => String = (s: String) => s.toUpperCase
-    val prefix: (String, IdentConverter) => String => String = (prefix: String, suffix: IdentConverter) =>
-      (s: String) => prefix + suffix(s)
+    val prefix: (String, IdentConverter) => String => String =
+      (prefix: String, suffix: IdentConverter) =>
+        (s: String) => prefix + suffix(s)
 
     val javaDefault: JavaIdentStyle = JavaIdentStyle(
       ty = camelUpper,
@@ -232,7 +235,7 @@ package object generatorTools {
       file = camelUpper
     )
 
-    val styles: Map[String,String => String] = Map(
+    val styles: Map[String, String => String] = Map(
       "FooBar" -> camelUpper,
       "fooBar" -> camelLower,
       "foo_bar" -> underLower,
@@ -414,7 +417,8 @@ package object generatorTools {
 }
 
 object Generator {
-  val writtenFiles: mutable.HashMap[String,String] = mutable.HashMap[String, String]()
+  val writtenFiles: mutable.HashMap[String, String] =
+    mutable.HashMap[String, String]()
 }
 
 abstract class Generator(spec: Spec) {
@@ -492,7 +496,7 @@ abstract class Generator(spec: Spec) {
     val cp = file.getCanonicalPath
     Generator.writtenFiles.put(cp.toLowerCase, cp) match {
       case Some(_) => return
-      case _              =>
+      case _       =>
     }
 
     if (spec.outFileListWriter.isDefined) {
@@ -527,7 +531,11 @@ abstract class Generator(spec: Spec) {
   val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
 
-  def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit): Unit = {
+  def wrapNamespace(
+      w: IndentWriter,
+      ns: String,
+      f: IndentWriter => Unit
+  ): Unit = {
     ns match {
       case "" => f(w)
       case s =>
@@ -702,9 +710,14 @@ abstract class Generator(spec: Spec) {
     w.w(end)
   }
 
-  def normalEnumOptions(e: Enum): Seq[Enum.Option] = e.options.filter(_.specialFlag.isEmpty)
+  def normalEnumOptions(e: Enum): Seq[Enum.Option] =
+    e.options.filter(_.specialFlag.isEmpty)
 
-  def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
+  def writeEnumOptionNone(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter
+  ): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))
     ) {
@@ -713,7 +726,11 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def writeEnumOptions(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
+  def writeEnumOptions(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter
+  ): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
@@ -724,7 +741,11 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def writeEnumOptionAll(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
+  def writeEnumOptionAll(
+      w: IndentWriter,
+      e: Enum,
+      ident: IdentConverter
+  ): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
