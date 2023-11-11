@@ -1,6 +1,6 @@
 import sbtassembly.AssemblyPlugin.defaultUniversalScript
 
-ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / organization := "com.github.cross-language-cpp"
 
 val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
