@@ -39,7 +39,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   }
 
   // Override since Python doesn't share the C-style comment syntax.
-  override def writeDoc(w: IndentWriter, doc: Doc) {
+  override def writeDoc(w: IndentWriter, doc: Doc): Unit = {
     doc.lines.foreach(l => w.wl(s"#$l"))
   }
 
@@ -67,7 +67,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       name: String,
       docItems: IndentWriter => Unit
-  ) {
+  ): Unit = {
     w.wl(name)
     w.nested {
       docItems(w)
@@ -531,10 +531,10 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   class PythonRefs(ident: Ident, origin: String) {
     var python = mutable.TreeSet[String]()
 
-    def collect(ty: TypeRef, justCollect: Boolean) {
+    def collect(ty: TypeRef, justCollect: Boolean): Unit = {
       collect(ty.resolved, justCollect, isOpt = false)
     }
-    def collect(tm: MExpr, justCollect: Boolean, isOpt: Boolean) {
+    def collect(tm: MExpr, justCollect: Boolean, isOpt: Boolean): Unit = {
       tm.args.foreach(t => collect(t, justCollect, isOpt))
       collect(tm.base, justCollect)
 
@@ -636,7 +636,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       refs: Iterable[String],
       includeCffiLib: Boolean,
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     createFileOnce(
       spec.pyOutFolder.get,
       idPython.ty(ident) + ".py",
@@ -707,7 +707,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def writeWithStmts(withStmts: Seq[String], w: IndentWriter)(f: => Unit) {
+  def writeWithStmts(withStmts: Seq[String], w: IndentWriter)(f: => Unit): Unit = {
     if (withStmts.nonEmpty) {
       val len = withStmts.length
 
@@ -853,7 +853,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def checkForExceptionFromCpp(ret: String, w: IndentWriter) {
+  def checkForExceptionFromCpp(ret: String, w: IndentWriter): Unit = {
     w.wl("CPyException.toPyCheckAndRaise" + p(ret))
   }
 
@@ -966,7 +966,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       ident: String,
       ext: Ext,
       w: IndentWriter
-  ) {
+  ): Unit = {
     val helperClass = idPython.className(ident) + "Helper"
     val proxyClass = idPython.className(ident) + "CppProxy"
     // Static method to wrap as object of this class
@@ -1637,7 +1637,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def writeEnumOptionNone(w: IndentWriter, e: Enum) {
+  def writeEnumOptionNone(w: IndentWriter, e: Enum): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))
     ) {
@@ -1646,7 +1646,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def writeEnumOptions(w: IndentWriter, e: Enum) {
+  def writeEnumOptions(w: IndentWriter, e: Enum): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDocString(w, o.doc)
@@ -1657,7 +1657,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def writeEnumOptionAll(w: IndentWriter, e: Enum) {
+  def writeEnumOptionAll(w: IndentWriter, e: Enum): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {

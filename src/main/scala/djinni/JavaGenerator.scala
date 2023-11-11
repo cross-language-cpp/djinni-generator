@@ -42,8 +42,8 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     spec.javaNullableAnnotation.foreach(pkg => java.add(pkg))
     spec.javaNonnullAnnotation.foreach(pkg => java.add(pkg))
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
@@ -58,7 +58,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     createFile(
       spec.javaOutFolder.get,
       idJava.ty(ident) + ".java",
@@ -76,7 +76,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def writeDocAnnotations(w: IndentWriter, doc: Doc) {
+  def writeDocAnnotations(w: IndentWriter, doc: Doc): Unit = {
     writeDeprecated(w, doc, "@Deprecated")
   }
 
@@ -134,7 +134,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     val refs = new JavaRefs()
 
     writeJavaFile(
@@ -165,7 +165,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new JavaRefs()
 
     i.methods.map(m => {
@@ -343,7 +343,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new JavaRefs()
     r.fields.foreach(f => refs.find(f.ty))
 
@@ -606,7 +606,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             writeParcelable(w, self, r)
 
           if (r.derivingTypes.contains(DerivingType.Ord)) {
-            def primitiveCompare(ident: Ident) {
+            def primitiveCompare(ident: Ident): Unit = {
               w.wl(
                 s"if (this.${idJava.field(ident)} < other.${idJava.field(ident)}) {"
               ).nested {
@@ -695,7 +695,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
 
     // constructor (Parcel)
-    def deserializeField(f: Field, m: Meta, inOptional: Boolean) {
+    def deserializeField(f: Field, m: Meta, inOptional: Boolean): Unit = {
       m match {
         case MString =>
           w.wl(s"this.${idJava.field(f.ident)} = in.readString();")
@@ -816,7 +816,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
 
     // writeToParcel
-    def serializeField(f: Field, m: Meta, inOptional: Boolean) {
+    def serializeField(f: Field, m: Meta, inOptional: Boolean): Unit = {
       m match {
         case MString => w.wl(s"out.writeString(this.${idJava.field(f.ident)});")
         case MBinary => {

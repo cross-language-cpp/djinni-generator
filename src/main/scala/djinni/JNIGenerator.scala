@@ -88,8 +88,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       case _           =>
     }
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
@@ -99,7 +99,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     val refs = new JNIRefs(ident.name)
     val jniHelper = jniMarshal.helperClass(ident)
     val cppSelf = cppMarshal.fqTypename(ident, e)
@@ -150,7 +150,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val prefixOverride: Option[String] = if (r.ext.cpp) {
       Some(spec.cppExtendedRecordIncludePrefix)
     } else {
@@ -162,7 +162,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     val jniHelper = jniMarshal.helperClass(ident)
     val cppSelf = cppMarshal.fqTypename(ident, r) + cppTypeArgs(params)
 
-    def writeJniPrototype(w: IndentWriter) {
+    def writeJniPrototype(w: IndentWriter): Unit = {
       writeJniTypeParams(w, params)
       w.w(s"class $jniHelper final").bracedSemi {
         w.wlOutdent("public:")
@@ -200,7 +200,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       }
     }
 
-    def writeJniBody(w: IndentWriter) {
+    def writeJniBody(w: IndentWriter): Unit = {
       val jniHelperWithParams = jniHelper + typeParamsSignature(params)
       // Defining ctor/dtor in the cpp file reduces build times
       writeJniTypeParams(w, params)
@@ -287,7 +287,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new JNIRefs(ident.name)
     i.methods.foreach(m => {
       m.params.foreach(p => refs.find(p.ty))
@@ -303,7 +303,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     val classLookup = jniMarshal.undecoratedTypename(ident, i)
     val baseType = s"::djinni::JniInterface<$cppSelf, $jniSelf>"
 
-    def writeJniPrototype(w: IndentWriter) {
+    def writeJniPrototype(w: IndentWriter): Unit = {
       writeJniTypeParams(w, typeParams)
       w.w(s"class $jniSelf final : $baseType").bracedSemi {
         w.wlOutdent(s"public:")
@@ -388,7 +388,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       }
     }
 
-    def writeJniBody(w: IndentWriter) {
+    def writeJniBody(w: IndentWriter): Unit = {
       // Defining ctor/dtor in the cpp file reduces build times
       val baseClassParam = if (i.ext.cpp) q(classLookup + "$CppProxy") else ""
       val jniSelfWithParams = jniSelf + typeParamsSignature(typeParams)
@@ -448,7 +448,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                 w.w(")")
               w.wl(";")
               w.wl(s"::djinni::jniExceptionCheck(jniEnv);")
-              m.ret.fold()(ty => {
+              m.ret.fold(())(ty => {
                 (spec.cppNnCheckExpression, isInterface(ty.resolved)) match {
                   case (Some(check), true) => {
                     // We have a non-optional interface, assert that we're getting a non-null value
@@ -573,7 +573,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                 p => jniMarshal.toCpp(p.ty, "j_" + idJava.local(p.ident))
               )
               w.wl(";")
-              m.ret.fold()(r =>
+              m.ret.fold(())(r =>
                 w.wl(
                   s"return ::djinni::release(${jniMarshal.fromCpp(r, "r")});"
                 )
@@ -601,7 +601,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       refs: JNIRefs,
       writeProto: IndentWriter => Unit,
       writeBody: IndentWriter => Unit
-  ) {
+  ): Unit = {
     if (allInHeader) {
       // Template class.  Write both parts to .hpp.
       writeJniHppFile(
@@ -622,7 +622,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def writeJniTypeParams(w: IndentWriter, params: Seq[TypeParam]) {
+  def writeJniTypeParams(w: IndentWriter, params: Seq[TypeParam]): Unit = {
     if (params.isEmpty) return
     w.wl(
       "template " + params

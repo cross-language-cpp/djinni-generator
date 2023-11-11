@@ -33,8 +33,8 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     var body = mutable.TreeSet[String]()
     var privHeader = mutable.TreeSet[String]()
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
@@ -50,7 +50,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     ) + ");"
   )
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     var imports = mutable.TreeSet[String]()
     imports.add(
       "#import " + q(
@@ -82,7 +82,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty))
@@ -117,7 +117,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       case _           =>
     }
 
-    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter) {
+    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter): Unit = {
       val label = if (method.static) "+" else "-"
       val ret = objcMarshal.fqReturnType(method.ret)
       val decl = s"$label ($ret)${idObjc.method(method.ident)}"
@@ -285,7 +285,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 )
 
                 w.wl(";")
-                m.ret.fold()(r =>
+                m.ret.fold(())(r =>
                   w.wl(s"return ${objcppMarshal.fromCpp(r, "objcpp_result_")};")
                 )
               }
@@ -341,7 +341,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                           )
                       )
                       w.wl(";")
-                      m.ret.fold()(ty => {
+                      m.ret.fold(())(ty => {
                         if (
                           spec.cppNnCheckExpression.nonEmpty && isInterface(
                             ty.resolved
@@ -465,7 +465,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     for (c <- r.consts)
       refs.find(c.ty)
@@ -599,7 +599,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     val folder =
       if (isHeader) spec.objcppHeaderOutFolder else spec.objcppOutFolder
     val fileName =

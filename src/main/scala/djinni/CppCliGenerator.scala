@@ -41,10 +41,10 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       )
     )
 
-    def find(ty: TypeRef, forwardDeclareOnly: Boolean) {
+    def find(ty: TypeRef, forwardDeclareOnly: Boolean): Unit = {
       find(ty.resolved, forwardDeclareOnly)
     }
-    def find(tm: MExpr, forwardDeclareOnly: Boolean) {
+    def find(tm: MExpr, forwardDeclareOnly: Boolean): Unit = {
       tm.args.foreach(x => find(x, forwardDeclareOnly))
       find(tm.base, forwardDeclareOnly)
     }
@@ -164,7 +164,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     val refs = new CppCliRefs(ident.name)
 
     writeCppCliHppFile(
@@ -199,7 +199,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
     refs.find(MString, false) // for: String^ ToString();
     r.fields.foreach(f => refs.find(f.ty, false))
@@ -459,7 +459,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
     i.methods.foreach(m => {
       m.params.foreach(p => refs.find(p.ty, true))
@@ -592,11 +592,11 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                 )
 
                 w.wl(";")
-                m.ret.fold()(r =>
+                m.ret.fold(())(r =>
                   w.wl(s"return ${marshal.fromCpp(r, "cs_result")};")
                 )
               }
-              m.ret.fold()(r =>
+              m.ret.fold(())(r =>
                 w.wl(
                   s"return ${dummyConstant(r)}; // Unreachable! (Silencing compiler warnings.)"
                 )
@@ -647,11 +647,11 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                     )
 
                     w.wl(";")
-                    m.ret.fold()(r =>
+                    m.ret.fold(())(r =>
                       w.wl(s"return ${marshal.fromCpp(r, "cs_result")};")
                     )
                   }
-                  m.ret.fold()(r =>
+                  m.ret.fold(())(r =>
                     w.wl(
                       s"return ${dummyConstant(r)}; // Unreachable! (Silencing compiler warnings.)"
                     )
@@ -705,7 +705,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                   p => s"${marshal.fromCpp(p.ty, idCpp.local(p.ident))}"
                 )
                 w.wl(";")
-                m.ret.fold()(ty => {
+                m.ret.fold(())(ty => {
                   w.wl("// TODO check cs_result for null")
                   w.wl(s"return ${marshal.toCpp(ty, "cs_result")};")
                 })

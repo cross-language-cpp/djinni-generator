@@ -110,7 +110,7 @@ package object resolver {
     None
   }
 
-  private def resolve(scope: Scope, typeDef: TypeDef) {
+  private def resolve(scope: Scope, typeDef: TypeDef): Unit = {
     typeDef match {
       case e: Enum      => resolveEnum(scope, e)
       case r: Record    => resolveRecord(scope, r)
@@ -118,14 +118,14 @@ package object resolver {
     }
   }
 
-  private def resolveEnum(scope: Scope, e: Enum) {
+  private def resolveEnum(scope: Scope, e: Enum): Unit = {
     val dupeChecker = new DupeChecker("enum option")
     for (o <- e.options) {
       dupeChecker.check(o.ident)
     }
   }
 
-  private def resolveConst(typeDef: TypeDef) {
+  private def resolveConst(typeDef: TypeDef): Unit = {
     def f(consts: Seq[Const]): Unit = {
       val resolvedConsts = new ArrayBuffer[Const]
       for (c <- consts) {
@@ -150,7 +150,7 @@ package object resolver {
       ty: MExpr,
       value: Any,
       resolvedConsts: Seq[Const]
-  ) {
+  ): Unit = {
     // Check existing consts
     if (value.isInstanceOf[ConstRef]) {
       val ref = value.asInstanceOf[ConstRef]
@@ -261,7 +261,7 @@ package object resolver {
     }
   }
 
-  private def resolveRecord(scope: Scope, r: Record) {
+  private def resolveRecord(scope: Scope, r: Record): Unit = {
     val dupeChecker = new DupeChecker("record field")
     for (f <- r.fields) {
       dupeChecker.check(f.ident)
@@ -346,7 +346,7 @@ package object resolver {
     }
   }
 
-  private def resolveInterface(scope: Scope, i: Interface) {
+  private def resolveInterface(scope: Scope, i: Interface): Unit = {
     // Const and static methods are only allowed on +c (only) interfaces
     if (i.ext.java || i.ext.objc) {
       for (m <- i.methods) {
@@ -391,7 +391,7 @@ package object resolver {
     }
   }
 
-  private def resolveRef(scope: Scope, r: TypeRef) {
+  private def resolveRef(scope: Scope, r: TypeRef): Unit = {
     if (r.resolved != null) throw new AssertionError("double-resolve?")
     r.resolved = buildMExpr(scope, r.expr)
   }
@@ -427,7 +427,7 @@ package object resolver {
   private class DupeChecker(kind: String) {
     private val names = mutable.HashMap[String, Loc]()
 
-    def check(ident: Ident) {
+    def check(ident: Ident): Unit = {
       names.put(ident.name, ident.loc) match {
         case Some(existing) =>
           throw Error(

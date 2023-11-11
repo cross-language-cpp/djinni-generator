@@ -1,11 +1,15 @@
 import sbtassembly.AssemblyPlugin.defaultUniversalScript
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.12.18"
 ThisBuild / organization := "com.github.cross-language-cpp"
+
+ThisBuild / semanticdbEnabled := true // enable SemanticDB
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision // use Scalafix compatible version
 
 val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 lazy val djinni = (project in file("."))
   .configs(IntegrationTest)
+  .enablePlugins(ScalafixPlugin) // enable Scalafix for this project
   .settings(
     name := "djinni",
     Defaults.itSettings,

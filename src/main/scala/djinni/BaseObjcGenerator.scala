@@ -78,7 +78,7 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
         }
       }
 
-    def writeObjcConstMethImpl(c: Const, w: IndentWriter) {
+    def writeObjcConstMethImpl(c: Const, w: IndentWriter): Unit = {
       val label = "+"
       val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
       val ret = marshal.fqFieldType(c.ty) + nullability

@@ -29,7 +29,8 @@ import djinni.ast._
 import org.apache.commons.io.FilenameUtils
 import org.yaml.snakeyaml.Yaml
 import java.util.{Map => JMap}
-import scala.jdk.CollectionConverters._
+// import scala.jdk.CollectionConverters._ // comes with scala 2.13, we use 2.12 for a while
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{Position, Positional}
@@ -51,6 +52,7 @@ case class Parser(includePaths: List[String]) {
       ("@" ~> directive) ~ ("\"" ~> filePath <~ "\"") ^^ {
         case "import" ~ x => IdlFileRef(importFile(x))
         case "extern" ~ x => ExternFileRef(importFile(x))
+         case unexpected => throw new IllegalArgumentException(s"Unexpected directive: $unexpected")
       }
     }
 
@@ -177,6 +179,7 @@ case class Parser(includePaths: List[String]) {
           Enum.Option(ident, doc, Some(Enum.SpecialFlag.AllFlags))
         case doc ~ ident ~ Some("none") =>
           Enum.Option(ident, doc, Some(Enum.SpecialFlag.NoFlags))
+        case _ => throw new IllegalArgumentException("Unexpected flag value")
       }
 
     def interfaceHeader = "interface" ~> extInterface

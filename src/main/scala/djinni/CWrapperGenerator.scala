@@ -1062,10 +1062,10 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
     var hpp = mutable.TreeSet[String]()
     var h = mutable.TreeSet[String]()
 
-    def collect(ty: TypeRef, justCollect: Boolean) {
+    def collect(ty: TypeRef, justCollect: Boolean): Unit = {
       collect(ty.resolved, justCollect)
     }
-    def collect(tm: MExpr, justCollect: Boolean) {
+    def collect(tm: MExpr, justCollect: Boolean): Unit = {
       tm.args.foreach(t => collect(t, justCollect))
       collect(tm.base, justCollect)
 
@@ -1306,7 +1306,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       create: Boolean,
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     if (create)
       createFile(
         spec.cWrapperOutFolder.get,

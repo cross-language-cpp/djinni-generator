@@ -29,8 +29,8 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     var body = mutable.TreeSet[String]()
     var header = mutable.TreeSet[String]()
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
@@ -40,7 +40,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     val refs = new ObjcRefs()
 
     refs.header.add("#import <Foundation/Foundation.h>")
@@ -76,7 +76,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     ident
   ) + "." + spec.objcppExt // Must be a Obj-C++ file in case the constants are not compile-time constant expressions
 
-  def writeObjcConstMethDecl(c: Const, w: IndentWriter) {
+  def writeObjcConstMethDecl(c: Const, w: IndentWriter): Unit = {
     val label = "+"
     val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
     val ret = marshal.fqFieldType(c.ty) + nullability
@@ -87,15 +87,15 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
   def deprecatedAttr(doc: Doc): String = {
     deprecatedText(doc) match {
       case Some("")      => " __deprecated"
-      case Some(message) => s" __deprecated_msg(\"$message\")"
+      case Some(message) => s""" __deprecated_msg(\"$message\")"""
       case None          => ""
     }
   }
 
-  def writeDocAttributes(w: IndentWriter, doc: Doc) {
+  def writeDocAttributes(w: IndentWriter, doc: Doc): Unit = {
     deprecatedText(doc) match {
       case Some("")      => w.wl("__deprecated")
-      case Some(message) => w.wl(s" __deprecated_msg(\"$message\")")
+      case Some(message) => w.wl(s""" __deprecated_msg(\"$message\")""")
       case None          =>
     }
   }
@@ -108,7 +108,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty))
@@ -122,7 +122,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
     refs.header.add("#import <Foundation/Foundation.h>")
 
-    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter) {
+    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter): Unit = {
       val label = if (method.static) "+" else "-"
       val ret = marshal.returnType(method.ret)
       val decl = s"$label ($ret)${idObjc.method(method.ident)}"
@@ -212,7 +212,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     for (c <- r.consts)
       refs.find(c.ty)
@@ -260,7 +260,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         writeDocAttributes(w, doc)
         w.wl(s"@interface $self : NSObject")
 
-        def writeInitializer(sign: String, prefix: String) {
+        def writeInitializer(sign: String, prefix: String): Unit = {
           val decl = s"$sign (nonnull instancetype)$prefix$firstInitializerArg"
           writeAlignedObjcCall(
             w,
@@ -631,7 +631,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     val folder = if (isHeader) spec.objcHeaderOutFolder else spec.objcOutFolder
     val fileName =
       if (isHeader) marshal.headerName(objcName) else bodyName(objcName)

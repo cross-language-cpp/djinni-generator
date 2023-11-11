@@ -278,7 +278,7 @@ package object generatorTools {
   final case class SkipFirst() {
     private var first = true
 
-    def apply(f: => Unit) {
+    def apply(f: => Unit): Unit = {
       if (first) {
         first = false
       } else {
@@ -290,7 +290,7 @@ package object generatorTools {
   case class GenerateException(message: String)
       extends java.lang.Exception(message)
 
-  def createFolder(name: String, folder: File) {
+  def createFolder(name: String, folder: File): Unit = {
     folder.mkdirs()
     if (folder.exists) {
       if (!folder.isDirectory) {
@@ -488,7 +488,7 @@ abstract class Generator(spec: Spec) {
       folder: File,
       fileName: String,
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     val file = new File(folder, fileName)
     val cp = file.getCanonicalPath
     Generator.writtenFiles.put(cp.toLowerCase, cp) match {
@@ -528,7 +528,7 @@ abstract class Generator(spec: Spec) {
   val idPython = spec.pyIdentStyle
   val idCs = spec.cppCliIdentStyle
 
-  def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit) {
+  def wrapNamespace(w: IndentWriter, ns: String, f: IndentWriter => Unit): Unit = {
     ns match {
       case "" => f(w)
       case s =>
@@ -540,7 +540,7 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def wrapAnonymousNamespace(w: IndentWriter, f: IndentWriter => Unit) {
+  def wrapAnonymousNamespace(w: IndentWriter, f: IndentWriter => Unit): Unit = {
     w.wl("namespace { // anonymous namespace")
     w.wl
     f(w)
@@ -559,7 +559,7 @@ abstract class Generator(spec: Spec) {
       fwds: Iterable[String],
       f: IndentWriter => Unit,
       f2: IndentWriter => Unit
-  ) {
+  ): Unit = {
     createFile(
       folder,
       fileIdentStyle(name) + "." + spec.cppHeaderExt,
@@ -599,7 +599,7 @@ abstract class Generator(spec: Spec) {
       origin: String,
       includes: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     createFile(
       folder,
       fileIdentStyle(name) + "." + spec.cppExt,
@@ -619,7 +619,7 @@ abstract class Generator(spec: Spec) {
     )
   }
 
-  def generate(idl: Seq[TypeDecl]) {
+  def generate(idl: Seq[TypeDecl]): Unit = {
     for (td <- idl.collect { case itd: InternTypeDecl => itd }) td.body match {
       case e: Enum =>
         assert(td.params.isEmpty)
@@ -631,21 +631,21 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum)
+  def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit
   def generateRecord(
       origin: String,
       ident: Ident,
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  )
+  ): Unit
   def generateInterface(
       origin: String,
       ident: Ident,
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  )
+  ): Unit
 
   def withNs(namespace: Option[String], t: String) = namespace match {
     case None     => t
@@ -705,7 +705,7 @@ abstract class Generator(spec: Spec) {
 
   def normalEnumOptions(e: Enum) = e.options.filter(_.specialFlag.isEmpty)
 
-  def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter) {
+  def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.NoFlags))
     ) {
@@ -714,7 +714,7 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def writeEnumOptions(w: IndentWriter, e: Enum, ident: IdentConverter) {
+  def writeEnumOptions(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
@@ -725,7 +725,7 @@ abstract class Generator(spec: Spec) {
     }
   }
 
-  def writeEnumOptionAll(w: IndentWriter, e: Enum, ident: IdentConverter) {
+  def writeEnumOptionAll(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
@@ -746,7 +746,7 @@ abstract class Generator(spec: Spec) {
       w: IndentWriter,
       method: Interface.Method,
       ident: IdentConverter
-  ) {
+  ): Unit = {
     val paramReplacements = method.params.map(p =>
       (s"\\b${Regex.quote(p.ident.name)}\\b", s"${ident(p.ident.name)}")
     )
@@ -758,7 +758,7 @@ abstract class Generator(spec: Spec) {
     writeDoc(w, newDoc)
   }
 
-  def writeDoc(w: IndentWriter, doc: Doc) {
+  def writeDoc(w: IndentWriter, doc: Doc): Unit = {
     doc.lines.length match {
       case 0 =>
       case 1 =>
@@ -782,7 +782,7 @@ abstract class Generator(spec: Spec) {
     return None
   }
 
-  def writeDeprecated(w: IndentWriter, doc: Doc, annotation: String) {
+  def writeDeprecated(w: IndentWriter, doc: Doc, annotation: String): Unit = {
     deprecatedText(doc) match {
       case Some(message) => w.wl(annotation.replace("<message>", message))
       case None          =>

@@ -55,11 +55,11 @@ package object writer {
       this
     }
 
-    def increase() {
+    def increase(): Unit = {
       currentIndent += indent
     }
 
-    def decrease() {
+    def decrease(): Unit = {
       assert(currentIndent.length > startIndent.length)
       currentIndent =
         currentIndent.substring(0, currentIndent.length - indent.length)
@@ -69,13 +69,13 @@ package object writer {
 
     def nestedN(amount: Int): ((=> Unit) => Unit) = nested_(amount, _)
 
-    private def nested_(amount: Int, f: => Unit) {
+    private def nested_(amount: Int, f: => Unit): Unit = {
       for (i <- 0 until amount) increase()
       f
       for (i <- 0 until amount) decrease()
     }
 
-    def bracedEnd(end: String)(f: => Unit) {
+    def bracedEnd(end: String)(f: => Unit): Unit = {
       if (startOfLine) {
         wl("{")
       } else {

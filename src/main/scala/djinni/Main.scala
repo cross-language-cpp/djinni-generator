@@ -28,7 +28,7 @@ import scopt.{OptionDef, OptionParser}
 
 object Main {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     var idlFile: File = null
     var idlIncludePaths: List[String] = List("")
     var cppOutFolder: Option[File] = None
