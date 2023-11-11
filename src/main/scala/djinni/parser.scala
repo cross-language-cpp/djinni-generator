@@ -30,6 +30,7 @@ import java.io.Writer
 import java.util.{Map => JMap}
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.collection.mutable.ArrayStack
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.Position
@@ -38,7 +39,7 @@ import scala.util.parsing.input.Positional
 case class Parser(includePaths: List[String]) {
 
   val visitedFiles: mutable.Set[File] = mutable.Set[File]()
-  val fileStack: mutable.Stack[File] = mutable.Stack[File]()
+  val fileStack: ArrayStack[File] = ArrayStack[File]()
 
   private object IdlParser extends RegexParsers {
     override protected val whiteSpace: Regex = """[ \t\n\r]+""".r

@@ -5,7 +5,12 @@ ThisBuild / organization := "com.github.cross-language-cpp"
 
 ThisBuild / semanticdbEnabled := true // enable SemanticDB
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision // use Scalafix compatible version
-ThisBuild / scalacOptions += "-Ywarn-unused"
+
+// Keep this as a reminder, we will use that later
+// ThisBuild / scalacOptions += "-Ywarn-unused"
+// us: sbt 'set ThisBuild / scalacOptions += "-Ywarn-unused"' scalafix
+// until the last 2 unused warnings are fixed
+ThisBuild / scalacOptions ++= Seq("-deprecation", "-unchecked")
 
 val binExt = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 lazy val djinni = (project in file("."))
