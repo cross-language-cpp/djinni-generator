@@ -26,15 +26,15 @@ import scala.collection.mutable
 class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
   class ObjcRefs() {
-    var body = mutable.TreeSet[String]()
-    var header = mutable.TreeSet[String]()
+    var body: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var header: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     def find(ty: TypeRef): Unit = { find(ty.resolved) }
     def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- marshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- marshal.references(m)) r match {
       case ImportRef(arg)   => header.add("#import " + arg)
       case DeclRef(decl, _) => header.add(decl)
     }
@@ -81,7 +81,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
     val ret = marshal.fqFieldType(c.ty) + nullability
     val decl = s"$label ($ret)${idObjc.method(c.ident)}"
-    writeAlignedObjcCall(w, decl, List(), ";", p => ("", ""))
+    writeAlignedObjcCall(w, decl, List(), ";", _ => ("", ""))
   }
 
   def deprecatedAttr(doc: Doc): String = {
@@ -449,7 +449,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                       s"[self.${idObjc.field(f.ident)} isEqualToDate:typedOther.${idObjc
                         .field(f.ident)}]"
                     )
-                  case t: MPrimitive =>
+                  case _: MPrimitive =>
                     w.w(s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
                       .field(f.ident)}")
                   case df: MDef =>
@@ -506,7 +506,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                         w.w(s"(NSUInteger)self.${idObjc.field(f.ident)}")
                       case _ => w.w(s"self.${idObjc.field(f.ident)}.hash")
                     }
-                  case t: MPrimitive =>
+                  case _: MPrimitive =>
                     w.w(s"(NSUInteger)self.${idObjc.field(f.ident)}")
                   case df: MDef =>
                     df.defType match {
@@ -559,7 +559,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 case MString | MDate =>
                   w.wl(s"tempResult = [self.${idObjc
                     .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
-                case t: MPrimitive => generatePrimitiveOrder(f.ident, w)
+                case _: MPrimitive => generatePrimitiveOrder(f.ident, w)
                 case df: MDef =>
                   df.defType match {
                     case DRecord =>
@@ -600,7 +600,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
               w.w(", ")
               f.ty.resolved.base match {
                 case MOptional     => w.w(s"self.${idObjc.field(f.ident)}")
-                case t: MPrimitive => w.w(s"@(self.${idObjc.field(f.ident)})")
+                case _: MPrimitive => w.w(s"@(self.${idObjc.field(f.ident)})")
                 case df: MDef =>
                   df.defType match {
                     case DEnum => w.w(s"@(self.${idObjc.field(f.ident)})")

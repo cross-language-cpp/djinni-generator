@@ -5,8 +5,10 @@ import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
 import djinni.writer.IndentWriter
-import collection.JavaConverters._
+
 import java.util.{Map => JMap}
+
+import collection.JavaConverters._
 class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   val cppMarshal = new CppMarshal(spec)
@@ -191,9 +193,9 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   private def meta(td: TypeDecl) = {
     val defType = td.body match {
-      case i: Interface => DInterface
-      case r: Record    => DRecord
-      case e: Enum      => DEnum
+      case _: Interface => DInterface
+      case _: Record    => DRecord
+      case _: Enum      => DEnum
     }
     MDef(td.ident, 0, defType, td.body)
   }
@@ -245,7 +247,7 @@ object YamlGenerator {
       javaOutRequired: Boolean,
       jniOutRequired: Boolean,
       cppCliOutRequired: Boolean
-  ) = MExtern(
+  ): MExtern = MExtern(
     td.ident.name.stripPrefix(
       td.properties("prefix").toString
     ), // Make sure the generator uses this type with its original name for all intents and purposes
@@ -388,8 +390,8 @@ object YamlGenerator {
   }
 
   private def defType(td: ExternTypeDecl) = td.body match {
-    case i: Interface => DInterface
-    case r: Record    => DRecord
-    case e: Enum      => DEnum
+    case _: Interface => DInterface
+    case _: Record    => DRecord
+    case _: Enum      => DEnum
   }
 }

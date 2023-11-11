@@ -15,10 +15,11 @@
 
 package djinni.ast
 
-import java.io.File
 import djinni.ast.Record.DerivingType.DerivingType
 import djinni.meta.MExpr
 import djinni.syntax.Loc
+
+import java.io.File
 
 case class IdlFile(imports: Seq[FileRef], typeDecls: Seq[TypeDecl])
 

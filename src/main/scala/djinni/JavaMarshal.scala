@@ -21,9 +21,9 @@ import djinni.meta._
 
 class JavaMarshal(spec: Spec) extends Marshal(spec) {
 
-  val javaNullableAnnotation =
+  val javaNullableAnnotation: Option[String] =
     spec.javaNullableAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaNonnullAnnotation =
+  val javaNonnullAnnotation: Option[String] =
     spec.javaNonnullAnnotation.map(pkg => '@' + pkg.split("\\.").last)
 
   override def typename(tm: MExpr): String = toJavaType(tm, None)
@@ -64,7 +64,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
     case _                   => List()
   }
 
-  val interfaceNullityAnnotation =
+  val interfaceNullityAnnotation: Option[String] =
     if (spec.cppNnType.nonEmpty) javaNonnullAnnotation
     else javaNullableAnnotation
 
@@ -73,7 +73,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
   def nullityAnnotation(ty: TypeRef): Option[String] = {
     ty.resolved.base match {
       case MOptional     => javaNullableAnnotation
-      case p: MPrimitive => None
+      case _: MPrimitive => None
       case m: MDef =>
         m.defType match {
           case DInterface => interfaceNullityAnnotation
@@ -91,10 +91,10 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
     }
   }
 
-  def isReference(td: TypeDecl) = td.body match {
-    case i: Interface => true
-    case r: Record    => true
-    case e: Enum      => true
+  def isReference(td: TypeDecl): Boolean = td.body match {
+    case _: Interface => true
+    case _: Record    => true
+    case _: Enum      => true
   }
 
   def isEnumFlags(m: Meta): Boolean = m match {
@@ -127,7 +127,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
           arg.base match {
             case p: MPrimitive => p.jBoxed
             case MOptional     => throw new AssertionError("nested optional?")
-            case m             => f(arg, true)
+            case _             => f(arg, true)
           }
         case e: MExtern =>
           (if (needRef) e.java.boxed.get else e.java.typename.get) + (if (
@@ -148,7 +148,7 @@ class JavaMarshal(spec: Spec) extends Marshal(spec) {
             case MSet       => "HashSet"
             case MMap       => "HashMap"
             case d: MDef    => withPackage(packageName, idJava.ty(d.name))
-            case e: MExtern => throw new AssertionError("unreachable")
+            case _: MExtern => throw new AssertionError("unreachable")
             case p: MParam  => idJava.typeParam(p.name)
           }
           base + args(tm)

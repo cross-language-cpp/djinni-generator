@@ -71,9 +71,9 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def isReference(td: TypeDecl): Boolean = td.body match {
-    case i: Interface => true
-    case r: Record    => true
-    case e: Enum      => false
+    case _: Interface => true
+    case _: Record    => true
+    case _: Enum      => false
   }
 
   def references(
@@ -83,7 +83,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   ): Seq[SymbolReference] = m match {
     case d: MDef =>
       d.body match {
-        case i: Interface =>
+        case _: Interface =>
           if (d.name != exclude) {
             if (forwardDeclareOnly) {
               List(
@@ -247,9 +247,9 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
           case MList      => "List"
           case MSet       => "Set"
           case MMap       => "Map"
-          case d: MDef    => throw new AssertionError("unreachable")
-          case e: MExtern => throw new AssertionError("unreachable")
-          case p: MParam  => throw new AssertionError("not applicable")
+          case _: MDef    => throw new AssertionError("unreachable")
+          case _: MExtern => throw new AssertionError("unreachable")
+          case _: MParam  => throw new AssertionError("not applicable")
         }
       )
   }

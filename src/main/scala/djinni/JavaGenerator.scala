@@ -25,18 +25,18 @@ import scala.collection.mutable
 
 class JavaGenerator(spec: Spec) extends Generator(spec) {
 
-  val javaAnnotationHeader =
+  val javaAnnotationHeader: Option[String] =
     spec.javaAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaNullableAnnotation =
+  val javaNullableAnnotation: Option[String] =
     spec.javaNullableAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaNonnullAnnotation =
+  val javaNonnullAnnotation: Option[String] =
     spec.javaNonnullAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaClassAccessModifierString =
+  val javaClassAccessModifierString: String =
     JavaAccessModifier.getCodeGenerationString(spec.javaClassAccessModifier)
   val marshal = new JavaMarshal(spec)
 
   class JavaRefs() {
-    var java = mutable.TreeSet[String]()
+    var java: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     spec.javaAnnotation.foreach(pkg => java.add(pkg))
     spec.javaNullableAnnotation.foreach(pkg => java.add(pkg))
@@ -47,7 +47,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- marshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- marshal.references(m)) r match {
       case ImportRef(arg) => java.add(arg)
       case _              =>
     }
@@ -84,7 +84,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       consts: Seq[Const],
       forJavaInterface: Boolean
-  ) = {
+  ): Unit = {
 
     def writeJavaConst(w: IndentWriter, ty: TypeRef, v: Any): Unit = v match {
       case l: Long if marshal.fieldType(ty).equalsIgnoreCase("long") =>
@@ -493,7 +493,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                         )
                         w.w(s"(this.${idJava.field(f.ident)} != null && this.${idJava
                           .field(f.ident)}.equals(other.${idJava.field(f.ident)})))")
-                      case t: MPrimitive =>
+                      case _: MPrimitive =>
                         w.w(s"this.${idJava.field(f.ident)} == other.${idJava
                           .field(f.ident)}")
                       case df: MDef =>
@@ -551,7 +551,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   case MList | MSet | MMap | MString | MDate =>
                     s"${idJava.field(f.ident)}.hashCode()"
                   // Need to repeat this case for MDef
-                  case df: MDef => s"${idJava.field(f.ident)}.hashCode()"
+                  case _: MDef => s"${idJava.field(f.ident)}.hashCode()"
                   case MOptional =>
                     s"(${idJava.field(f.ident)} == null ? 0 : ${idJava.field(f.ident)}.hashCode())"
                   case t: MPrimitive =>
@@ -634,7 +634,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     case MString | MDate =>
                       w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
                         .field(f.ident)});")
-                    case t: MPrimitive => primitiveCompare(f.ident)
+                    case _: MPrimitive => primitiveCompare(f.ident)
                     case df: MDef =>
                       df.defType match {
                         case DRecord =>
@@ -676,7 +676,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     if (params.isEmpty) ""
     else params.map(p => idJava.typeParam(p.ident)).mkString("<", ", ", ">")
 
-  def writeParcelable(w: IndentWriter, self: String, r: Record) = {
+  def writeParcelable(w: IndentWriter, self: String, r: Record): IndentWriter = {
     // Generates the methods and the constructor to implement the interface android.os.Parcelable
 
     // CREATOR

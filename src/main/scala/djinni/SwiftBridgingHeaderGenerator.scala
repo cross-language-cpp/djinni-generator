@@ -15,10 +15,10 @@
 
 package djinni
 
-import java.io._
-
 import djinni.ast._
 import djinni.generatorTools._
+
+import java.io._
 
 class SwiftBridgingHeaderGenerator(spec: Spec) extends Generator(spec) {
   val marshal = new ObjcMarshal(spec)
@@ -56,8 +56,8 @@ class SwiftBridgingHeaderGenerator(spec: Spec) extends Generator(spec) {
 
 object SwiftBridgingHeaderGenerator {
 
-  val bridgingHeaderName = (s: String) => s.split('-').mkString("_")
-  val bridgingHeaderVariables = (s: String) => s.split('-').mkString("")
+  val bridgingHeaderName: String => String = (s: String) => s.split('-').mkString("_")
+  val bridgingHeaderVariables: String => String = (s: String) => s.split('-').mkString("")
 
   def writeAutogenerationWarning(name: String, writer: Writer): Unit = {
     val bridgingHeaderVarName = bridgingHeaderName(name)

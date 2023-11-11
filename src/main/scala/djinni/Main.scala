@@ -15,16 +15,15 @@
 
 package djinni
 
-import java.io.{
-  BufferedWriter,
-  File,
-  FileNotFoundException,
-  FileWriter,
-  IOException
-}
-
 import djinni.generatorTools._
-import scopt.{OptionDef, OptionParser}
+import scopt.OptionDef
+import scopt.OptionParser
+
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileWriter
+import java.io.IOException
 
 object Main {
 
@@ -759,8 +758,7 @@ object Main {
       else cWrapperOutFolder
     val jniClassIdentStyle =
       jniClassIdentStyleOptional.getOrElse(cppIdentStyle.ty)
-    val jniBaseLibClassIdentStyle =
-      jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
+    jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
     val jniFileIdentStyle =
       jniFileIdentStyleOptional.getOrElse(cppFileIdentStyle)
     var objcFileIdentStyle =

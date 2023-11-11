@@ -21,7 +21,7 @@ import djinni.writer.IndentWriter
 
 class CffiGenerator(spec: Spec) extends Generator(spec) {
   val marshal = new PythonMarshal(spec)
-  val cffi = spec.pycffiPackageName + "_cffi"
+  val cffi: String = spec.pycffiPackageName + "_cffi"
 
   def writeCffiFile(ident: String, origin: String, f: IndentWriter => Unit): Unit = {
     createFileOnce(

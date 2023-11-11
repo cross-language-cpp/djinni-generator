@@ -59,7 +59,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
 
   def references(m: Meta, exclude: String = ""): Seq[SymbolReference] =
     m match {
-      case o: MOpaque =>
+      case _: MOpaque =>
         List(ImportRef("<Foundation/Foundation.h>"))
       case d: MDef =>
         d.defType match {
@@ -86,22 +86,22 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
             List(ImportRef(q(prefix + headerName(d.name))))
         }
       case e: MExtern => List(ImportRef(e.objc.header.get))
-      case p: MParam  => List()
+      case _: MParam  => List()
     }
 
-  def headerName(ident: String) = idObjc.ty(ident) + "." + spec.objcHeaderExt
-  def include(ident: String) = q(spec.objcIncludePrefix + headerName(ident))
+  def headerName(ident: String): String = idObjc.ty(ident) + "." + spec.objcHeaderExt
+  def include(ident: String): String = q(spec.objcIncludePrefix + headerName(ident))
 
-  def isPointer(td: TypeDecl) = td.body match {
-    case i: Interface => true
-    case r: Record    => true
-    case e: Enum      => false
+  def isPointer(td: TypeDecl): Boolean = td.body match {
+    case _: Interface => true
+    case _: Record    => true
+    case _: Enum      => false
   }
 
-  def boxedTypename(td: TypeDecl) = td.body match {
+  def boxedTypename(td: TypeDecl): String = td.body match {
     case i: Interface => typename(td.ident, i)
     case r: Record    => typename(td.ident, r)
-    case e: Enum      => "NSNumber"
+    case _: Enum      => "NSNumber"
   }
 
   // Return value: (Type_Name, Is_Class_Or_Not)
@@ -121,7 +121,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
           val arg = tm.args.head
           arg.base match {
             case MOptional => throw new AssertionError("nested optional?")
-            case m         => f(arg, true)
+            case _         => f(arg, true)
           }
         case o =>
           val base = o match {
@@ -161,7 +161,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
                   else if (needRef) (e.objc.boxed.get, true)
                   else (e.objc.typename.get, e.objc.pointer.get)
               }
-            case p: MParam =>
+            case _: MParam =>
               throw new AssertionError(
                 "Parameter should not happen at Obj-C top level"
               )

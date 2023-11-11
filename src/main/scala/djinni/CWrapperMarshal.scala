@@ -33,9 +33,9 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     cParamType(tm, forHeader)
   override def typename(tm: MExpr): String = cParamType(tm, false)
   def typename(name: String, ty: TypeDef): String = ty match {
-    case e: Enum      => idCpp.enumType(name)
-    case i: Interface => idCpp.ty(name)
-    case r: Record    => idCpp.ty(name)
+    case _: Enum      => idCpp.enumType(name)
+    case _: Interface => idCpp.ty(name)
+    case _: Record    => idCpp.ty(name)
   }
   override def fqTypename(tm: MExpr): String = throw new NotImplementedError()
 
@@ -56,7 +56,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
   override def fqReturnType(ret: Option[TypeRef]): String =
     throw new NotImplementedError()
 
-  def cFieldType(tm: MExpr, forHeader: Boolean) = ctypename(tm, forHeader)
+  def cFieldType(tm: MExpr, forHeader: Boolean): String = ctypename(tm, forHeader)
   override def fieldType(tm: MExpr): String = ctypename(tm, false)
   override def fqFieldType(tm: MExpr): String = throw new NotImplementedError()
 
@@ -88,7 +88,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
             ImportRef(q(dh + d.name + ".hpp"))
           )
       }
-    case e: MExtern => throw new NotImplementedError()
+    case _: MExtern => throw new NotImplementedError()
     case _          => List()
   }
 
@@ -106,11 +106,11 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
       }
     case MOptional =>
       tm.args.head.base match {
-        case mp: MPrimitive => true
+        case _: MPrimitive => true
         case MDate          => true
         case _              => needsRAII(tm.args.head)
       }
-    case e: MExtern => throw new NotImplementedError()
+    case _: MExtern => throw new NotImplementedError()
     case _          => false
   }
 
@@ -118,12 +118,12 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     case MString | MBinary => true
     case MOptional =>
       tm.args.head.base match {
-        case mp: MPrimitive    => true
+        case _: MPrimitive    => true
         case MString | MBinary => true
         case MDate             => true
         case _                 => false
       }
-    case e: MExtern => throw new NotImplementedError()
+    case _: MExtern => throw new NotImplementedError()
     case _          => false
   }
 
@@ -162,7 +162,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
               structPrefix + djinniWrapper + idCpp.ty(d.name) + " *"
           }
         case p: MParam  => idCpp.typeParam(p.name)
-        case e: MExtern => throw new NotImplementedError()
+        case _: MExtern => throw new NotImplementedError()
       }
     }
     def expr(tm: MExpr): String = {
@@ -202,7 +202,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     case _ => throw new NotImplementedError()
   }
 
-  private def toCIdlType(ty: TypeRef): String = toCIdlType(ty.resolved)
+  
   private def toCIdlType(tm: MExpr): String = {
     def baseToIdl(m: Meta): String = m match {
       case p: MPrimitive => p.cName
@@ -213,10 +213,10 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
           case DEnum      => "enum_" + d.name
         }
       case p: MParam  => idCpp.typeParam(p.name)
-      case e: MExtern => "extern"
+      case _: MExtern => "extern"
       case MOptional =>
         tm.args.head.base match {
-          case mp: MPrimitive => "boxed"
+          case _: MPrimitive => "boxed"
           case _              => "optional"
         }
       case _ => m.asInstanceOf[MOpaque].idlName
@@ -253,7 +253,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     val valueType = cType
 
     def toType(expr: MExpr): String = expr.base match {
-      case p: MPrimitive => valueType
+      case _: MPrimitive => valueType
       case MString       => valueType // DjinniString
       case MBinary       => valueType // DjinniBinary
       case MDate         => valueType // uint64_t
@@ -268,7 +268,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
           case DRecord    => valueType
           case _          => refType
         }
-      case e: MExtern => throw new NotImplementedError()
+      case _: MExtern => throw new NotImplementedError()
       case _          => refType
     }
     toType(tm)
@@ -336,7 +336,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
               cppExpr
             )
         }
-      case e: MExtern => throw new NotImplementedError()
+      case _: MExtern => throw new NotImplementedError()
       case _          => cppExpr // MParam <- didn't need to do anything here
     }
   }
@@ -377,14 +377,14 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
           case DRecord => "Djinni" + idCpp.ty(d.name) + "::fromCpp" + p(cppExpr)
           case DEnum   => "int32_from_enum_" + idCpp.method(d.name) + p(cppExpr)
         }
-      case e: MExtern => throw new NotImplementedError()
+      case _: MExtern => throw new NotImplementedError()
       case _ => cppExpr // TODO: MParam <- didn't need to do anything here
     }
   }
 
-  def checkForException(s: String) = "lib.check_for_exception" + p(s)
+  def checkForException(s: String): String = "lib.check_for_exception" + p(s)
 
-  def cArgDecl(args: Seq[String]) = {
+  def cArgDecl(args: Seq[String]): String = {
     if (args.isEmpty) {
       // CWrapper headers need to be parsed as C.  `()` in C means "unspecified args" and triggers
       // -Wstrict-prototypes.  `(void)` means no args in C.  In C++ the two forms are equivalent.
@@ -394,7 +394,7 @@ class CWrapperMarshal(spec: Spec) extends Marshal(spec) { // modeled(pretty much
     }
   }
 
-  def cArgVals(args: Seq[String]) = {
+  def cArgVals(args: Seq[String]): String = {
     args.mkString("(", ", ", ")")
   }
 }

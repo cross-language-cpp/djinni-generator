@@ -17,9 +17,9 @@ package djinni
 
 import djinni.ast.Record.DerivingType
 import djinni.ast._
-import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
+
 import scala.collection.immutable
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -48,7 +48,7 @@ package object resolver {
         topLevelDupeChecker.check(typeDecl.ident)
 
         def defType = typeDecl.body match {
-          case e: Enum =>
+          case _: Enum =>
             if (!typeDecl.params.isEmpty) {
               throw Error(
                 typeDecl.ident.loc,
@@ -56,13 +56,13 @@ package object resolver {
               ).toException
             }
             DEnum
-          case r: Record    => DRecord
-          case i: Interface => DInterface
+          case _: Record    => DRecord
+          case _: Interface => DInterface
         }
         topScope = topScope.updated(
           typeDecl.ident.name,
           typeDecl match {
-            case td: InternTypeDecl =>
+            case _: InternTypeDecl =>
               MDef(
                 typeDecl.ident.name,
                 typeDecl.params.length,
@@ -139,7 +139,7 @@ package object resolver {
       }
     }
     typeDef match {
-      case e: Enum      =>
+      case _: Enum      =>
       case r: Record    => f(r.consts)
       case i: Interface => f(i.consts)
     }
@@ -216,7 +216,7 @@ package object resolver {
             value match {
               case i: Long =>
                 assert(i.toDouble == value, "Const value not a valid f64")
-              case f: Double =>
+              case _: Double =>
               case _ => throw new AssertionError("Const type mismatch: f64")
             }
         }
@@ -255,7 +255,7 @@ package object resolver {
               )
           }
         }
-      case e: MExtern =>
+      case _: MExtern =>
         throw new AssertionError("Extern type not allowed for constant")
       case _ => throw new AssertionError("Const type cannot be resolved")
     }

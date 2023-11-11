@@ -16,25 +16,25 @@
 package djinni
 
 import djinni.ast.Record.DerivingType
-
-import scala.collection.mutable
-import scala.math.pow
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
 import djinni.writer.IndentWriter
+
+import scala.collection.mutable
+import scala.math.pow
 
 class PythonGenerator(spec: Spec) extends Generator(spec) {
   val lib = "lib" // internal library name (from PyCFFIlib_cffi import lib)
   val marshal = new PythonMarshal(spec)
   val cMarshal = new CWrapperMarshal(spec)
 
-  def getRecordArguments(r: Record, self: String) = {
+  def getRecordArguments(r: Record, self: String): Seq[String] = {
     if (self != "") Seq(self) ++ r.fields.map(f => idPython.local(f.ident.name))
     else r.fields.map(f => idPython.local(f.ident.name))
   }
 
-  def getRecordTypes(r: Record) = {
+  def getRecordTypes(r: Record): Seq[String] = {
     r.fields.map(f => cMarshal.cParamType(f.ty, forHeader = true))
   }
 
@@ -329,7 +329,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       ident: Ident,
       origin: String,
       python: mutable.TreeSet[String]
-  ) = {
+  ): Unit = {
     val helperClass = idPython.className(fileName) + "Helper"
     val proxyName = idPython.className(fileName) + "Proxy"
     val next =
@@ -382,7 +382,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
                 "el",
                 elTy,
                 "",
-                w => {}
+                _ => {}
               )
             case MMap =>
               val keyTyRef = getContainerElTyRef(tm, 0, ident)
@@ -529,7 +529,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
   // for map and set have proxy map and set that can hold on to metadata like iterator
 
   class PythonRefs(ident: Ident, origin: String) {
-    var python = mutable.TreeSet[String]()
+    var python: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     def collect(ty: TypeRef, justCollect: Boolean): Unit = {
       collect(ty.resolved, justCollect, isOpt = false)
@@ -589,7 +589,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
         case _ =>
       }
     }
-    def collect(m: Meta, justCollect: Boolean) = if (justCollect)
+    def collect(m: Meta, justCollect: Boolean): Unit = if (justCollect)
       for (r <- marshal references (m, ident.name)) r match {
         case ImportRef(arg) =>
           python.add(arg)
@@ -597,13 +597,13 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       }
   }
 
-  def getCArgTypes(m: Interface.Method, self: String) = {
+  def getCArgTypes(m: Interface.Method, self: String): String = {
     (Seq(self) ++ m.params.map(p =>
       cMarshal.cParamType(p.ty, forHeader = true)
     )).mkString("(", ", ", ")")
   }
 
-  def getDefArgs(m: Interface.Method, self: String) = {
+  def getDefArgs(m: Interface.Method, self: String): String = {
     if (m.static) {
       m.params.map(p => idPython.local(p.ident.name)).mkString("(", ", ", ")")
     } else {
@@ -612,7 +612,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getLibArgsFrom(m: Interface.Method, pythonClass: String) = {
+  def getLibArgsFrom(m: Interface.Method, pythonClass: String): String = {
     if (m.static || pythonClass == "") {
       m.params
         .map(p => marshal.releaseRAII(marshal.pyName(p.ident.name, p.ty), p.ty))
@@ -624,7 +624,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getLibArgsTo(m: Interface.Method, pythonClass: String) = {
+  def getLibArgsTo(m: Interface.Method, pythonClass: String): String = {
     m.params
       .map(p => marshal.convertTo(p.ident.name, p.ty))
       .mkString("(", ", ", ")")
@@ -1108,7 +1108,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
     case d: Double    => w.w(d.toString)
     case b: Boolean   => w.w(if (b) "True" else "False")
     case s: String    => w.w(s)
-    case e: EnumValue => throw new NotImplementedError()
+    case _: EnumValue => throw new NotImplementedError()
     case v: ConstRef  => w.w(selfName + "." + idPython.const(v))
   }
 
@@ -1117,7 +1117,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       consts: Seq[Const],
       selfName: String,
       genRecord: Boolean
-  ) = {
+  ): Unit = {
     for (c <- consts) {
       if (!c.value.isInstanceOf[Map[_, _]]) { // is not a record
         w.w(idPython.const(c.ident) + " = ")
@@ -1310,7 +1310,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       number: Int,
       callbackNames: mutable.Set[String],
       w: IndentWriter
-  ) = {
+  ): IndentWriter = {
     val recordAsMethod = idPython.method(ident.name)
     var field_number = number
     for (f <- r.fields) {
@@ -1371,7 +1371,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       prefix: String,
       number: Int,
       w: IndentWriter
-  ) = {
+  ): IndentWriter = {
     val recordClassName = idPython.className(ident.name)
     val skipFirst = SkipFirst()
     w.wl("py_rec = " + recordClassName + "(").nested {
@@ -1391,7 +1391,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       fieldName: String,
       cmpOp: String,
       needsParens: Boolean
-  ) = {
+  ): String = {
     if (needsParens) {
       "self." + fieldName + cmpOp + p("other." + fieldName)
     } else {

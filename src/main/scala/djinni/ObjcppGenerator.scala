@@ -15,13 +15,12 @@
 
 package djinni
 
-import java.io.StringWriter
-
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
 import djinni.writer.IndentWriter
 
+import java.io.StringWriter
 import scala.collection.mutable
 
 class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
@@ -30,15 +29,15 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
   val cppMarshal = new CppMarshal(spec)
 
   class ObjcRefs() {
-    var body = mutable.TreeSet[String]()
-    var privHeader = mutable.TreeSet[String]()
+    var body: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var privHeader: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     def find(ty: TypeRef): Unit = { find(ty.resolved) }
     def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- objcppMarshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- objcppMarshal.references(m)) r match {
       case ImportRef(arg) => body.add("#import " + arg)
       case _              =>
     }
@@ -65,7 +64,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       )
     )
 
-    writeObjcFile(ident.name, isHeader = true, origin, imports, w => {})
+    writeObjcFile(ident.name, isHeader = true, origin, imports, _ => {})
   }
 
   def headerName(ident: String): String =
@@ -553,7 +552,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 w.wl(
                   "(void)obj; // Suppress warnings in relase builds for empty records"
                 )
-              val call = "return CppType("
+              
               writeAlignedCall(
                 w,
                 "return {",

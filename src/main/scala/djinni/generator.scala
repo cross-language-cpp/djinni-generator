@@ -16,14 +16,13 @@
 package djinni
 
 import djinni.ast._
-import java.io._
 import djinni.generatorTools._
 import djinni.writer.IndentWriter
-
-import scala.annotation.tailrec
 import org.apache.commons.io.FilenameUtils
-import scala.language.{implicitConversions, postfixOps}
+
+import java.io._
 import scala.collection.mutable
+import scala.language.implicitConversions
 import scala.util.matching.Regex
 
 package object generatorTools {
@@ -106,13 +105,13 @@ package object generatorTools {
       cppJsonSerialization: Option[String]
   )
 
-  def preComma(s: String) = {
+  def preComma(s: String): String = {
     if (s.isEmpty) s else ", " + s
   }
-  def p(s: String) = "(" + s + ")"
-  def q(s: String) = '"' + s + '"'
-  def t(s: String) = "<" + s + ">"
-  def firstUpper(token: String) =
+  def p(s: String): String = "(" + s + ")"
+  def q(s: String): String = '"' + s + '"'
+  def t(s: String): String = "<" + s + ">"
+  def firstUpper(token: String): String =
     if (token.isEmpty()) token else token.charAt(0).toUpper + token.substring(1)
 
   type IdentConverter = String => String
@@ -171,18 +170,18 @@ package object generatorTools {
   )
 
   object IdentStyle {
-    val camelUpper = (s: String) => s.split('_').map(firstUpper).mkString
-    val camelLower = (s: String) => {
+    val camelUpper: String => String = (s: String) => s.split('_').map(firstUpper).mkString
+    val camelLower: String => String = (s: String) => {
       val parts = s.split('_')
       parts.head + parts.tail.map(firstUpper).mkString
     }
-    val underLower = (s: String) => s
-    val underUpper = (s: String) => s.split('_').map(firstUpper).mkString("_")
-    val underCaps = (s: String) => s.toUpperCase
-    val prefix = (prefix: String, suffix: IdentConverter) =>
+    val underLower: String => String = (s: String) => s
+    val underUpper: String => String = (s: String) => s.split('_').map(firstUpper).mkString("_")
+    val underCaps: String => String = (s: String) => s.toUpperCase
+    val prefix: (String, IdentConverter) => String => String = (prefix: String, suffix: IdentConverter) =>
       (s: String) => prefix + suffix(s)
 
-    val javaDefault = JavaIdentStyle(
+    val javaDefault: JavaIdentStyle = JavaIdentStyle(
       ty = camelUpper,
       typeParam = camelUpper,
       method = camelLower,
@@ -191,7 +190,7 @@ package object generatorTools {
       enum = underCaps,
       const = underCaps
     )
-    val cppDefault = CppIdentStyle(
+    val cppDefault: CppIdentStyle = CppIdentStyle(
       ty = camelUpper,
       enumType = camelUpper,
       typeParam = camelUpper,
@@ -201,7 +200,7 @@ package object generatorTools {
       enum = underCaps,
       const = underCaps
     )
-    val objcDefault = ObjcIdentStyle(
+    val objcDefault: ObjcIdentStyle = ObjcIdentStyle(
       ty = camelUpper,
       typeParam = camelUpper,
       method = camelLower,
@@ -210,7 +209,7 @@ package object generatorTools {
       enum = camelUpper,
       const = camelUpper
     )
-    val pythonDefault = PythonIdentStyle(
+    val pythonDefault: PythonIdentStyle = PythonIdentStyle(
       ty = underLower,
       className = camelUpper,
       typeParam = underLower,
@@ -221,7 +220,7 @@ package object generatorTools {
       const = underCaps
     )
 
-    val csDefault = CppCliIdentStyle(
+    val csDefault: CppCliIdentStyle = CppCliIdentStyle(
       ty = camelUpper,
       typeParam = camelUpper,
       property = camelUpper,
@@ -233,7 +232,7 @@ package object generatorTools {
       file = camelUpper
     )
 
-    val styles = Map(
+    val styles: Map[String,String => String] = Map(
       "FooBar" -> camelUpper,
       "fooBar" -> camelLower,
       "foo_bar" -> underLower,
@@ -259,8 +258,8 @@ package object generatorTools {
   }
 
   object JavaAccessModifier extends Enumeration {
-    val Public = Value("public")
-    val Package = Value("package")
+    val Public: Value = Value("public")
+    val Package: Value = Value("package")
 
     def getCodeGenerationString(
         javaAccessModifier: JavaAccessModifier.Value
@@ -415,7 +414,7 @@ package object generatorTools {
 }
 
 object Generator {
-  val writtenFiles = mutable.HashMap[String, String]()
+  val writtenFiles: mutable.HashMap[String,String] = mutable.HashMap[String, String]()
 }
 
 abstract class Generator(spec: Spec) {
@@ -492,7 +491,7 @@ abstract class Generator(spec: Spec) {
     val file = new File(folder, fileName)
     val cp = file.getCanonicalPath
     Generator.writtenFiles.put(cp.toLowerCase, cp) match {
-      case Some(existing) => return
+      case Some(_) => return
       case _              =>
     }
 
@@ -536,7 +535,7 @@ abstract class Generator(spec: Spec) {
         w.wl(parts.map("namespace " + _ + " {").mkString(" ")).wl
         f(w)
         w.wl
-        w.wl(parts.map(p => "}").mkString(" ") + s"  // namespace $s")
+        w.wl(parts.map(_ => "}").mkString(" ") + s"  // namespace $s")
     }
   }
 
@@ -647,13 +646,13 @@ abstract class Generator(spec: Spec) {
       i: Interface
   ): Unit
 
-  def withNs(namespace: Option[String], t: String) = namespace match {
+  def withNs(namespace: Option[String], t: String): String = namespace match {
     case None     => t
     case Some("") => "::" + t
     case Some(s)  => "::" + s + "::" + t
   }
 
-  def withCppNs(t: String) = withNs(Some(spec.cppNamespace), t)
+  def withCppNs(t: String): String = withNs(Some(spec.cppNamespace), t)
 
   // --------------------------------------------------------------------------
   // Render type expression
@@ -690,7 +689,7 @@ abstract class Generator(spec: Spec) {
       params: Seq[Field],
       end: String,
       f: Field => (String, String)
-  ) = {
+  ): IndentWriter = {
     w.w(call)
     val skipFirst = new SkipFirst
     params.foreach(p => {
@@ -703,7 +702,7 @@ abstract class Generator(spec: Spec) {
     w.w(end)
   }
 
-  def normalEnumOptions(e: Enum) = e.options.filter(_.specialFlag.isEmpty)
+  def normalEnumOptions(e: Enum): Seq[Enum.Option] = e.options.filter(_.specialFlag.isEmpty)
 
   def writeEnumOptionNone(w: IndentWriter, e: Enum, ident: IdentConverter): Unit = {
     for (

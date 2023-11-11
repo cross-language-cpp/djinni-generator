@@ -28,7 +28,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
   val marshal = new CppMarshal(spec)
 
-  val writeCppFile = writeCppFileGeneric(
+  val writeCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
     spec.cppOutFolder.get,
     spec.cppNamespace,
     spec.cppFileIdentStyle,
@@ -40,8 +40,8 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       fwds: Iterable[String],
       f: IndentWriter => Unit,
-      f2: IndentWriter => Unit = (w => {})
-  ) =
+      f2: IndentWriter => Unit = (_ => {})
+  ): Unit =
     writeHppFileGeneric(
       spec.cppHeaderOutFolder.get,
       spec.cppNamespace,
@@ -60,7 +60,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       spec.cppHeaderOutFolder.get,
       cppNamespace,
       spec.cppFileIdentStyle
-    )(name, origin, includes, fwds, f, (w => {}))
+    )(name, origin, includes, fwds, f, (_ => {}))
 
   def writeJsonExtensionFile(f: IndentWriter => Unit): Unit = {
     createFileOnce(
@@ -93,7 +93,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def deprecatedAttr(doc: Doc) = {
+  def deprecatedAttr(doc: Doc): String = {
     deprecatedText(doc) match {
       case None     => ""
       case Some("") => " [[deprecated]]"
@@ -102,9 +102,9 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
   }
 
   class CppRefs(name: String, extension: String = "") {
-    var hpp = mutable.TreeSet[String]()
-    var hppFwds = mutable.TreeSet[String]()
-    var cpp = mutable.TreeSet[String]()
+    var hpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var hppFwds: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var cpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     def find(ty: TypeRef, forwardDeclareOnly: Boolean): Unit = {
       find(ty.resolved, forwardDeclareOnly)
@@ -113,7 +113,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       tm.args.foreach((x) => find(x, forwardDeclareOnly))
       find(tm.base, forwardDeclareOnly)
     }
-    def find(m: Meta, forwardDeclareOnly: Boolean) = {
+    def find(m: Meta, forwardDeclareOnly: Boolean): Unit = {
       for (r <- marshal.hppReferences(m, name, forwardDeclareOnly, extension))
         r match {
           case ImportRef(arg) => hpp.add("#include " + arg)
@@ -303,16 +303,16 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def shouldConstexpr(c: Const) = {
+  def shouldConstexpr(c: Const): Boolean = {
     // Make sure we don't constexpr optionals as some might not support it
     val canConstexpr = c.ty.resolved.base match {
-      case p: MPrimitive if c.ty.resolved.base != MOptional => true
+      case _: MPrimitive if c.ty.resolved.base != MOptional => true
       case _                                                => false
     }
     canConstexpr
   }
 
-  def generateHppConstants(w: IndentWriter, consts: Seq[Const]) = {
+  def generateHppConstants(w: IndentWriter, consts: Seq[Const]): Unit = {
     for (c <- consts) {
       // set value in header if can constexpr (only primitives)
       var constexpr = shouldConstexpr(c)
@@ -343,7 +343,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       consts: Seq[Const],
       selfName: String
-  ) = {
+  ): Unit = {
     def writeCppConst(w: IndentWriter, ty: TypeRef, v: Any): Unit = v match {
       case l: Long => w.w(l.toString)
       case d: Double if marshal.fieldType(ty) == "float" =>

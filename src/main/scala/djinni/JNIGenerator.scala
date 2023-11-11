@@ -26,10 +26,10 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
   val jniMarshal = new JNIMarshal(spec)
   val cppMarshal = new CppMarshal(spec)
   val javaMarshal = new JavaMarshal(spec)
-  val jniBaseLibClassIdentStyle = IdentStyle.prefix("H", IdentStyle.camelUpper)
+  val jniBaseLibClassIdentStyle: String => String = IdentStyle.prefix("H", IdentStyle.camelUpper)
   val jniBaseLibFileIdentStyle = jniBaseLibClassIdentStyle
 
-  val writeJniCppFile = writeCppFileGeneric(
+  val writeJniCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
     spec.jniOutFolder.get,
     spec.jniNamespace,
     spec.jniFileIdentStyle,
@@ -41,8 +41,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       fwds: Iterable[String],
       f: IndentWriter => Unit,
-      f2: IndentWriter => Unit = (w => {})
-  ) =
+      f2: IndentWriter => Unit = (_ => {})
+  ): Unit =
     writeHppFileGeneric(
       spec.jniHeaderOutFolder.get,
       spec.jniNamespace,
@@ -71,10 +71,10 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
   }
 
   class JNIRefs(name: String, cppPrefixOverride: Option[String] = None) {
-    var jniHpp = mutable.TreeSet[String]()
-    var jniCpp = mutable.TreeSet[String]()
+    var jniHpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var jniCpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    val cppPrefix = cppPrefixOverride.getOrElse(spec.jniIncludeCppPrefix)
+    val cppPrefix: String = cppPrefixOverride.getOrElse(spec.jniIncludeCppPrefix)
     jniHpp.add(
       "#include " + q(
         cppPrefix + spec.cppFileIdentStyle(name) + "." + spec.cppHeaderExt
@@ -93,7 +93,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- jniMarshal.references(m, name)) r match {
+    def find(m: Meta): Unit = for (r <- jniMarshal.references(m, name)) r match {
       case ImportRef(arg) => jniCpp.add("#include " + arg)
       case _              =>
     }
@@ -450,7 +450,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
               w.wl(s"::djinni::jniExceptionCheck(jniEnv);")
               m.ret.fold(())(ty => {
                 (spec.cppNnCheckExpression, isInterface(ty.resolved)) match {
-                  case (Some(check), true) => {
+                  case (Some(_), true) => {
                     // We have a non-optional interface, assert that we're getting a non-null value
                     val javaParams = m.params.map(p =>
                       javaMarshal.fqParamType(p.ty) + " " + idJava
@@ -494,7 +494,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
           val jniRetType = jniMarshal.fqReturnType(ret)
           w.wl
           val methodNameMunged = name.replaceAllLiterally("_", "_1")
-          val zero = ret.fold("")(s => "0 /* value doesn't matter */")
+          val zero = ret.fold("")(_ => "0 /* value doesn't matter */")
           if (static) {
             w.wl(
               s"CJNIEXPORT $jniRetType JNICALL ${prefix}_00024CppProxy_$methodNameMunged(JNIEnv* jniEnv, jobject /*this*/${preComma(paramList)})"
@@ -561,7 +561,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                 }
               })
               val methodName = idCpp.method(m.ident)
-              val ret = m.ret.fold("")(r => "auto r = ")
+              val ret = m.ret.fold("")(_ => "auto r = ")
               val call =
                 if (m.static) s"$cppSelf::$methodName("
                 else s"ref->$methodName("
@@ -631,7 +631,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def typeParamsSignature(params: Seq[TypeParam]) = if (params.isEmpty) ""
+  def typeParamsSignature(params: Seq[TypeParam]): String = if (params.isEmpty) ""
   else
     params.map(p => spec.jniClassIdentStyle(p.ident)).mkString("<", ", ", ">")
 

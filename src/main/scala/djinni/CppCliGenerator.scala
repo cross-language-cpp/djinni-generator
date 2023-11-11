@@ -62,7 +62,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
   def withCppCliNs(namespace: String, t: String): String =
     withNs(Some(namespace), t)
 
-  val writeCppCliCppFile = writeCppFileGeneric(
+  val writeCppCliCppFile: (String, String, Iterable[String], IndentWriter => Unit) => Unit = writeCppFileGeneric(
     spec.cppCliOutFolder.get,
     spec.cppCliNamespace,
     spec.cppCliIdentStyle.file,
@@ -75,8 +75,8 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       fwds: Iterable[String],
       f: IndentWriter => Unit,
-      f2: IndentWriter => Unit = w => {}
-  ) =
+      f2: IndentWriter => Unit = _ => {}
+  ): Unit =
     writeHppFileGeneric(
       spec.cppCliOutFolder.get,
       spec.cppCliNamespace,
@@ -207,7 +207,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
 
     def call(f: Field) = {
       f.ty.resolved.base match {
-        case p: MPrimitive => "."
+        case _: MPrimitive => "."
         case MOptional     => "."
         case MDate         => "."
         case e: MExtern    => if (e.cs.reference.get) "->" else "."
@@ -369,7 +369,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                 .map(f => {
                   val property = idCs.property(f.ident)
                   f.ty.resolved.base match {
-                    case p: MPrimitive => s"$property == other->$property"
+                    case _: MPrimitive => s"$property == other->$property"
                     case _ => s"$property${call(f)}Equals(other->$property)"
                   }
                 })

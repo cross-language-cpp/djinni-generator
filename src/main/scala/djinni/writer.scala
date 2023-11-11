@@ -85,9 +85,9 @@ package object writer {
       wl(s"}$end")
     }
 
-    def braced = bracedEnd("")(_)
+    def braced: (=> Unit) => Unit = bracedEnd("")(_)
 
-    def bracedSemi = bracedEnd(";")(_)
+    def bracedSemi: (=> Unit) => Unit = bracedEnd(";")(_)
   }
 
 }

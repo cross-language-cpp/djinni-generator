@@ -51,7 +51,7 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def references(m: Meta): Seq[SymbolReference] = m match {
-    case o: MOpaque =>
+    case _: MOpaque =>
       List(ImportRef(q(objcBaseLibIncludePrefix + "DJIMarshal+Private.h")))
     case d: MDef =>
       d.defType match {
@@ -65,19 +65,19 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
           )
       }
     case e: MExtern => List(ImportRef(e.objcpp.header.get))
-    case p: MParam  => List()
+    case _: MParam  => List()
   }
 
-  def include(m: Meta) = m match {
+  def include(m: Meta): String = m match {
     case d: MDef => q(spec.objcppIncludePrefix + privateHeaderName(d.name))
     case _       => throw new AssertionError("not applicable")
   }
 
-  def helperClass(name: String) = idCpp.ty(name)
+  def helperClass(name: String): String = idCpp.ty(name)
   private def helperClass(tm: MExpr): String =
     helperName(tm) + helperTemplates(tm)
 
-  def helperClassWithNs(name: String) =
+  def helperClassWithNs(name: String): String =
     withNs(Some(spec.objcppNamespace), helperClass(name))
 
   def privateHeaderName(ident: String): String =
@@ -115,9 +115,9 @@ class ObjcppMarshal(spec: Spec) extends Marshal(spec) {
           case MList      => "List"
           case MSet       => "Set"
           case MMap       => "Map"
-          case d: MDef    => throw new AssertionError("unreachable")
-          case e: MExtern => throw new AssertionError("unreachable")
-          case p: MParam  => throw new AssertionError("not applicable")
+          case _: MDef    => throw new AssertionError("unreachable")
+          case _: MExtern => throw new AssertionError("unreachable")
+          case _: MParam  => throw new AssertionError("not applicable")
         }
       )
   }

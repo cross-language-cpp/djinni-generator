@@ -3,6 +3,7 @@ package djinni
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
+
 import scala.language.implicitConversions
 
 // Generate code for marshalling a specific type from/to C++ including header and type names.
@@ -43,11 +44,11 @@ abstract class Marshal(spec: Spec) {
   protected val idPython = spec.pyIdentStyle
   protected val idCs = spec.cppCliIdentStyle
 
-  protected def withNs(namespace: Option[String], t: String) = namespace match {
+  protected def withNs(namespace: Option[String], t: String): String = namespace match {
     case None     => t
     case Some("") => "::" + t
     case Some(s)  => "::" + s + "::" + t
   }
 
-  protected def withCppNs(t: String) = withNs(Some(spec.cppNamespace), t)
+  protected def withCppNs(t: String): String = withNs(Some(spec.cppNamespace), t)
 }

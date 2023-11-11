@@ -15,33 +15,33 @@
 
 package djinni
 
-import java.io.{
-  File,
-  FileInputStream,
-  FileNotFoundException,
-  InputStreamReader,
-  Writer
-}
 import djinni.ast.Interface.Method
 import djinni.ast.Record.DerivingType.DerivingType
-import djinni.syntax._
 import djinni.ast._
+import djinni.syntax._
 import org.apache.commons.io.FilenameUtils
 import org.yaml.snakeyaml.Yaml
+
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStreamReader
+import java.io.Writer
 import java.util.{Map => JMap}
-// import scala.jdk.CollectionConverters._ // comes with scala 2.13, we use 2.12 for a while
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
-import scala.util.parsing.input.{Position, Positional}
+import scala.util.parsing.input.Position
+import scala.util.parsing.input.Positional
 
 case class Parser(includePaths: List[String]) {
 
-  val visitedFiles = mutable.Set[File]()
-  val fileStack = mutable.Stack[File]()
+  val visitedFiles: mutable.Set[File] = mutable.Set[File]()
+  val fileStack: mutable.Stack[File] = mutable.Stack[File]()
 
   private object IdlParser extends RegexParsers {
-    override protected val whiteSpace = """[ \t\n\r]+""".r
+    override protected val whiteSpace: Regex = """[ \t\n\r]+""".r
 
     def idlFile(origin: String): Parser[IdlFile] =
       rep(importFileRef) ~ rep(typeDecl(origin)) ^^ { case imp ~ types =>
@@ -59,7 +59,7 @@ case class Parser(includePaths: List[String]) {
     def importFile(fileName: String): File = {
       var file: Option[File] = None
 
-      val path = includePaths.find(path => {
+      includePaths.find(path => {
         val relPath = if (path.isEmpty) fileStack.top.getParent() else path
         val tmp = new File(relPath, fileName)
         val exists = tmp.exists
@@ -75,11 +75,11 @@ case class Parser(includePaths: List[String]) {
       file.get
     }
 
-    def filePath = "[^\"]*".r
+    def filePath: Regex = "[^\"]*".r
 
-    def directive = importDirective | externDirective
-    def importDirective = "import".r
-    def externDirective = "extern".r
+    def directive: Parser[String] = importDirective | externDirective
+    def importDirective: Regex = "import".r
+    def externDirective: Regex = "extern".r
 
     def typeDecl(origin: String): Parser[TypeDecl] =
       doc ~ ident ~ typeList(ident ^^ TypeParam) ~ "=" ~ typeDef ^^ {
@@ -87,11 +87,11 @@ case class Parser(includePaths: List[String]) {
           InternTypeDecl(ident, typeParams, body, doc, origin)
       }
 
-    def ext(default: Ext) = (rep1("+" ~> ident) >> checkExts) | success(default)
-    def extRecord = ext(
+    def ext(default: Ext): Parser[Ext] = (rep1("+" ~> ident) >> checkExts) | success(default)
+    def extRecord: Parser[Ext] = ext(
       Ext(java = false, cpp = false, objc = false, py = false, cppcli = false)
     )
-    def extInterface = ext(
+    def extInterface: Parser[Ext] = ext(
       Ext(java = true, cpp = true, objc = true, py = true, cppcli = true)
     )
 
@@ -131,7 +131,7 @@ case class Parser(includePaths: List[String]) {
 
     def typeDef: Parser[TypeDef] = record | enum | flags | interface
 
-    def recordHeader = "record" ~> extRecord
+    def recordHeader: Parser[Ext] = "record" ~> extRecord
     def record: Parser[Record] =
       recordHeader ~ bracesList(field | const) ~ opt(deriving) ^^ {
         case ext ~ items ~ deriving => {
@@ -157,11 +157,11 @@ case class Parser(includePaths: List[String]) {
         ).toSet
       }
 
-    def flagsAll = "all".r
-    def flagsNone = "none".r
+    def flagsAll: Regex = "all".r
+    def flagsNone: Regex = "none".r
 
-    def enumHeader = "enum".r
-    def flagsHeader = "flags".r
+    def enumHeader: Regex = "enum".r
+    def flagsHeader: Regex = "flags".r
     def enum: Parser[Enum] = enumHeader ~> bracesList(enumOption) ^^ {
       case items => Enum(items, flags = false)
     }
@@ -182,7 +182,7 @@ case class Parser(includePaths: List[String]) {
         case _ => throw new IllegalArgumentException("Unexpected flag value")
       }
 
-    def interfaceHeader = "interface" ~> extInterface
+    def interfaceHeader: Parser[Ext] = "interface" ~> extInterface
     def interface: Parser[Interface] =
       interfaceHeader ~ bracesList(method | const) ^^ {
         case ext ~ items => {
@@ -248,7 +248,7 @@ case class Parser(includePaths: List[String]) {
       }
 
     // Integer before float for compatibility; ident for enum option
-    def value =
+    def value: Parser[Any] =
       floatValue | intValue | boolValue | stringValue | enumValue | constRef | compositeValue
 
     def const: Parser[Const] =
@@ -302,7 +302,7 @@ case class Parser(includePaths: List[String]) {
     }
   }
 
-  def toLoc(file: File, pos: Position) = Loc(file, pos.line, pos.column)
+  def toLoc(file: File, pos: Position): Loc = Loc(file, pos.line, pos.column)
 
   def slurpReader(in: java.io.Reader): String = {
     var buf = new Array[Char](4 * 1024)
@@ -311,7 +311,7 @@ case class Parser(includePaths: List[String]) {
       val space = buf.length - pos
       val read = in.read(buf, pos, space)
       if (read == -1) {
-        val r = new Array[Char](pos)
+        new Array[Char](pos)
         return new String(buf, 0, pos)
       }
       pos += read
@@ -368,7 +368,7 @@ case class Parser(includePaths: List[String]) {
       ) match {
         case IdlParser.Success(ty: TypeDef, _) =>
           tds += ExternTypeDecl(ident, params, ty, properties.toMap, origin)
-        case IdlParser.NoSuccess(msg, input) =>
+        case IdlParser.NoSuccess(_, _) =>
           return Left(
             Error(
               Loc(fileStack.top, 1, 1),
@@ -442,9 +442,9 @@ case class Parser(includePaths: List[String]) {
             }
             if (!visitedFiles.contains(normalized)) {
               x match {
-                case IdlFileRef(file) =>
+                case IdlFileRef(_) =>
                   types = parseFile(normalized, inFileListWriter) ++ types
-                case ExternFileRef(file) =>
+                case ExternFileRef(_) =>
                   types = parseExternFile(normalized, inFileListWriter) ++ types
               }
             }
