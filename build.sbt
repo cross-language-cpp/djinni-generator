@@ -25,8 +25,12 @@ lazy val djinni = (project in file("."))
     libraryDependencies += "org.yaml" % "snakeyaml" % "1.29",
     libraryDependencies += "com.github.scopt" %% "scopt" % "4.0.1",
     libraryDependencies += "commons-io" % "commons-io" % "2.11.0",
-    assembly / assemblyOutputPath := { file("target/bin") / s"${(assembly / assemblyJarName).value}${binExt}" },
+    assembly / assemblyOutputPath := {
+      val dir = file("target/bin")
+      IO.createDirectory(dir)
+      dir / s"${(assembly / assemblyJarName).value}${binExt}"
+    },
     assembly / assemblyJarName := s"${name.value}",
-    assembly / assemblyOption := (assembly / assemblyOption).value.copy(prependShellScript = Some(defaultUniversalScript(shebang = false))),
+    assembly / assemblyPrependShellScript := Some(defaultUniversalScript(shebang = false)),
     assembly / test := {}
   )
