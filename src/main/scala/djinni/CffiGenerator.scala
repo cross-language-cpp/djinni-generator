@@ -58,7 +58,7 @@ class CffiGenerator(spec: Spec) extends Generator(spec) {
         w.wl("ffi = FFI()")
         w.wl
         // Paths relative to test-suite/pybuild
-        //TODO: raise exception if not at least 2 arguments?
+        // TODO: raise exception if not at least 2 arguments?
         w.wl("args = sys.argv[1:]")
         w.wl(
           "cdef_headers = sort_by_import_order(clean_headers_for(args, 'python_cdef_ignore'))"

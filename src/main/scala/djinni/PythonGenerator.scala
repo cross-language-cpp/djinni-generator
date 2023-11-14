@@ -876,7 +876,7 @@ class PythonGenerator(spec: Spec) extends Generator(spec) {
       val withStmts = mutable.ArrayBuffer[String]()
       processPackedArgs(m, withStmts)
       // check that if python promised to send as arguments non optionals then they are not None
-      //checkNonOptionals(m, w)
+      // checkNonOptionals(m, w)
       writeWithStmts(withStmts.toSeq, w) {
         val libArgs = getLibArgsFrom(m, pythonClass)
         val libCall = lib + "." + cMethodWrapper + "_" + m.ident.name + libArgs

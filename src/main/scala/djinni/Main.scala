@@ -814,7 +814,7 @@ object Main {
       if (!validJsonSerializers.contains(cppJsonSerialization.get)) {
         System.err.println(
           s"Error: Invalid value for --cpp-json-serializers '${cppJsonSerialization.get}'. Available serializers: ['${validJsonSerializers
-            .mkString(",")}']."
+              .mkString(",")}']."
         )
         System.exit(1); return
       }

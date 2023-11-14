@@ -307,7 +307,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
             writeDoc(w, f.doc)
             w.wl(
               s"${marshal.fqFieldType(f.ty.resolved, fieldNamesInScope)} ${idCs
-                .field(f.ident)};"
+                  .field(f.ident)};"
             )
           }
         }

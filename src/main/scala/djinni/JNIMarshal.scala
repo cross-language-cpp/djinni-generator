@@ -150,7 +150,7 @@ class JNIMarshal(spec: Spec) extends Marshal(spec) {
     tm.base match {
       case MOptional =>
         assert(tm.args.size == 1)
-        //assert(!isInterface(tm.args.head))
+        // assert(!isInterface(tm.args.head))
         val argHelperClass = helperClass(tm.args.head)
         s"<${spec.cppOptionalTemplate}, $argHelperClass>"
       case MList | MSet =>

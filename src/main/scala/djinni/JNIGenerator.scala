@@ -224,7 +224,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       w.w(
         s"auto $jniHelperWithParams::fromCpp(JNIEnv* jniEnv, const CppType& c) -> ::djinni::LocalRef<JniType>"
       ).braced {
-        //w.wl(s"::${spec.jniNamespace}::JniLocalScope jscope(jniEnv, 10);")
+        // w.wl(s"::${spec.jniNamespace}::JniLocalScope jscope(jniEnv, 10);")
         if (r.fields.isEmpty)
           w.wl(
             "(void)c; // Suppress warnings in release builds for empty records"
@@ -339,8 +339,8 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
               s"""DJINNI_ASSERT_MSG(j, jniEnv, "$jniSelf::fromCpp requires a non-null Java object");"""
             )
             w.wl(s"""return ${nnCheck(
-              s"::djinni::JniClass<$jniSelf>::get()._fromJava(jniEnv, j)"
-            )};""")
+                s"::djinni::JniClass<$jniSelf>::get()._fromJava(jniEnv, j)"
+              )};""")
           }
         } else {
           w.wl(
@@ -544,7 +544,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
             m.static,
             m.params,
             m.ret, {
-              //w.wl(s"::${spec.jniNamespace}::JniLocalScope jscope(jniEnv, 10);")
+              // w.wl(s"::${spec.jniNamespace}::JniLocalScope jscope(jniEnv, 10);")
               if (!m.static)
                 w.wl(
                   s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);"

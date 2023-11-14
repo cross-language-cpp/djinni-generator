@@ -332,7 +332,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                       val ret = m.ret.fold("")(_ => "auto objcpp_result_ = ")
                       val call =
                         s"[djinni_private_get_proxied_objc_object() ${idObjc
-                          .method(m.ident)}"
+                            .method(m.ident)}"
                       writeAlignedObjcCall(
                         w,
                         ret + call,
@@ -398,7 +398,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 // C++ only. In this case we generate a class instead of a protocol, so
                 // we don't have to do any casting at all, just access cppRef directly.
                 w.wl("return " + nnCheck("objc->_cppRefHandle.get()") + ";")
-                //w.wl(s"return ${spec.cppNnCheckExpression.getOrElse("")}(objc->_cppRefHandle.get());")
+                // w.wl(s"return ${spec.cppNnCheckExpression.getOrElse("")}(objc->_cppRefHandle.get());")
               } else if (i.ext.cpp || i.ext.objc) {
                 // ObjC only, or ObjC and C++.
                 if (i.ext.cpp) {

@@ -31,7 +31,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   @SuppressWarnings(Array("unused"))
   def typename(name: String, ty: TypeDef): String = {
     val _ = (name, ty) // unused, TODO, check remove
-    throw new NotImplementedError() //idPython.ty(name)
+    throw new NotImplementedError() // idPython.ty(name)
   }
 
   override def fqTypename(tm: MExpr): String = throw new NotImplementedError()

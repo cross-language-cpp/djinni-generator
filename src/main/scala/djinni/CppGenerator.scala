@@ -568,7 +568,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                       case DRecord =>
                         w.w(s"""if (j.contains("$name"))""").braced {
                           w.wl(s"""result.$name = j.at("$name").get<${marshal
-                            .fqTypename(fields(i).ty)}>();""")
+                              .fqTypename(fields(i).ty)}>();""")
                         }
                       case DEnum =>
                         w.w(s"""if (j.contains("$name"))""").braced {
@@ -741,7 +741,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             } else {
               val constFlag = if (m.const) " const" else ""
               w.wl(s"virtual $ret ${idCpp.method(m.ident)}${params
-                .mkString("(", ", ", ")")}$constFlag = 0;")
+                  .mkString("(", ", ", ")")}$constFlag = 0;")
             }
           }
         }
