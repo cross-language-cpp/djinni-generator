@@ -234,7 +234,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
       if (!spec.wasmOmitNsAlias && !spec.wasmNamespace.isEmpty) {
         w.wl(
           s"""    ::djinni::djinni_register_name_in_ns("${fullyQualifiedName}", "${spec.wasmNamespace.get}.${idJs
-            .ty(ident)}");"""
+              .ty(ident)}");"""
         )
       }
       w.wl(s"});")
@@ -249,7 +249,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  //------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
 
   override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
     val refs = new WasmRefs(ident.name)
@@ -306,7 +306,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
             if (!spec.wasmOmitNsAlias && !spec.wasmNamespace.isEmpty) {
               w.wl(
                 s"""    ::djinni::djinni_register_name_in_ns("${fullyQualifiedName}", "${spec.wasmNamespace.get}.${idJs
-                  .ty(ident)}");"""
+                    .ty(ident)}");"""
               )
             }
             w.wl(s"});")
@@ -484,7 +484,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
                 w.wl(";")
                 m.ret.fold(())(r =>
                   w.wl(s"return ${helperClass(r.resolved)}::fromCpp(${cppMarshal
-                    .maybeMove("r", r)});")
+                      .maybeMove("r", r)});")
                 )
               }
               w.w("catch(const std::exception& e)").braced {
@@ -506,7 +506,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
               val constModifier = if (m.const) " const" else ""
               w.w(
                 s"${cppMarshal.fqReturnType(m.ret)} ${helper}::JsProxy::${idCpp
-                  .method(m.ident)}("
+                    .method(m.ident)}("
               )
               w.w(
                 m.params
@@ -526,7 +526,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
                   s")",
                   p => {
                     s"${helperClass(p.ty.resolved)}::fromCpp(${cppMarshal
-                      .maybeMove(idCpp.local(p.ident), p.ty)})"
+                        .maybeMove(idCpp.local(p.ident), p.ty)})"
                   }
                 )
                 w.wl(";")
@@ -556,7 +556,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
           val classRegister =
             if (!spec.wasmOmitNsAlias && !spec.wasmNamespace.isEmpty) {
               s"""::djinni::DjinniClass_<$cls>("${fullyQualifiedJsName}", "${spec.wasmNamespace.get}.${idJs
-                .ty(ident.name)}")"""
+                  .ty(ident.name)}")"""
             } else {
               s"""em::class_<$cls>("${fullyQualifiedJsName}")"""
             }
@@ -566,13 +566,13 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
               s""".smart_ptr<std::shared_ptr<$cls>>("${fullyQualifiedJsName}")"""
             )
             w.wl(s""".function("${idJs
-              .method("native_destroy")}", &$helper::nativeDestroy)""")
+                .method("native_destroy")}", &$helper::nativeDestroy)""")
             if (i.ext.cpp) {
               for (m <- i.methods.filter(m => !m.static || m.lang.js)) {
                 val funcType = if (m.static) "class_function" else "function"
                 w.wl(s""".$funcType("${idJs.method(
-                  m.ident.name
-                )}", $helper::${idCpp.method(m.ident)})""")
+                    m.ident.name
+                  )}", $helper::${idCpp.method(m.ident)})""")
               }
             }
             w.wl(";")
@@ -661,7 +661,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
             "}",
             f => {
               s"""${helperClass(f.ty.resolved)}::Boxed::toCpp(j["${idJs
-                .field(f.ident.name)}"])"""
+                  .field(f.ident.name)}"])"""
             }
           )
           w.wl(";")
@@ -670,9 +670,9 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
           w.wl("em::val js = em::val::object();")
           for (f <- r.fields) {
             w.wl(s"""js.set("${idJs.field(f.ident.name)}", ${helperClass(
-              f.ty.resolved
-            )}::Boxed::fromCpp(${cppMarshal
-              .maybeMove("c." + idCpp.field(f.ident), f.ty)}));""")
+                f.ty.resolved
+              )}::Boxed::fromCpp(${cppMarshal
+                .maybeMove("c." + idCpp.field(f.ident), f.ty)}));""")
           }
           w.wl("return js;")
         }

@@ -156,7 +156,7 @@ class TsGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  //------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
   private def generateEnum(
       origin: String,
       ident: Ident,
@@ -245,7 +245,7 @@ class TsGenerator(spec: Spec) extends Generator(spec) {
         ) + sep + name
       case None => name
     }
-  //--------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   override def generate(idl: Seq[TypeDecl]) {
     createFile(
       spec.tsOutFolder.get,

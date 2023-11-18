@@ -91,7 +91,7 @@ case class Parser(includePaths: List[String]) {
           InternTypeDecl(ident, typeParams, body, doc, origin)
       }
 
-    def ext(default: Ext): Parser[Ext] = 
+    def ext(default: Ext): Parser[Ext] =
       (rep1("+" ~> ident) >> checkExts) | success(default)
     def extRecord: Parser[Ext] = ext(
       Ext(

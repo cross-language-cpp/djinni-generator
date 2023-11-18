@@ -145,6 +145,14 @@ djinni \
 | `--cppcli-namespace ...`               | The namespace name to use for generated C++/CLI classes.                   |
 | `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
 
+### WebAssembly/TS/JS
+
+| Argument                               | Description                                                                |
+|----------------------------------------|----------------------------------------------------------------------------|
+| `--wasm-out <out-folder>`              | WebAssembly bridge code output folder   |
+| `--ts-out <out-folder>`                | Path to the Typescript type definitions output folder                   |
+| `--ts-module <module>`                 | Name of the module for the Typescript types. `module.ts` by default. |
+
 
 ### Yaml Generation
 
