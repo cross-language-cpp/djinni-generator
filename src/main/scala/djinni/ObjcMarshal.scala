@@ -10,7 +10,10 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
     val (name, _) = toObjcType(tm)
     name
   }
-  def typename(name: String, ty: TypeDef): String = idObjc.ty(name)
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO: remove
+    idObjc.ty(name)
+  }
 
   override def fqTypename(tm: MExpr): String = typename(tm)
   def fqTypename(name: String, ty: TypeDef): String = typename(name, ty)
@@ -57,9 +60,10 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
   override def fromCpp(tm: MExpr, expr: String): String =
     throw new AssertionError("direct cpp to objc conversion not possible")
 
-  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] =
+  def references(m: Meta, exclude: String = ""): Seq[SymbolReference] = {
+    val _ = exclude // unused, TODO: remove
     m match {
-      case o: MOpaque =>
+      case _: MOpaque =>
         List(ImportRef("<Foundation/Foundation.h>"))
       case d: MDef =>
         d.defType match {
@@ -86,22 +90,26 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
             List(ImportRef(q(prefix + headerName(d.name))))
         }
       case e: MExtern => List(ImportRef(e.objc.header.get))
-      case p: MParam  => List()
+      case _: MParam  => List()
     }
-
-  def headerName(ident: String) = idObjc.ty(ident) + "." + spec.objcHeaderExt
-  def include(ident: String) = q(spec.objcIncludePrefix + headerName(ident))
-
-  def isPointer(td: TypeDecl) = td.body match {
-    case i: Interface => true
-    case r: Record    => true
-    case e: Enum      => false
   }
 
-  def boxedTypename(td: TypeDecl) = td.body match {
+  def headerName(ident: String): String =
+    idObjc.ty(ident) + "." + spec.objcHeaderExt
+  def include(ident: String): String = q(
+    spec.objcIncludePrefix + headerName(ident)
+  )
+
+  def isPointer(td: TypeDecl): Boolean = td.body match {
+    case _: Interface => true
+    case _: Record    => true
+    case _: Enum      => false
+  }
+
+  def boxedTypename(td: TypeDecl): String = td.body match {
     case i: Interface => typename(td.ident, i)
     case r: Record    => typename(td.ident, r)
-    case e: Enum      => "NSNumber"
+    case _: Enum      => "NSNumber"
   }
 
   // Return value: (Type_Name, Is_Class_Or_Not)
@@ -121,7 +129,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
           val arg = tm.args.head
           arg.base match {
             case MOptional => throw new AssertionError("nested optional?")
-            case m         => f(arg, true)
+            case _         => f(arg, true)
           }
         case o =>
           val base = o match {
@@ -161,7 +169,7 @@ class ObjcMarshal(spec: Spec) extends Marshal(spec) {
                   else if (needRef) (e.objc.boxed.get, true)
                   else (e.objc.typename.get, e.objc.pointer.get)
               }
-            case p: MParam =>
+            case _: MParam =>
               throw new AssertionError(
                 "Parameter should not happen at Obj-C top level"
               )

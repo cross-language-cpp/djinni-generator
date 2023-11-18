@@ -25,29 +25,29 @@ import scala.collection.mutable
 
 class JavaGenerator(spec: Spec) extends Generator(spec) {
 
-  val javaAnnotationHeader =
+  val javaAnnotationHeader: Option[String] =
     spec.javaAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaNullableAnnotation =
+  val javaNullableAnnotation: Option[String] =
     spec.javaNullableAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaNonnullAnnotation =
+  val javaNonnullAnnotation: Option[String] =
     spec.javaNonnullAnnotation.map(pkg => '@' + pkg.split("\\.").last)
-  val javaClassAccessModifierString =
+  val javaClassAccessModifierString: String =
     JavaAccessModifier.getCodeGenerationString(spec.javaClassAccessModifier)
   val marshal = new JavaMarshal(spec)
 
   class JavaRefs() {
-    var java = mutable.TreeSet[String]()
+    var java: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
     spec.javaAnnotation.foreach(pkg => java.add(pkg))
     spec.javaNullableAnnotation.foreach(pkg => java.add(pkg))
     spec.javaNonnullAnnotation.foreach(pkg => java.add(pkg))
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- marshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- marshal.references(m)) r match {
       case ImportRef(arg) => java.add(arg)
       case _              =>
     }
@@ -58,7 +58,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     createFile(
       spec.javaOutFolder.get,
       idJava.ty(ident) + ".java",
@@ -76,7 +76,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def writeDocAnnotations(w: IndentWriter, doc: Doc) {
+  def writeDocAnnotations(w: IndentWriter, doc: Doc): Unit = {
     writeDeprecated(w, doc, "@Deprecated")
   }
 
@@ -84,7 +84,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       consts: Seq[Const],
       forJavaInterface: Boolean
-  ) = {
+  ): Unit = {
 
     def writeJavaConst(w: IndentWriter, ty: TypeRef, v: Any): Unit = v match {
       case l: Long if marshal.fieldType(ty).equalsIgnoreCase("long") =>
@@ -134,7 +134,12 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new JavaRefs()
 
     writeJavaFile(
@@ -165,7 +170,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new JavaRefs()
 
     i.methods.map(m => {
@@ -343,7 +348,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new JavaRefs()
     r.fields.foreach(f => refs.find(f.ty))
 
@@ -480,31 +485,31 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     f.ty.resolved.base match {
                       case MBinary =>
                         w.w(s"java.util.Arrays.equals(${idJava
-                          .field(f.ident)}, other.${idJava.field(f.ident)})")
+                            .field(f.ident)}, other.${idJava.field(f.ident)})")
                       case MList | MSet | MMap | MString | MDate =>
                         w.w(
                           s"this.${idJava.field(f.ident)}.equals(other.${idJava
-                            .field(f.ident)})"
+                              .field(f.ident)})"
                         )
                       case MOptional =>
                         w.w(
                           s"((this.${idJava.field(f.ident)} == null && other.${idJava
-                            .field(f.ident)} == null) || "
+                              .field(f.ident)} == null) || "
                         )
                         w.w(s"(this.${idJava.field(f.ident)} != null && this.${idJava
-                          .field(f.ident)}.equals(other.${idJava.field(f.ident)})))")
-                      case t: MPrimitive =>
+                            .field(f.ident)}.equals(other.${idJava.field(f.ident)})))")
+                      case _: MPrimitive =>
                         w.w(s"this.${idJava.field(f.ident)} == other.${idJava
-                          .field(f.ident)}")
+                            .field(f.ident)}")
                       case df: MDef =>
                         df.defType match {
                           case DRecord =>
                             w.w(s"this.${idJava.field(f.ident)}.equals(other.${idJava
-                              .field(f.ident)})")
+                                .field(f.ident)})")
                           case DEnum =>
                             w.w(
                               s"this.${idJava.field(f.ident)} == other.${idJava
-                                .field(f.ident)}"
+                                  .field(f.ident)}"
                             )
                           case _ => throw new AssertionError("Unreachable")
                         }
@@ -514,16 +519,16 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                             if (e.java.reference.get) {
                               w.w(
                                 s"this.${idJava.field(f.ident)}.equals(other.${idJava
-                                  .field(f.ident)})"
+                                    .field(f.ident)})"
                               )
                             } else {
                               w.w(s"this.${idJava.field(f.ident)} == other.${idJava
-                                .field(f.ident)}")
+                                  .field(f.ident)}")
                             }
                           case DEnum =>
                             w.w(
                               s"this.${idJava.field(f.ident)} == other.${idJava
-                                .field(f.ident)}"
+                                  .field(f.ident)}"
                             )
                           case _ => throw new AssertionError("Unreachable")
                         }
@@ -551,7 +556,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   case MList | MSet | MMap | MString | MDate =>
                     s"${idJava.field(f.ident)}.hashCode()"
                   // Need to repeat this case for MDef
-                  case df: MDef => s"${idJava.field(f.ident)}.hashCode()"
+                  case _: MDef => s"${idJava.field(f.ident)}.hashCode()"
                   case MOptional =>
                     s"(${idJava.field(f.ident)} == null ? 0 : ${idJava.field(f.ident)}.hashCode())"
                   case t: MPrimitive =>
@@ -563,7 +568,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                         s"Float.floatToIntBits(${idJava.field(f.ident)})"
                       case "double" =>
                         s"((int) (Double.doubleToLongBits(${idJava.field(f.ident)}) ^ (Double.doubleToLongBits(${idJava
-                          .field(f.ident)}) >>> 32)))"
+                            .field(f.ident)}) >>> 32)))"
                       case "boolean" => s"(${idJava.field(f.ident)} ? 1 : 0)"
                       case _         => throw new AssertionError("Unreachable")
                     }
@@ -606,7 +611,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             writeParcelable(w, self, r)
 
           if (r.derivingTypes.contains(DerivingType.Ord)) {
-            def primitiveCompare(ident: Ident) {
+            def primitiveCompare(ident: Ident): Unit = {
               w.wl(
                 s"if (this.${idJava.field(ident)} < other.${idJava.field(ident)}) {"
               ).nested {
@@ -633,16 +638,16 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   f.ty.resolved.base match {
                     case MString | MDate =>
                       w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
-                        .field(f.ident)});")
-                    case t: MPrimitive => primitiveCompare(f.ident)
+                          .field(f.ident)});")
+                    case _: MPrimitive => primitiveCompare(f.ident)
                     case df: MDef =>
                       df.defType match {
                         case DRecord =>
                           w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
-                            .field(f.ident)});")
+                              .field(f.ident)});")
                         case DEnum =>
                           w.w(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
-                            .field(f.ident)});")
+                              .field(f.ident)});")
                         case _ => throw new AssertionError("Unreachable")
                       }
                     case e: MExtern =>
@@ -650,11 +655,11 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                         case DRecord =>
                           if (e.java.reference.get)
                             w.wl(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
-                              .field(f.ident)});")
+                                .field(f.ident)});")
                           else primitiveCompare(f.ident)
                         case DEnum =>
                           w.w(s"tempResult = this.${idJava.field(f.ident)}.compareTo(other.${idJava
-                            .field(f.ident)});")
+                              .field(f.ident)});")
                         case _ => throw new AssertionError("Unreachable")
                       }
                     case _ => throw new AssertionError("Unreachable")
@@ -676,7 +681,11 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     if (params.isEmpty) ""
     else params.map(p => idJava.typeParam(p.ident)).mkString("<", ", ", ">")
 
-  def writeParcelable(w: IndentWriter, self: String, r: Record) = {
+  def writeParcelable(
+      w: IndentWriter,
+      self: String,
+      r: Record
+  ): IndentWriter = {
     // Generates the methods and the constructor to implement the interface android.os.Parcelable
 
     // CREATOR
@@ -695,7 +704,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
 
     // constructor (Parcel)
-    def deserializeField(f: Field, m: Meta, inOptional: Boolean) {
+    def deserializeField(f: Field, m: Meta, inOptional: Boolean): Unit = {
       m match {
         case MString =>
           w.wl(s"this.${idJava.field(f.ident)} = in.readString();")
@@ -746,7 +755,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
           e.defType match {
             case DRecord =>
               w.wl(s"this.${idJava.field(f.ident)} = ${e.java.readFromParcel
-                .format(marshal.typename(f.ty))};")
+                  .format(marshal.typename(f.ty))};")
             case DEnum => {
               if (marshal.isEnumFlags(m)) {
                 w.wl(
@@ -778,7 +787,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             s"in.readList(${idJava.field(f.ident)}Temp, getClass().getClassLoader());"
           )
           w.wl(s"this.${idJava.field(f.ident)} = new ${marshal
-            .typename(f.ty)}(${idJava.field(f.ident)}Temp);")
+              .typename(f.ty)}(${idJava.field(f.ident)}Temp);")
         }
         case MMap => {
           w.wl(
@@ -816,7 +825,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
     }
 
     // writeToParcel
-    def serializeField(f: Field, m: Meta, inOptional: Boolean) {
+    def serializeField(f: Field, m: Meta, inOptional: Boolean): Unit = {
       m match {
         case MString => w.wl(s"out.writeString(this.${idJava.field(f.ident)});")
         case MBinary => {
@@ -876,7 +885,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             marshal.typename(f.ty).replaceFirst("HashSet<(.*)>", "$1")
           w.wl(
             s"out.writeList(new ArrayList<${collectionTypeName}>(this.${idJava
-              .field(f.ident)}));"
+                .field(f.ident)}));"
           )
         }
         case MMap => w.wl(s"out.writeMap(this.${idJava.field(f.ident)});")

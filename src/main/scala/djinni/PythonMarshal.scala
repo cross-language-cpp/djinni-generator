@@ -28,12 +28,18 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   val dh = "dh__"
 
   override def typename(tm: MExpr): String = toPythonType(tm)
-  def typename(name: String, ty: TypeDef): String =
-    throw new NotImplementedError() //idPython.ty(name)
+  @SuppressWarnings(Array("unused"))
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO, check remove
+    throw new NotImplementedError() // idPython.ty(name)
+  }
 
   override def fqTypename(tm: MExpr): String = throw new NotImplementedError()
-  def fqTypename(name: String, ty: TypeDef): String =
+  @SuppressWarnings(Array("unused"))
+  def fqTypename(name: String, ty: TypeDef): String = {
+    val _ = (name, ty) // unused, TODO, check remove
     throw new NotImplementedError()
+  }
 
   override def paramType(tm: MExpr): String = typename(tm)
   override def fqParamType(tm: MExpr): String = throw new NotImplementedError()
@@ -93,7 +99,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
         }
       } else List()
     }
-    case mp: MPrimitive =>
+    case _: MPrimitive =>
       List(ImportRef("from djinni.pycffi_marshal import CPyPrimitive"))
     case MString =>
       List(ImportRef("from djinni.pycffi_marshal import CPyString"))
@@ -105,11 +111,11 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
       List(
         ImportRef("from djinni.pycffi_marshal import CPyObject, CPyObjectProxy")
       )
-    case e: MExtern => List() // TODO: implement e: MExtern
+    case _: MExtern => List() // TODO: implement e: MExtern
     case _          => List()
   }
 
-  def getExprIdlName(tm: MExpr) = toPythonType(tm)
+  def getExprIdlName(tm: MExpr): String = toPythonType(tm)
   def referencesForContainer(
       tm: MExpr,
       exclude: String
@@ -179,7 +185,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
               )
               refs.add("from djinni.pycffi_marshal import CPyEnum")
           }
-        case mp: MPrimitive =>
+        case _: MPrimitive =>
           refs.add("from djinni.pycffi_marshal import CPyPrimitive")
         case MString => refs.add("from djinni.pycffi_marshal import CPyString")
         case MBinary => refs.add("from djinni.pycffi_marshal import CPyBinary")
@@ -192,9 +198,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     return refs
   }
 
-  private def toPythonType(ty: TypeRef): String = toPythonType(
-    ty.resolved
-  ) // see if this works wutg getIdlName
+  // see if this works wutg getIdlName
   private def toPythonType(tm: MExpr): String = {
     def base(m: Meta): String = m match {
       case p: MPrimitive => p.cName
@@ -215,7 +219,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
           case DRecord    => "record_" + d.name
           case DEnum      => "enum_" + d.name
         }
-      case e: MExtern => "extern" // TODO: implement e: MExtern
+      case _: MExtern => "extern" // TODO: implement e: MExtern
       case _          => throw new NotImplementedError()
     }
     def expr(tm: MExpr): String = {
@@ -245,8 +249,8 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def isPrimitive(ty: TypeRef): Boolean = ty.resolved.base match {
-    case mp: MPrimitive => true
-    case _              => false
+    case _: MPrimitive => true
+    case _             => false
   }
 
   // TODO: pyName, isPacked and getPacked have been removed on a different branch (keep them removed when rebasing)
@@ -275,7 +279,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
         case MString | MBinary                                => true
         case _                                                => false
       }
-    case e: MExtern => false // TODO: implement e: MExtern
+    case _: MExtern => false // TODO: implement e: MExtern
     case _          => isPacked(ty.resolved)
   }
 
@@ -314,7 +318,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
             )
         }
       }
-      case e: MExtern => argName // TODO: implement e: MExtern
+      case _: MExtern => argName // TODO: implement e: MExtern
       case _ => getPacked(arg.ty.resolved, isOpt = false, argName, pyArgName)
     }
   }
@@ -327,12 +331,12 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   // from Python names
-  def fromRAII(name: String, ty: MExpr, isOpt: Boolean) = {
+  def fromRAII(name: String, ty: MExpr, isOpt: Boolean): String = {
     ty.base match {
       case MString    => idPython.method(name + ".get_djinni_string()")
       case MBinary    => idPython.method(name + ".get_djinni_binary()")
       case MOptional  => convertFrom(name, ty, true)
-      case e: MExtern => name // TODO: implement e: MExtern
+      case _: MExtern => name // TODO: implement e: MExtern
       case _          => convertFrom(name, ty, isOpt)
     }
   }
@@ -344,7 +348,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
         case _ => fromRAII(name, ty.resolved.args.head, isOpt = true)
       }
     }
-    case e: MExtern => name // TODO: implement e: MExtern
+    case _: MExtern => name // TODO: implement e: MExtern
     case _          => fromRAII(name, ty.resolved, isOpt = false)
   }
 
@@ -352,7 +356,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     ty.base match {
       case MString    => idPython.method(name + ".release_djinni_string()")
       case MBinary    => idPython.method(name + ".release_djinni_binary()")
-      case e: MExtern => name // TODO: implement e: MExtern
+      case _: MExtern => name // TODO: implement e: MExtern
       case _ =>
         fromRAII(
           name,
@@ -369,7 +373,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
           idPython.method(name + ".release_djinni_boxed" + "()")
         case _ => releaseRAII(name, ty.resolved.args.head, isOpt = true)
       }
-    case e: MExtern => name // TODO: implement e: MExtern
+    case _: MExtern => name // TODO: implement e: MExtern
     case _          => releaseRAII(name, ty.resolved, isOpt = false)
   }
 
@@ -382,7 +386,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     val opt_s = if (isOpt) "Opt" else ""
 
     ty.base match {
-      case mp: MPrimitive => "CPyPrimitive.toPy" + p(local)
+      case _: MPrimitive => "CPyPrimitive.toPy" + p(local)
       case MString | MBinary | MDate =>
         "CPy" + idlName + ".toPy" + opt_s + p(local)
       case MList =>
@@ -412,7 +416,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
           case _ => convertTo(name, ty.args.head, isOpt = true)
         }
       }
-      case e: MExtern => name // TODO: implement e: MExtern
+      case _: MExtern => name // TODO: implement e: MExtern
       case _          => name
     }
   }
@@ -436,7 +440,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
           case MString | MBinary => convertToRelease(name, ty.args.head)
           case _                 => convertTo(name, ty, isOpt = false)
         }
-      case e: MExtern => name // TODO: implement e: MExtern
+      case _: MExtern => name // TODO: implement e: MExtern
       case _          => convertTo(name, ty, isOpt = false)
     }
   }
@@ -449,7 +453,7 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
     val opt_s = if (isOpt) "Opt" else ""
 
     ty.base match {
-      case mp: MPrimitive => "CPyPrimitive.fromPy" + p(local)
+      case _: MPrimitive => "CPyPrimitive.fromPy" + p(local)
       case MString | MBinary | MDate =>
         "CPy" + idlName + ".fromPy" + opt_s + p(local)
       case MList =>
@@ -478,10 +482,10 @@ class PythonMarshal(spec: Spec) extends Marshal(spec) {
           case _ => convertFrom(name, ty.args.head, isOpt = true)
         }
       }
-      case e: MExtern => name // TODO: implement e: MExtern
+      case _: MExtern => name // TODO: implement e: MExtern
       case _          => name
     }
   }
 
-  def privateClassMember(s: String) = "_" + s // private class member
+  def privateClassMember(s: String): String = "_" + s // private class member
 }

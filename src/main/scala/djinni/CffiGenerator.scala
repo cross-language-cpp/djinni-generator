@@ -21,9 +21,14 @@ import djinni.writer.IndentWriter
 
 class CffiGenerator(spec: Spec) extends Generator(spec) {
   val marshal = new PythonMarshal(spec)
-  val cffi = spec.pycffiPackageName + "_cffi"
+  val cffi: String = spec.pycffiPackageName + "_cffi"
 
-  def writeCffiFile(ident: String, origin: String, f: IndentWriter => Unit) {
+  def writeCffiFile(
+      ident: String,
+      origin: String,
+      f: IndentWriter => Unit
+  ): Unit = {
+    val _ = (ident, origin) // unused, TODO: remove
     createFileOnce(
       spec.pycffiOutFolder.get,
       "pycffi_lib_build" + ".py",
@@ -53,7 +58,7 @@ class CffiGenerator(spec: Spec) extends Generator(spec) {
         w.wl("ffi = FFI()")
         w.wl
         // Paths relative to test-suite/pybuild
-        //TODO: raise exception if not at least 2 arguments?
+        // TODO: raise exception if not at least 2 arguments?
         w.wl("args = sys.argv[1:]")
         w.wl(
           "cdef_headers = sort_by_import_order(clean_headers_for(args, 'python_cdef_ignore'))"

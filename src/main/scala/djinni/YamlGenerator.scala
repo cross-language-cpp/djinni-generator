@@ -5,8 +5,10 @@ import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
 import djinni.writer.IndentWriter
-import collection.JavaConverters._
+
 import java.util.{Map => JMap}
+
+import collection.JavaConverters._
 class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   val cppMarshal = new CppMarshal(spec)
@@ -66,7 +68,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
       }
     )
 
-  private def write(w: IndentWriter, td: TypeDecl) {
+  private def write(w: IndentWriter, td: TypeDecl): Unit = {
     write(w, preamble(td))
     w.wl("cpp:").nested { write(w, cpp(td)) }
     w.wl("objc:").nested { write(w, objc(td)) }
@@ -76,7 +78,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     w.wl("cs:").nested { write(w, cs(td)) }
   }
 
-  private def write(w: IndentWriter, m: Map[String, Any]) {
+  private def write(w: IndentWriter, m: Map[String, Any]): Unit = {
     for ((k, v) <- m) {
       w.w(k + ": ")
       v match {
@@ -91,20 +93,20 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  private def write(w: IndentWriter, s: Seq[Any]) {
+  private def write(w: IndentWriter, s: Seq[Any]): Unit = {
     // The only arrays we have are small enough to use flow notation
     w.wl(s.mkString("[", ",", "]"))
   }
 
-  private def write(w: IndentWriter, b: Boolean) {
+  private def write(w: IndentWriter, b: Boolean): Unit = {
     w.wl(if (b) "true" else "false")
   }
 
-  private def write(w: IndentWriter, s: String) {
+  private def write(w: IndentWriter, s: String): Unit = {
     if (s.isEmpty) w.wl(q("")) else w.wl(s)
   }
 
-  private def write(w: IndentWriter, s: QuotedString) {
+  private def write(w: IndentWriter, s: QuotedString): Unit = {
     if (s.str.isEmpty) w.wl(q(""))
     else w.wl("'" + s.str.replaceAllLiterally("'", "''") + "'")
   }
@@ -191,14 +193,14 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
 
   private def meta(td: TypeDecl) = {
     val defType = td.body match {
-      case i: Interface => DInterface
-      case r: Record    => DRecord
-      case e: Enum      => DEnum
+      case _: Interface => DInterface
+      case _: Record    => DRecord
+      case _: Enum      => DEnum
     }
     MDef(td.ident, 0, defType, td.body)
   }
 
-  override def generate(idl: Seq[TypeDecl]) {
+  override def generate(idl: Seq[TypeDecl]): Unit = {
     val internOnly = idl
       .collect { case itd: InternTypeDecl => itd }
       .sortWith(_.ident.name < _.ident.name)
@@ -211,7 +213,12 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     // unused
   }
 
@@ -221,7 +228,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     // unused
   }
 
@@ -231,7 +238,7 @@ class YamlGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     // unused
   }
 }
@@ -245,7 +252,7 @@ object YamlGenerator {
       javaOutRequired: Boolean,
       jniOutRequired: Boolean,
       cppCliOutRequired: Boolean
-  ) = MExtern(
+  ): MExtern = MExtern(
     td.ident.name.stripPrefix(
       td.properties("prefix").toString
     ), // Make sure the generator uses this type with its original name for all intents and purposes
@@ -388,8 +395,8 @@ object YamlGenerator {
   }
 
   private def defType(td: ExternTypeDecl) = td.body match {
-    case i: Interface => DInterface
-    case r: Record    => DRecord
-    case e: Enum      => DEnum
+    case _: Interface => DInterface
+    case _: Record    => DRecord
+    case _: Enum      => DEnum
   }
 }

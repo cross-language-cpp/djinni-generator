@@ -15,13 +15,12 @@
 
 package djinni
 
-import java.io.StringWriter
-
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
 import djinni.writer.IndentWriter
 
+import java.io.StringWriter
 import scala.collection.mutable
 
 class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
@@ -30,15 +29,15 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
   val cppMarshal = new CppMarshal(spec)
 
   class ObjcRefs() {
-    var body = mutable.TreeSet[String]()
-    var privHeader = mutable.TreeSet[String]()
+    var body: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var privHeader: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- objcppMarshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- objcppMarshal.references(m)) r match {
       case ImportRef(arg) => body.add("#import " + arg)
       case _              =>
     }
@@ -50,8 +49,13 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     ) + ");"
   )
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
-    var imports = mutable.TreeSet[String]()
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
+    val imports = mutable.TreeSet[String]()
     imports.add(
       "#import " + q(
         objcppMarshal.objcBaseLibIncludePrefix + "DJIMarshal+Private.h"
@@ -65,7 +69,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       )
     )
 
-    writeObjcFile(ident.name, isHeader = true, origin, imports, w => {})
+    writeObjcFile(ident.name, isHeader = true, origin, imports, _ => {})
   }
 
   def headerName(ident: String): String =
@@ -82,7 +86,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty))
@@ -117,7 +121,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       case _           =>
     }
 
-    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter) {
+    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter): Unit = {
       val label = if (method.static) "+" else "-"
       val ret = objcMarshal.fqReturnType(method.ret)
       val decl = s"$label ($ret)${idObjc.method(method.ident)}"
@@ -285,7 +289,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 )
 
                 w.wl(";")
-                m.ret.fold()(r =>
+                m.ret.fold(())(r =>
                   w.wl(s"return ${objcppMarshal.fromCpp(r, "objcpp_result_")};")
                 )
               }
@@ -328,7 +332,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                       val ret = m.ret.fold("")(_ => "auto objcpp_result_ = ")
                       val call =
                         s"[djinni_private_get_proxied_objc_object() ${idObjc
-                          .method(m.ident)}"
+                            .method(m.ident)}"
                       writeAlignedObjcCall(
                         w,
                         ret + call,
@@ -341,7 +345,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                           )
                       )
                       w.wl(";")
-                      m.ret.fold()(ty => {
+                      m.ret.fold(())(ty => {
                         if (
                           spec.cppNnCheckExpression.nonEmpty && isInterface(
                             ty.resolved
@@ -394,7 +398,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 // C++ only. In this case we generate a class instead of a protocol, so
                 // we don't have to do any casting at all, just access cppRef directly.
                 w.wl("return " + nnCheck("objc->_cppRefHandle.get()") + ";")
-                //w.wl(s"return ${spec.cppNnCheckExpression.getOrElse("")}(objc->_cppRefHandle.get());")
+                // w.wl(s"return ${spec.cppNnCheckExpression.getOrElse("")}(objc->_cppRefHandle.get());")
               } else if (i.ext.cpp || i.ext.objc) {
                 // ObjC only, or ObjC and C++.
                 if (i.ext.cpp) {
@@ -465,7 +469,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     for (c <- r.consts)
       refs.find(c.ty)
@@ -553,7 +557,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                 w.wl(
                   "(void)obj; // Suppress warnings in relase builds for empty records"
                 )
-              val call = "return CppType("
+
               writeAlignedCall(
                 w,
                 "return {",
@@ -599,7 +603,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     val folder =
       if (isHeader) spec.objcppHeaderOutFolder else spec.objcppOutFolder
     val fileName =
@@ -613,7 +617,7 @@ class ObjcppGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         w.wl("// This file was generated by Djinni from " + origin)
         w.wl
         if (refs.nonEmpty) {
-          var included = mutable.TreeSet[String]()
+          val included = mutable.TreeSet[String]()
           for (s <- refs) {
             // Ignore the ! in front of each line; used to put own headers to the top
             // according to Objective-C style guide

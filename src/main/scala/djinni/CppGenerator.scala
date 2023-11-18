@@ -28,20 +28,22 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
   val marshal = new CppMarshal(spec)
 
-  val writeCppFile = writeCppFileGeneric(
-    spec.cppOutFolder.get,
-    spec.cppNamespace,
-    spec.cppFileIdentStyle,
-    spec.cppIncludePrefix
-  ) _
+  val writeCppFile
+      : (String, String, Iterable[String], IndentWriter => Unit) => Unit =
+    writeCppFileGeneric(
+      spec.cppOutFolder.get,
+      spec.cppNamespace,
+      spec.cppFileIdentStyle,
+      spec.cppIncludePrefix
+    ) _
   def writeHppFile(
       name: String,
       origin: String,
       includes: Iterable[String],
       fwds: Iterable[String],
       f: IndentWriter => Unit,
-      f2: IndentWriter => Unit = (w => {})
-  ) =
+      f2: IndentWriter => Unit = (_ => {})
+  ): Unit =
     writeHppFileGeneric(
       spec.cppHeaderOutFolder.get,
       spec.cppNamespace,
@@ -60,9 +62,9 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       spec.cppHeaderOutFolder.get,
       cppNamespace,
       spec.cppFileIdentStyle
-    )(name, origin, includes, fwds, f, (w => {}))
+    )(name, origin, includes, fwds, f, (_ => {}))
 
-  def writeJsonExtensionFile(f: IndentWriter => Unit) {
+  def writeJsonExtensionFile(f: IndentWriter => Unit): Unit = {
     createFileOnce(
       spec.cppHeaderOutFolder.get,
       "json+extension.hpp",
@@ -75,7 +77,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     )
   }
 
-  def writeNlohmannJsonExtensionFile() {
+  def writeNlohmannJsonExtensionFile(): Unit = {
     val extensionContent = Source
       .fromResource("extension/json/nlohmann/json+extension.hpp")
       .getLines
@@ -85,35 +87,35 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     })
   }
 
-  def writeDeprecated(w: IndentWriter, doc: Doc) {
+  def writeDeprecated(w: IndentWriter, doc: Doc): Unit = {
     deprecatedText(doc) match {
       case None     =>
       case Some("") => w.wl("[[deprecated]]")
-      case Some(s)  => w.wl(s"[[deprecated(\"$s\")]]")
+      case Some(s)  => w.wl(s"""[[deprecated(\"$s\")]]""")
     }
   }
 
-  def deprecatedAttr(doc: Doc) = {
+  def deprecatedAttr(doc: Doc): String = {
     deprecatedText(doc) match {
       case None     => ""
       case Some("") => " [[deprecated]]"
-      case Some(s)  => s" [[deprecated(\"$s\")]]"
+      case Some(s)  => s""" [[deprecated(\"$s\")]]"""
     }
   }
 
   class CppRefs(name: String, extension: String = "") {
-    var hpp = mutable.TreeSet[String]()
-    var hppFwds = mutable.TreeSet[String]()
-    var cpp = mutable.TreeSet[String]()
+    var hpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var hppFwds: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var cpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    def find(ty: TypeRef, forwardDeclareOnly: Boolean) {
+    def find(ty: TypeRef, forwardDeclareOnly: Boolean): Unit = {
       find(ty.resolved, forwardDeclareOnly)
     }
-    def find(tm: MExpr, forwardDeclareOnly: Boolean) {
+    def find(tm: MExpr, forwardDeclareOnly: Boolean): Unit = {
       tm.args.foreach((x) => find(x, forwardDeclareOnly))
       find(tm.base, forwardDeclareOnly)
     }
-    def find(m: Meta, forwardDeclareOnly: Boolean) = {
+    def find(m: Meta, forwardDeclareOnly: Boolean): Unit = {
       for (r <- marshal.hppReferences(m, name, forwardDeclareOnly, extension))
         r match {
           case ImportRef(arg) => hpp.add("#include " + arg)
@@ -127,7 +129,12 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new CppRefs(ident.name)
     val self = marshal.typename(ident, e)
 
@@ -155,7 +162,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
         if (e.flags) {
           // Define some operators to make working with "enum class" flags actually practical
-          def binaryOp(op: String) {
+          def binaryOp(op: String): Unit = {
             w.w(s"constexpr $self operator$op($self lhs, $self rhs) noexcept")
               .braced {
                 w.wl(
@@ -303,19 +310,19 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def shouldConstexpr(c: Const) = {
+  def shouldConstexpr(c: Const): Boolean = {
     // Make sure we don't constexpr optionals as some might not support it
     val canConstexpr = c.ty.resolved.base match {
-      case p: MPrimitive if c.ty.resolved.base != MOptional => true
+      case _: MPrimitive if c.ty.resolved.base != MOptional => true
       case _                                                => false
     }
     canConstexpr
   }
 
-  def generateHppConstants(w: IndentWriter, consts: Seq[Const]) = {
+  def generateHppConstants(w: IndentWriter, consts: Seq[Const]): Unit = {
     for (c <- consts) {
       // set value in header if can constexpr (only primitives)
-      var constexpr = shouldConstexpr(c)
+      val constexpr = shouldConstexpr(c)
       var constValue = ";"
       if (constexpr) {
         constValue = c.value match {
@@ -343,7 +350,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       consts: Seq[Const],
       selfName: String
-  ) = {
+  ): Unit = {
     def writeCppConst(w: IndentWriter, ty: TypeRef, v: Any): Unit = v match {
       case l: Long => w.w(l.toString)
       case d: Double if marshal.fieldType(ty) == "float" =>
@@ -403,7 +410,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new CppRefs(ident.name)
     r.fields.foreach(f => refs.find(f.ty, false))
     r.consts.foreach(c => refs.find(c.ty, false))
@@ -437,7 +444,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
     val deprecationType = deprecatedAttr(doc) + " "
 
     // C++ Header
-    def writeCppPrototype(w: IndentWriter) {
+    def writeCppPrototype(w: IndentWriter): Unit = {
       if (r.ext.cpp) {
         w.w(s"struct $self; // Requiring extended class")
         w.wl
@@ -561,7 +568,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                       case DRecord =>
                         w.w(s"""if (j.contains("$name"))""").braced {
                           w.wl(s"""result.$name = j.at("$name").get<${marshal
-                            .fqTypename(fields(i).ty)}>();""")
+                              .fqTypename(fields(i).ty)}>();""")
                         }
                       case DEnum =>
                         w.w(s"""if (j.contains("$name"))""").braced {
@@ -690,7 +697,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new CppRefs(ident.name)
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty, true))
@@ -734,7 +741,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             } else {
               val constFlag = if (m.const) " const" else ""
               w.wl(s"virtual $ret ${idCpp.method(m.ident)}${params
-                .mkString("(", ", ", ")")}$constFlag = 0;")
+                  .mkString("(", ", ", ")")}$constFlag = 0;")
             }
           }
         }
@@ -755,7 +762,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
 
   }
 
-  def writeCppTypeParams(w: IndentWriter, params: Seq[TypeParam]) {
+  def writeCppTypeParams(w: IndentWriter, params: Seq[TypeParam]): Unit = {
     if (params.isEmpty) return
     w.wl(
       "template " + params

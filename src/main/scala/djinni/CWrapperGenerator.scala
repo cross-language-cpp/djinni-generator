@@ -19,7 +19,6 @@ import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
 import djinni.writer.IndentWriter
-import sun.reflect.generics.tree.ReturnType
 
 import scala.collection.mutable
 
@@ -30,7 +29,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
   val cppMarshal = new CppMarshal(spec)
   val dw = "djinni_this"
 
-  def getCppDefArgs(m: Interface.Method, self: String) = {
+  def getCppDefArgs(m: Interface.Method, self: String): String = {
     if (m.static || self == "") {
       marshal.cArgDecl(
         m.params.map(p =>
@@ -47,7 +46,11 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getDefArgs(m: Interface.Method, self: String, forHeader: Boolean) = {
+  def getDefArgs(
+      m: Interface.Method,
+      self: String,
+      forHeader: Boolean
+  ): String = {
     if (m.static || self == "") {
       marshal.cArgDecl(
         m.params.map(p =>
@@ -66,13 +69,17 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  def getCArgTypes(m: Interface.Method, self: String, forHeader: Boolean) = {
+  def getCArgTypes(
+      m: Interface.Method,
+      self: String,
+      forHeader: Boolean
+  ): String = {
     marshal.cArgDecl(
       Seq(self) ++ m.params.map(p => marshal.cParamType(p.ty, forHeader))
     )
   }
 
-  def getRecordTypes(r: Record, forHeader: Boolean) = {
+  def getRecordTypes(r: Record, forHeader: Boolean): Seq[String] = {
     r.fields.map(f => marshal.cParamType(f.ty, forHeader))
   }
 
@@ -240,6 +247,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
+    val _ = retType // unused, TODO, check remove
     val elTyRef = getContainerElTypeRef(tm, 0, ident)
     val addToList = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     declareObjectUniquePointerHandle(tm, classAsMethodName, w)
@@ -326,6 +334,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
+    val _ = retType // unused, TODO, check remove
     val addToMap = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     val keyTyRef = getContainerElTypeRef(tm, 0, ident)
     val valTyRef = getContainerElTypeRef(tm, 1, ident)
@@ -397,8 +406,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       classAsMethodName: String,
       w: IndentWriter
   ): Unit = {
-    val createMap =
-      marshal.callback(idCpp.method(classAsMethodName + "__create"))
+    val _ = retType // unused, TODO, check remove
+    marshal.callback(idCpp.method(classAsMethodName + "__create"))
     val addToMap = marshal.callback(idCpp.method(classAsMethodName + "__add"))
     val keyTyRef = getContainerElTypeRef(tm, 0, ident)
     declareObjectUniquePointerHandle(tm, classAsMethodName, w)
@@ -428,8 +437,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       getReturnType: String,
       addCArgs: String
   ): Unit = {
+    val _ = (tm, ident, retType) // unused, TODO, check remove
     val handle = "DjinniObjectHandle *"
-
     var ret = ""
     var cArgs = ""
     if (getName != "") {
@@ -462,8 +471,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       getReturnType: String,
       addCArgs: String
   ): Unit = {
+    val _ = (tm, ident, retType) // unused, TODO, check remove
     val handle = "struct DjinniObjectHandle *"
-
     var ret = ""
     var cArgs = ""
     if (getName != "") {
@@ -550,6 +559,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       deleteMethod: String,
       w: IndentWriter
   ): Unit = {
+    val _ = handle // unused, TODO, check remove
     w.wl(
       "djinni::Handle" + t(optHandle) + " " + djinniWrapper + "::fromCpp" + p(
         spec.cppOptionalTemplate + t(retType) + " dc"
@@ -579,6 +589,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       deleteMethod: String,
       w: IndentWriter
   ): Unit = {
+    val _ = reinterpret // unused, TODO, check remove
     w.wl(
       spec.cppOptionalTemplate + t(retTypeStr) + djinniWrapper + "::toCpp" + p(
         "djinni::Handle" + t(optHandle) + " dh"
@@ -609,6 +620,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       retType: String,
       w: IndentWriter
   ): Unit = {
+    val _ = (handle, optHandle) // unused, TODO, check remove
     w.wl(
       "static " + "djinni::Handle" + t(cppHandle) + " fromCpp" + p(
         cppMarshal.fqParamType(tm) + " dc"
@@ -641,6 +653,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = handle + " *"
@@ -763,6 +776,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = "DjinniObjectHandle *"
@@ -934,6 +948,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       h: mutable.TreeSet[String],
       hpp: mutable.TreeSet[String]
   ): Unit = {
+    val _ = className // unused, TODO, check remove
     // className is the composed idl named of the container type
     val handle = "DjinniObjectHandle"
     val handlePtr = "DjinniObjectHandle *"
@@ -1059,13 +1074,13 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
   }
 
   class CRefs(ident: Ident, origin: String) {
-    var hpp = mutable.TreeSet[String]()
-    var h = mutable.TreeSet[String]()
+    var hpp: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var h: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    def collect(ty: TypeRef, justCollect: Boolean) {
+    def collect(ty: TypeRef, justCollect: Boolean): Unit = {
       collect(ty.resolved, justCollect)
     }
-    def collect(tm: MExpr, justCollect: Boolean) {
+    def collect(tm: MExpr, justCollect: Boolean): Unit = {
       tm.args.foreach(t => collect(t, justCollect))
       collect(tm.base, justCollect)
 
@@ -1093,7 +1108,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
         }
       }
     }
-    def collect(m: Meta, justCollect: Boolean) = if (justCollect)
+    def collect(m: Meta, justCollect: Boolean): Unit = if (justCollect)
       for (r <- marshal references (m, ident)) r match {
         case ImportRef(arg) =>
           if (arg.endsWith(".hpp\"") || !arg.contains("."))
@@ -1109,6 +1124,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       methods: Seq[Interface.Method],
       w: IndentWriter
   ): Unit = {
+    val _ = cClassWrapper // unused, TODO, check remove
     for (m <- methods) {
       val ret = marshal.cReturnType(m.ret, false)
       val cArgs = getCArgTypes(m, marshal.djinniObjectHandle + " * ", false)
@@ -1132,7 +1148,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       prefix: String,
       number: Int,
       w: IndentWriter
-  ) = {
+  ): Unit = {
     val recordAsMethodName = idCpp.method(ident.name)
     var field_number = number
     for (f <- r.fields) {
@@ -1167,7 +1183,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       prefix: String,
       number: Int,
       w: IndentWriter
-  ) = {
+  ): Unit = {
     val recordAsMethodName = idCpp.method(ident.name)
     var field_number = number
     for (f <- r.fields) {
@@ -1207,7 +1223,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       prefix: String,
       number: Int,
       w: IndentWriter
-  ) = {
+  ): IndentWriter = {
     val recordAsFqClassType = withCppNs(idCpp.ty(ident.name))
     val recordAsMethodName = idCpp.method(ident.name)
     var field_number = number
@@ -1263,7 +1279,8 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       prefix: String,
       number: Int,
       w: IndentWriter
-  ) = {
+  ): IndentWriter = {
+    val _ = (prefix, number) // unused, TODO, check remove
     val recordAsMethodName = idCpp.method(ident.name)
 
     for (f <- r.fields) {
@@ -1306,7 +1323,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       create: Boolean,
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     if (create)
       createFile(
         spec.cWrapperOutFolder.get,
@@ -1363,6 +1380,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       create: Boolean,
       f: IndentWriter => Unit
   ): Unit = {
+    val _ = cppClass // unused, TODO, check remove
     if (create)
       createFile(
         spec.cWrapperHeaderOutFolder.get,
@@ -1400,6 +1418,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       create: Boolean,
       f: IndentWriter => Unit
   ): Unit = {
+    val _ = cppClass // unused, TODO, check remove
     // hpp file contains definition of DjinniStruct wrapper over cpp shared_ptr
     // meant to facilitate interuse of interfaces across files
     if (create)
@@ -1546,6 +1565,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       w: IndentWriter,
       className: String
   ): Unit = {
+    val _ = ident // unused, TODO, check remove
     w.wl("struct " + marshal.wrappedName(className) + " final {").nested {
       w.wl(
         marshal.wrappedName(className) + p(
@@ -1756,7 +1776,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
       djinniWrapper: String,
       cMethodName: String,
       w: IndentWriter
-  ) = {
+  ): IndentWriter = {
     w.wl(
       "struct " + djinniWrapper + " * " + " make_proxy_object_from_handle_" + cMethodName + p(
         "struct " + marshal.djinniObjectHandle + " * " + "c_ptr"
@@ -2148,7 +2168,7 @@ class CWrapperGenerator(spec: Spec) extends Generator(spec) {
 
   def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum): Unit = {
     val refs = new CRefs(ident, origin)
-    writeCHeader(marshal.dh + ident.name, origin, "", refs.h, true, w => {})
+    writeCHeader(marshal.dh + ident.name, origin, "", refs.h, true, _ => {})
 
     writeCppHeader(
       marshal.dh + ident.name,

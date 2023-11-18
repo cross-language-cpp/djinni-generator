@@ -41,7 +41,7 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
       consts: Seq[Const],
       selfName: String,
       genType: ObjcConstantType.Value
-  ) = {
+  ): Unit = {
     def boxedPrimitive(ty: TypeRef): String = {
       val (_, needRef) = marshal.toObjcType(ty)
       if (needRef) "@" else ""
@@ -78,16 +78,16 @@ abstract class BaseObjcGenerator(spec: Spec) extends Generator(spec) {
         }
       }
 
-    def writeObjcConstMethImpl(c: Const, w: IndentWriter) {
+    def writeObjcConstMethImpl(c: Const, w: IndentWriter): Unit = {
       val label = "+"
       val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
       val ret = marshal.fqFieldType(c.ty) + nullability
       val decl = s"$label ($ret)${idObjc.method(c.ident)}"
-      writeAlignedObjcCall(w, decl, List(), "", p => ("", ""))
+      writeAlignedObjcCall(w, decl, List(), "", _ => ("", ""))
       w.wl
 
       w.braced {
-        var static_var = s"s_${idObjc.method(c.ident)}"
+        val static_var = s"s_${idObjc.method(c.ident)}"
         w.w(s"static ${marshal.fqFieldType(c.ty)} const ${static_var} = ")
         writeObjcConstValue(w, c.ty, c.value)
         w.wl(";")

@@ -16,6 +16,7 @@
 package djinni
 
 import djinni.ast.TypeDef
+
 import scala.collection.immutable
 
 package object meta {

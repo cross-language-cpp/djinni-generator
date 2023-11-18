@@ -41,10 +41,10 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       )
     )
 
-    def find(ty: TypeRef, forwardDeclareOnly: Boolean) {
+    def find(ty: TypeRef, forwardDeclareOnly: Boolean): Unit = {
       find(ty.resolved, forwardDeclareOnly)
     }
-    def find(tm: MExpr, forwardDeclareOnly: Boolean) {
+    def find(tm: MExpr, forwardDeclareOnly: Boolean): Unit = {
       tm.args.foreach(x => find(x, forwardDeclareOnly))
       find(tm.base, forwardDeclareOnly)
     }
@@ -62,12 +62,14 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
   def withCppCliNs(namespace: String, t: String): String =
     withNs(Some(namespace), t)
 
-  val writeCppCliCppFile = writeCppFileGeneric(
-    spec.cppCliOutFolder.get,
-    spec.cppCliNamespace,
-    spec.cppCliIdentStyle.file,
-    ""
-  ) _
+  val writeCppCliCppFile
+      : (String, String, Iterable[String], IndentWriter => Unit) => Unit =
+    writeCppFileGeneric(
+      spec.cppCliOutFolder.get,
+      spec.cppCliNamespace,
+      spec.cppCliIdentStyle.file,
+      ""
+    ) _
 
   def writeCppCliHppFile(
       name: String,
@@ -75,8 +77,8 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       includes: Iterable[String],
       fwds: Iterable[String],
       f: IndentWriter => Unit,
-      f2: IndentWriter => Unit = w => {}
-  ) =
+      f2: IndentWriter => Unit = _ => {}
+  ): Unit =
     writeHppFileGeneric(
       spec.cppCliOutFolder.get,
       spec.cppCliNamespace,
@@ -164,7 +166,12 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
 
     writeCppCliHppFile(
@@ -199,7 +206,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
     refs.find(MString, false) // for: String^ ToString();
     r.fields.foreach(f => refs.find(f.ty, false))
@@ -207,7 +214,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
 
     def call(f: Field) = {
       f.ty.resolved.base match {
-        case p: MPrimitive => "."
+        case _: MPrimitive => "."
         case MOptional     => "."
         case MDate         => "."
         case e: MExtern    => if (e.cs.reference.get) "->" else "."
@@ -300,7 +307,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
             writeDoc(w, f.doc)
             w.wl(
               s"${marshal.fqFieldType(f.ty.resolved, fieldNamesInScope)} ${idCs
-                .field(f.ident)};"
+                  .field(f.ident)};"
             )
           }
         }
@@ -369,7 +376,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                 .map(f => {
                   val property = idCs.property(f.ident)
                   f.ty.resolved.base match {
-                    case p: MPrimitive => s"$property == other->$property"
+                    case _: MPrimitive => s"$property == other->$property"
                     case _ => s"$property${call(f)}Equals(other->$property)"
                   }
                 })
@@ -459,7 +466,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new CppCliRefs(ident.name)
     i.methods.foreach(m => {
       m.params.foreach(p => refs.find(p.ty, true))
@@ -592,11 +599,11 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                 )
 
                 w.wl(";")
-                m.ret.fold()(r =>
+                m.ret.fold(())(r =>
                   w.wl(s"return ${marshal.fromCpp(r, "cs_result")};")
                 )
               }
-              m.ret.fold()(r =>
+              m.ret.fold(())(r =>
                 w.wl(
                   s"return ${dummyConstant(r)}; // Unreachable! (Silencing compiler warnings.)"
                 )
@@ -647,11 +654,11 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                     )
 
                     w.wl(";")
-                    m.ret.fold()(r =>
+                    m.ret.fold(())(r =>
                       w.wl(s"return ${marshal.fromCpp(r, "cs_result")};")
                     )
                   }
-                  m.ret.fold()(r =>
+                  m.ret.fold(())(r =>
                     w.wl(
                       s"return ${dummyConstant(r)}; // Unreachable! (Silencing compiler warnings.)"
                     )
@@ -705,7 +712,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
                   p => s"${marshal.fromCpp(p.ty, idCpp.local(p.ident))}"
                 )
                 w.wl(";")
-                m.ret.fold()(ty => {
+                m.ret.fold(())(ty => {
                   w.wl("// TODO check cs_result for null")
                   w.wl(s"return ${marshal.toCpp(ty, "cs_result")};")
                 })

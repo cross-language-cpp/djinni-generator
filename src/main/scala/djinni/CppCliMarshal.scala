@@ -26,7 +26,10 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
     toCppCliType(tm, None, Seq(), needsHandle = true)
   def typename(ty: TypeRef, needsHandle: Boolean): String =
     toCppCliType(ty, None, Seq(), needsHandle)
-  def typename(name: String, ty: TypeDef): String = idCs.ty(name)
+  def typename(name: String, ty: TypeDef): String = {
+    val _ = ty // unused, TODO: remove
+    idCs.ty(name)
+  }
 
   override def fqTypename(tm: meta.MExpr): String =
     toCppCliType(tm, Some(spec.cppCliNamespace), Seq(), needsHandle = true)
@@ -67,13 +70,14 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def include(ident: String, isExtendedRecord: Boolean = false): String = {
+    val _ = isExtendedRecord // unused, TODO: remove
     q(spec.cppCliIdentStyle.file(ident) + "." + spec.cppHeaderExt)
   }
 
   def isReference(td: TypeDecl): Boolean = td.body match {
-    case i: Interface => true
-    case r: Record    => true
-    case e: Enum      => false
+    case _: Interface => true
+    case _: Record    => true
+    case _: Enum      => false
   }
 
   def references(
@@ -83,7 +87,7 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
   ): Seq[SymbolReference] = m match {
     case d: MDef =>
       d.body match {
-        case i: Interface =>
+        case _: Interface =>
           if (d.name != exclude) {
             if (forwardDeclareOnly) {
               List(
@@ -247,9 +251,9 @@ class CppCliMarshal(spec: Spec) extends Marshal(spec) {
           case MList      => "List"
           case MSet       => "Set"
           case MMap       => "Map"
-          case d: MDef    => throw new AssertionError("unreachable")
-          case e: MExtern => throw new AssertionError("unreachable")
-          case p: MParam  => throw new AssertionError("not applicable")
+          case _: MDef    => throw new AssertionError("unreachable")
+          case _: MExtern => throw new AssertionError("unreachable")
+          case _: MParam  => throw new AssertionError("not applicable")
         }
       )
   }

@@ -15,20 +15,19 @@
 
 package djinni
 
-import java.io.{
-  BufferedWriter,
-  File,
-  FileNotFoundException,
-  FileWriter,
-  IOException
-}
-
 import djinni.generatorTools._
-import scopt.{OptionDef, OptionParser}
+import scopt.OptionDef
+import scopt.OptionParser
+
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileWriter
+import java.io.IOException
 
 object Main {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     var idlFile: File = null
     var idlIncludePaths: List[String] = List("")
     var cppOutFolder: Option[File] = None
@@ -62,7 +61,7 @@ object Main {
     var jniIncludePrefix: String = ""
     var jniIncludeCppPrefix: String = ""
     var jniFileIdentStyleOptional: Option[IdentConverter] = None
-    var jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
+    val jniBaseLibClassIdentStyleOptional: Option[IdentConverter] = None
     var jniGenerateMain: Boolean = true
     var cppHeaderOutFolderOptional: Option[File] = None
     var cppExt: String = "cpp"
@@ -759,8 +758,7 @@ object Main {
       else cWrapperOutFolder
     val jniClassIdentStyle =
       jniClassIdentStyleOptional.getOrElse(cppIdentStyle.ty)
-    val jniBaseLibClassIdentStyle =
-      jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
+    jniBaseLibClassIdentStyleOptional.getOrElse(jniClassIdentStyle)
     val jniFileIdentStyle =
       jniFileIdentStyleOptional.getOrElse(cppFileIdentStyle)
     var objcFileIdentStyle =
@@ -816,7 +814,7 @@ object Main {
       if (!validJsonSerializers.contains(cppJsonSerialization.get)) {
         System.err.println(
           s"Error: Invalid value for --cpp-json-serializers '${cppJsonSerialization.get}'. Available serializers: ['${validJsonSerializers
-            .mkString(",")}']."
+              .mkString(",")}']."
         )
         System.exit(1); return
       }

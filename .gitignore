@@ -18,3 +18,7 @@ project/metals.sbt
 # for personal trials / tests that shall be ignored but stay on your disk
 ztest/
 .bsp/
+
+# OS specific
+.DS_Store
+

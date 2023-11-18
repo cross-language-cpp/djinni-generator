@@ -16,17 +16,17 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
   def typename(ty: TypeRef, scopeSymbols: Seq[String]): String =
     typename(ty.resolved, scopeSymbols)
   def typename(name: String, ty: TypeDef): String = ty match {
-    case e: Enum      => idCpp.enumType(name)
-    case i: Interface => idCpp.ty(name)
-    case r: Record    => idCpp.ty(name)
+    case _: Enum      => idCpp.enumType(name)
+    case _: Interface => idCpp.ty(name)
+    case _: Record    => idCpp.ty(name)
   }
 
   override def fqTypename(tm: MExpr): String =
     toCppType(tm, Some(spec.cppNamespace), Seq())
   def fqTypename(name: String, ty: TypeDef): String = ty match {
-    case e: Enum      => withNs(Some(spec.cppNamespace), idCpp.enumType(name))
-    case i: Interface => withNs(Some(spec.cppNamespace), idCpp.ty(name))
-    case r: Record    => withNs(Some(spec.cppNamespace), idCpp.ty(name))
+    case _: Enum      => withNs(Some(spec.cppNamespace), idCpp.enumType(name))
+    case _: Interface => withNs(Some(spec.cppNamespace), idCpp.ty(name))
+    case _: Record    => withNs(Some(spec.cppNamespace), idCpp.ty(name))
   }
 
   def paramType(tm: MExpr, scopeSymbols: Seq[String]): String =
@@ -109,7 +109,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
           } else {
             List()
           }
-        case i: Interface =>
+        case _: Interface =>
           val base = if (d.name != exclude) {
             List(
               ImportRef("<memory>"),
@@ -134,7 +134,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
           List(ImportRef("<memory>"), ImportRef(e.cpp.header.get))
         case _ => List(ImportRef(e.cpp.header.get))
       }
-    case p: MParam => List()
+    case _: MParam => List()
   }
 
   def cppReferences(
@@ -155,7 +155,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
               } else {
                 List()
               }
-            case e: Enum =>
+            case _: Enum =>
               if (d.name != exclude) {
                 List(ImportRef(include(d.name)))
               } else {
@@ -187,8 +187,9 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
       ty: TypeRef,
       namespace: Option[String] = None,
       scopeSymbols: Seq[String] = Seq()
-  ): String =
+  ): String = {
     toCppType(ty.resolved, namespace, scopeSymbols)
+  }
 
   private def toCppType(
       tm: MExpr,
@@ -285,7 +286,7 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def byValue(tm: MExpr): Boolean = tm.base match {
-    case p: MPrimitive => true
+    case _: MPrimitive => true
     case d: MDef =>
       d.defType match {
         case DEnum => true
@@ -302,9 +303,9 @@ class CppMarshal(spec: Spec) extends Marshal(spec) {
   }
 
   def byValue(td: TypeDecl): Boolean = td.body match {
-    case i: Interface => false
-    case r: Record    => false
-    case e: Enum      => true
+    case _: Interface => false
+    case _: Record    => false
+    case _: Enum      => true
   }
 
   // this can be used in c++ generation to know whether a const& should be applied to the parameter or not

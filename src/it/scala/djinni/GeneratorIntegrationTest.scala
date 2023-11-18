@@ -732,15 +732,15 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     }
 
     it(s"skip-generate should not generate any files") {
-      var idlFile = "all_datatypes"
-      var outputPath = "src/it/resources/result/skip_generate"
+      val idlFile = "all_datatypes"
+      val outputPath = "src/it/resources/result/skip_generate"
       Given(s"`$idlFile.djinni`")
       When(s"passing skip-generation true")
 
       djinni(djinniParams(idlFile, outputPath) + " --skip-generation true")
 
       Then(s"`$outputPath` should have been created")
-      var dir = new java.io.File(outputPath, idlFile)
+      val dir = new java.io.File(outputPath, idlFile)
       dir.exists should be(true)
 
       Then(s"genreated-files.txt should have been generated")
@@ -748,7 +748,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       gen.exists should be(true)
 
       Then(s"only the generated-files.txt should be generated")
-      var files = dir.listFiles()
+      val files = dir.listFiles()
       files should contain only (gen)
     }
 
@@ -815,7 +815,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     When(
       "calling the generator with `--cpp-namespace custom_namespace, --cpp-json-serialization nlohmann_json and --cpp-out`"
     )
-    val output = djinni(
+    val _ = djinni(
       s"--idl src/it/resources/${idlFile}.djinni --cpp-namespace custom_namespace --cpp-json-serialization nlohmann_json --cpp-out $outputPath/cpp --cpp-header-out $outputPath/cpp-headers"
     )
     Then(

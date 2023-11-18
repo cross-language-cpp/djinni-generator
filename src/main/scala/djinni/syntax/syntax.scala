@@ -18,12 +18,12 @@ package djinni.syntax
 import java.io.File
 
 case class Loc(file: File, line: Int, col: Int) {
-  override def toString() =
+  override def toString(): String =
     file.getAbsolutePath() + " (" + line + "." + col + ")"
 }
 
 case class Error(loc: Loc, msg: String) {
-  override def toString() = loc + ": " + msg
+  override def toString(): String = loc + ": " + msg
   def toException: Error.Exception = Error.Exception(this)
 }
 

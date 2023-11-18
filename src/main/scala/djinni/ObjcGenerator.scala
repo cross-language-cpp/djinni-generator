@@ -26,21 +26,26 @@ import scala.collection.mutable
 class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
   class ObjcRefs() {
-    var body = mutable.TreeSet[String]()
-    var header = mutable.TreeSet[String]()
+    var body: mutable.TreeSet[String] = mutable.TreeSet[String]()
+    var header: mutable.TreeSet[String] = mutable.TreeSet[String]()
 
-    def find(ty: TypeRef) { find(ty.resolved) }
-    def find(tm: MExpr) {
+    def find(ty: TypeRef): Unit = { find(ty.resolved) }
+    def find(tm: MExpr): Unit = {
       tm.args.foreach(find)
       find(tm.base)
     }
-    def find(m: Meta) = for (r <- marshal.references(m)) r match {
+    def find(m: Meta): Unit = for (r <- marshal.references(m)) r match {
       case ImportRef(arg)   => header.add("#import " + arg)
       case DeclRef(decl, _) => header.add(decl)
     }
   }
 
-  override def generateEnum(origin: String, ident: Ident, doc: Doc, e: Enum) {
+  override def generateEnum(
+      origin: String,
+      ident: Ident,
+      doc: Doc,
+      e: Enum
+  ): Unit = {
     val refs = new ObjcRefs()
 
     refs.header.add("#import <Foundation/Foundation.h>")
@@ -76,26 +81,26 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
     ident
   ) + "." + spec.objcppExt // Must be a Obj-C++ file in case the constants are not compile-time constant expressions
 
-  def writeObjcConstMethDecl(c: Const, w: IndentWriter) {
+  def writeObjcConstMethDecl(c: Const, w: IndentWriter): Unit = {
     val label = "+"
     val nullability = marshal.nullability(c.ty.resolved).fold("")(" __" + _)
     val ret = marshal.fqFieldType(c.ty) + nullability
     val decl = s"$label ($ret)${idObjc.method(c.ident)}"
-    writeAlignedObjcCall(w, decl, List(), ";", p => ("", ""))
+    writeAlignedObjcCall(w, decl, List(), ";", _ => ("", ""))
   }
 
   def deprecatedAttr(doc: Doc): String = {
     deprecatedText(doc) match {
       case Some("")      => " __deprecated"
-      case Some(message) => s" __deprecated_msg(\"$message\")"
+      case Some(message) => s""" __deprecated_msg(\"$message\")"""
       case None          => ""
     }
   }
 
-  def writeDocAttributes(w: IndentWriter, doc: Doc) {
+  def writeDocAttributes(w: IndentWriter, doc: Doc): Unit = {
     deprecatedText(doc) match {
       case Some("")      => w.wl("__deprecated")
-      case Some(message) => w.wl(s" __deprecated_msg(\"$message\")")
+      case Some(message) => w.wl(s""" __deprecated_msg(\"$message\")""")
       case None          =>
     }
   }
@@ -108,7 +113,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       typeParams: Seq[TypeParam],
       i: Interface
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     i.methods.map(m => {
       m.params.map(p => refs.find(p.ty))
@@ -122,7 +127,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
 
     refs.header.add("#import <Foundation/Foundation.h>")
 
-    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter) {
+    def writeObjcFuncDecl(method: Interface.Method, w: IndentWriter): Unit = {
       val label = if (method.static) "+" else "-"
       val ret = marshal.returnType(method.ret)
       val decl = s"$label ($ret)${idObjc.method(method.ident)}"
@@ -212,7 +217,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       doc: Doc,
       params: Seq[TypeParam],
       r: Record
-  ) {
+  ): Unit = {
     val refs = new ObjcRefs()
     for (c <- r.consts)
       refs.find(c.ty)
@@ -260,7 +265,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         writeDocAttributes(w, doc)
         w.wl(s"@interface $self : NSObject")
 
-        def writeInitializer(sign: String, prefix: String) {
+        def writeInitializer(sign: String, prefix: String): Unit = {
           val decl = s"$sign (nonnull instancetype)$prefix$firstInitializerArg"
           writeAlignedObjcCall(
             w,
@@ -293,7 +298,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
           val deprecated =
             deprecatedAttr(f.doc)
           w.wl(s"@property (nonatomic, readonly${nullability}) ${marshal
-            .fqFieldType(f.ty)} ${idObjc.field(f.ident)}${deprecated};")
+              .fqFieldType(f.ty)} ${idObjc.field(f.ident)}${deprecated};")
         }
         if (r.derivingTypes.contains(DerivingType.Ord)) {
           w.wl
@@ -415,54 +420,54 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                   case MBinary =>
                     w.w(
                       s"[self.${idObjc.field(f.ident)} isEqualToData:typedOther.${idObjc
-                        .field(f.ident)}]"
+                          .field(f.ident)}]"
                     )
                   case MList =>
                     w.w(s"[self.${idObjc.field(f.ident)} isEqualToArray:typedOther.${idObjc
-                      .field(f.ident)}]")
+                        .field(f.ident)}]")
                   case MSet =>
                     w.w(
                       s"[self.${idObjc.field(f.ident)} isEqualToSet:typedOther.${idObjc
-                        .field(f.ident)}]"
+                          .field(f.ident)}]"
                     )
                   case MMap =>
                     w.w(s"[self.${idObjc.field(f.ident)} isEqualToDictionary:typedOther.${idObjc
-                      .field(f.ident)}]")
+                        .field(f.ident)}]")
                   case MOptional =>
                     f.ty.resolved.args.head.base match {
                       case df: MDef if df.defType == DEnum =>
                         w.w(
                           s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
-                            .field(f.ident)}"
+                              .field(f.ident)}"
                         )
                       case _ =>
                         w.w(s"((self.${idObjc.field(f.ident)} == nil && typedOther.${idObjc
-                          .field(f.ident)} == nil) || ")
+                            .field(f.ident)} == nil) || ")
                         w.w(s"(self.${idObjc.field(f.ident)} != nil && [self.${idObjc
-                          .field(f.ident)} isEqual:typedOther.${idObjc.field(f.ident)}]))")
+                            .field(f.ident)} isEqual:typedOther.${idObjc.field(f.ident)}]))")
                     }
                   case MString =>
                     w.w(s"[self.${idObjc.field(f.ident)} isEqualToString:typedOther.${idObjc
-                      .field(f.ident)}]")
+                        .field(f.ident)}]")
                   case MDate =>
                     w.w(
                       s"[self.${idObjc.field(f.ident)} isEqualToDate:typedOther.${idObjc
-                        .field(f.ident)}]"
+                          .field(f.ident)}]"
                     )
-                  case t: MPrimitive =>
+                  case _: MPrimitive =>
                     w.w(s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
-                      .field(f.ident)}")
+                        .field(f.ident)}")
                   case df: MDef =>
                     df.defType match {
                       case DRecord =>
                         w.w(
                           s"[self.${idObjc.field(f.ident)} isEqual:typedOther.${idObjc
-                            .field(f.ident)}]"
+                              .field(f.ident)}]"
                         )
                       case DEnum =>
                         w.w(
                           s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
-                            .field(f.ident)}"
+                              .field(f.ident)}"
                         )
                       case _ => throw new AssertionError("Unreachable")
                     }
@@ -472,16 +477,16 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                         if (e.objc.pointer.get) {
                           w.w(
                             s"[self.${idObjc.field(f.ident)} isEqual:typedOther.${idObjc
-                              .field(f.ident)}]"
+                                .field(f.ident)}]"
                           )
                         } else {
                           w.w(s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
-                            .field(f.ident)}")
+                              .field(f.ident)}")
                         }
                       case DEnum =>
                         w.w(
                           s"self.${idObjc.field(f.ident)} == typedOther.${idObjc
-                            .field(f.ident)}"
+                              .field(f.ident)}"
                         )
                       case _ => throw new AssertionError("Unreachable")
                     }
@@ -506,7 +511,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                         w.w(s"(NSUInteger)self.${idObjc.field(f.ident)}")
                       case _ => w.w(s"self.${idObjc.field(f.ident)}.hash")
                     }
-                  case t: MPrimitive =>
+                  case _: MPrimitive =>
                     w.w(s"(NSUInteger)self.${idObjc.field(f.ident)}")
                   case df: MDef =>
                     df.defType match {
@@ -558,13 +563,13 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
               f.ty.resolved.base match {
                 case MString | MDate =>
                   w.wl(s"tempResult = [self.${idObjc
-                    .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
-                case t: MPrimitive => generatePrimitiveOrder(f.ident, w)
+                      .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
+                case _: MPrimitive => generatePrimitiveOrder(f.ident, w)
                 case df: MDef =>
                   df.defType match {
                     case DRecord =>
                       w.wl(s"tempResult = [self.${idObjc
-                        .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
+                          .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
                     case DEnum => generatePrimitiveOrder(f.ident, w)
                     case _     => throw new AssertionError("Unreachable")
                   }
@@ -572,7 +577,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
                   e.defType match {
                     case DRecord =>
                       if (e.objc.pointer.get) w.wl(s"tempResult = [self.${idObjc
-                        .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
+                          .field(f.ident)} compare:other.${idObjc.field(f.ident)}];")
                       else generatePrimitiveOrder(f.ident, w)
                     case DEnum => generatePrimitiveOrder(f.ident, w)
                     case _     => throw new AssertionError("Unreachable")
@@ -600,7 +605,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
               w.w(", ")
               f.ty.resolved.base match {
                 case MOptional     => w.w(s"self.${idObjc.field(f.ident)}")
-                case t: MPrimitive => w.w(s"@(self.${idObjc.field(f.ident)})")
+                case _: MPrimitive => w.w(s"@(self.${idObjc.field(f.ident)})")
                 case df: MDef =>
                   df.defType match {
                     case DEnum => w.w(s"@(self.${idObjc.field(f.ident)})")
@@ -631,7 +636,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
       origin: String,
       refs: Iterable[String],
       f: IndentWriter => Unit
-  ) {
+  ): Unit = {
     val folder = if (isHeader) spec.objcHeaderOutFolder else spec.objcOutFolder
     val fileName =
       if (isHeader) marshal.headerName(objcName) else bodyName(objcName)

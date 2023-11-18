@@ -17,9 +17,9 @@ package djinni
 
 import djinni.ast.Record.DerivingType
 import djinni.ast._
-import djinni.generatorTools._
 import djinni.meta._
 import djinni.syntax._
+
 import scala.collection.immutable
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -48,7 +48,7 @@ package object resolver {
         topLevelDupeChecker.check(typeDecl.ident)
 
         def defType = typeDecl.body match {
-          case e: Enum =>
+          case _: Enum =>
             if (!typeDecl.params.isEmpty) {
               throw Error(
                 typeDecl.ident.loc,
@@ -56,13 +56,13 @@ package object resolver {
               ).toException
             }
             DEnum
-          case r: Record    => DRecord
-          case i: Interface => DInterface
+          case _: Record    => DRecord
+          case _: Interface => DInterface
         }
         topScope = topScope.updated(
           typeDecl.ident.name,
           typeDecl match {
-            case td: InternTypeDecl =>
+            case _: InternTypeDecl =>
               MDef(
                 typeDecl.ident.name,
                 typeDecl.params.length,
@@ -110,7 +110,7 @@ package object resolver {
     None
   }
 
-  private def resolve(scope: Scope, typeDef: TypeDef) {
+  private def resolve(scope: Scope, typeDef: TypeDef): Unit = {
     typeDef match {
       case e: Enum      => resolveEnum(scope, e)
       case r: Record    => resolveRecord(scope, r)
@@ -118,14 +118,16 @@ package object resolver {
     }
   }
 
-  private def resolveEnum(scope: Scope, e: Enum) {
+  @SuppressWarnings(Array("unused")) // scope
+  private def resolveEnum(scope: Scope, e: Enum): Unit = {
+    val _ = scope // mark unused as used, TODO, check remove
     val dupeChecker = new DupeChecker("enum option")
     for (o <- e.options) {
       dupeChecker.check(o.ident)
     }
   }
 
-  private def resolveConst(typeDef: TypeDef) {
+  private def resolveConst(typeDef: TypeDef): Unit = {
     def f(consts: Seq[Const]): Unit = {
       val resolvedConsts = new ArrayBuffer[Const]
       for (c <- consts) {
@@ -139,7 +141,7 @@ package object resolver {
       }
     }
     typeDef match {
-      case e: Enum      =>
+      case _: Enum      =>
       case r: Record    => f(r.consts)
       case i: Interface => f(i.consts)
     }
@@ -150,7 +152,7 @@ package object resolver {
       ty: MExpr,
       value: Any,
       resolvedConsts: Seq[Const]
-  ) {
+  ): Unit = {
     // Check existing consts
     if (value.isInstanceOf[ConstRef]) {
       val ref = value.asInstanceOf[ConstRef]
@@ -216,7 +218,7 @@ package object resolver {
             value match {
               case i: Long =>
                 assert(i.toDouble == value, "Const value not a valid f64")
-              case f: Double =>
+              case _: Double =>
               case _ => throw new AssertionError("Const type mismatch: f64")
             }
         }
@@ -255,13 +257,13 @@ package object resolver {
               )
           }
         }
-      case e: MExtern =>
+      case _: MExtern =>
         throw new AssertionError("Extern type not allowed for constant")
       case _ => throw new AssertionError("Const type cannot be resolved")
     }
   }
 
-  private def resolveRecord(scope: Scope, r: Record) {
+  private def resolveRecord(scope: Scope, r: Record): Unit = {
     val dupeChecker = new DupeChecker("record field")
     for (f <- r.fields) {
       dupeChecker.check(f.ident)
@@ -346,7 +348,7 @@ package object resolver {
     }
   }
 
-  private def resolveInterface(scope: Scope, i: Interface) {
+  private def resolveInterface(scope: Scope, i: Interface): Unit = {
     // Const and static methods are only allowed on +c (only) interfaces
     if (i.ext.java || i.ext.objc) {
       for (m <- i.methods) {
@@ -391,7 +393,7 @@ package object resolver {
     }
   }
 
-  private def resolveRef(scope: Scope, r: TypeRef) {
+  private def resolveRef(scope: Scope, r: TypeRef): Unit = {
     if (r.resolved != null) throw new AssertionError("double-resolve?")
     r.resolved = buildMExpr(scope, r.expr)
   }
@@ -427,7 +429,7 @@ package object resolver {
   private class DupeChecker(kind: String) {
     private val names = mutable.HashMap[String, Loc]()
 
-    def check(ident: Ident) {
+    def check(ident: Ident): Unit = {
       names.put(ident.name, ident.loc) match {
         case Some(existing) =>
           throw Error(

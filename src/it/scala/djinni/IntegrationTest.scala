@@ -10,7 +10,7 @@ import scala.sys.process._
 
 import scala.reflect.io.Directory
 import java.io.File
-import java.nio.file.Paths
+//import java.nio.file.Paths
 
 // Base class for integration tests, providing a few handy helper functions
 class IntegrationTest extends AnyFunSpec {
