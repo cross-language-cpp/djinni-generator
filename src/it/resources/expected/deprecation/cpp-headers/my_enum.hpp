@@ -12,9 +12,9 @@
  */
 enum class [[deprecated("Use something else")]] MyEnum : int {
     /** @deprecated Use something else */
-    OPTION1,
+    OPTION1 = 0,
     /** not deprecated */
-    OPTION2,
+    OPTION2 = 1,
 };
 
 namespace std {

@@ -893,6 +893,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       python = false,
       cWrapper = false,
       cppCLI = false,
+      wasm = false,
       cppOmitDefaultRecordCtor = true
     )
 
@@ -923,6 +924,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       python = false,
       cWrapper = false,
       cppCLI = false,
+      wasm = false,
       cppOmitDefaultRecordCtor = true
     )
 
@@ -957,6 +959,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       python = false,
       cWrapper = false,
       cppCLI = false,
+      wasm = false,
       cppOmitDefaultRecordCtor = true
     )
 
@@ -966,5 +969,36 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
       "the @deprecated comments are generated as __deprecated attributes"
     )
     assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
+  }
+
+  it(
+    "should generate @Deprecated annotations for TS from @deprecated notes in comments"
+  ) {
+    Given(
+      "an IDL-file that documents deprecation using @deprecated in comments"
+    )
+    val idlFile = "deprecation"
+
+    When("generating Wasm/TS source")
+    val tsFilenames =
+      Ts("module.ts")
+    val cmd = djinniParams(
+      idlFile,
+      cpp = false,
+      objc = false,
+      java = false,
+      python = false,
+      cWrapper = false,
+      cppCLI = false,
+      wasm = true,
+      cppOmitDefaultRecordCtor = true
+    )
+
+    djinni(cmd)
+
+    Then(
+      "the @deprecated comments are generated as @Deprecated annotations"
+    )
+    assertFileContentEquals(idlFile, TS, tsFilenames)
   }
 }
