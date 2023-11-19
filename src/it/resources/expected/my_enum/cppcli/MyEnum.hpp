@@ -8,7 +8,7 @@
 /** enum comment */
 public enum class MyEnum {
     /** enum option comment */
-    Option1 = 0,
-    Option2 = 1,
-    Option3 = 2,
+    Option1,
+    Option2,
+    Option3,
 };

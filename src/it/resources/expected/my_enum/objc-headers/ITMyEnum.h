@@ -7,7 +7,7 @@
 typedef NS_ENUM(NSInteger, ITMyEnum)
 {
     /** enum option comment */
-    ITMyEnumOption1 = 0,
-    ITMyEnumOption2 = 1,
-    ITMyEnumOption3 = 2,
+    ITMyEnumOption1,
+    ITMyEnumOption2,
+    ITMyEnumOption3,
 };

@@ -9,9 +9,9 @@
  */
 export enum MyEnum {
     /** @deprecated Use something else */
-    OPTION1 = 0,
+    OPTION1,
     /** not deprecated */
-    OPTION2 = 1,
+    OPTION2,
 }
 
 /**

@@ -6,8 +6,8 @@
 #include <functional>
 
 enum class EnumData : int {
-    A = 0,
-    B = 1,
+    A,
+    B,
 };
 
 namespace std {

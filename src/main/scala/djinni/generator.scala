@@ -780,7 +780,9 @@ abstract class Generator(spec: Spec) {
       writeDoc(w, o.doc)
       w.wl(
         ident(o.ident.name) + (if (e.flags) s" $delim 1$optionSuffix << $shift"
-                               else s" $delim $shift") + ","
+                               else if (delim != "=") s" $delim $shift"
+                               else "")
+          + ","
       )
       shift += 1
     }

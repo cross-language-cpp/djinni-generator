@@ -5,6 +5,6 @@
 
 typedef NS_ENUM(NSInteger, ITEnumData)
 {
-    ITEnumDataA = 0,
-    ITEnumDataB = 1,
+    ITEnumDataA,
+    ITEnumDataB,
 };

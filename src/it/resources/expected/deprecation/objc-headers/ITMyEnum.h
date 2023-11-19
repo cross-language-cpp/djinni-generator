@@ -12,7 +12,7 @@
 typedef NS_ENUM(NSInteger, ITMyEnum)
 {
     /** @deprecated Use something else */
-    ITMyEnumOption1 = 0,
+    ITMyEnumOption1,
     /** not deprecated */
-    ITMyEnumOption2 = 1,
+    ITMyEnumOption2,
 };
