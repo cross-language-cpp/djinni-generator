@@ -184,7 +184,7 @@ class CppCliGenerator(spec: Spec) extends Generator(spec) {
         if (e.flags) w.wl("[System::Flags]")
         w.w(s"public enum class ${marshal.typename(ident, e)}").bracedSemi {
           writeEnumOptionNone(w, e, idCs.enum(_))
-          writeEnumOptions(w, e, idCs.enum(_))
+          writeEnumOptions(w, e, idCs.enum(_), "=", "u")
           writeEnumOptionAll(w, e, idCs.enum(_))
         }
       }

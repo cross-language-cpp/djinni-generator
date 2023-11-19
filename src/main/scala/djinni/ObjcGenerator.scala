@@ -70,7 +70,7 @@ class ObjcGenerator(spec: Spec) extends BaseObjcGenerator(spec) {
         })
         w.bracedSemi {
           writeEnumOptionNone(w, e, self + idObjc.enum(_))
-          writeEnumOptions(w, e, self + idObjc.enum(_))
+          writeEnumOptions(w, e, self + idObjc.enum(_), "=", "u")
           writeEnumOptionAll(w, e, self + idObjc.enum(_))
         }
       }

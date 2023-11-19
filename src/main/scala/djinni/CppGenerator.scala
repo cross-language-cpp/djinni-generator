@@ -156,7 +156,7 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
         writeDoc(w, doc)
         w.w(s"enum class${deprecatedType} $self : $underlyingType").bracedSemi {
           writeEnumOptionNone(w, e, idCpp.enum)
-          writeEnumOptions(w, e, idCpp.enum)
+          writeEnumOptions(w, e, idCpp.enum, "=", "u")
           writeEnumOptionAll(w, e, idCpp.enum)
         }
 

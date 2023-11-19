@@ -12,7 +12,7 @@
 typedef NS_OPTIONS(NSUInteger, ITMyFlags)
 {
     /** @deprecated Use someother flag */
-    ITMyFlagsFlag1 = 1 << 0,
+    ITMyFlagsFlag1 = 1u << 0,
     /** not deprecated */
-    ITMyFlagsFlag2 = 1 << 1,
+    ITMyFlagsFlag2 = 1u << 1,
 };

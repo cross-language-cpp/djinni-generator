@@ -772,13 +772,14 @@ abstract class Generator(spec: Spec) {
       w: IndentWriter,
       e: Enum,
       ident: IdentConverter,
-      delim: String = "="
+      delim: String = "=",
+      optionSuffix: String = ""
   ): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
       w.wl(
-        ident(o.ident.name) + (if (e.flags) s" $delim 1 << $shift"
+        ident(o.ident.name) + (if (e.flags) s" $delim 1$optionSuffix << $shift"
                                else s" $delim $shift") + ","
       )
       shift += 1
@@ -796,11 +797,11 @@ abstract class Generator(spec: Spec) {
     ) {
       writeDoc(w, o.doc)
       w.w(ident(o.ident.name) + s" $delim ")
-      w.w(
-        normalEnumOptions(e).zipWithIndex
-          .map { case (o, i) => s"(1 << $i)" }
-          .fold("0")((acc, o) => acc + " | " + o)
-      )
+      val all =
+        if (delim == "=") normalEnumOptions(e).map(o => ident(o.ident.name))
+        else
+          normalEnumOptions(e).zipWithIndex.map { case (o, i) => s"(1 << $i)" }
+      w.w(all.fold("0")((acc, o) => acc + " | " + o))
       w.wl(",")
     }
   }

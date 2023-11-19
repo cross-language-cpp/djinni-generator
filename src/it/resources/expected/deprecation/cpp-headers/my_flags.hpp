@@ -12,9 +12,9 @@
  */
 enum class [[deprecated("Use someother flags")]] MyFlags : unsigned {
     /** @deprecated Use someother flag */
-    FLAG1 = 1 << 0,
+    FLAG1 = 1u << 0,
     /** not deprecated */
-    FLAG2 = 1 << 1,
+    FLAG2 = 1u << 1,
 };
 constexpr MyFlags operator|(MyFlags lhs, MyFlags rhs) noexcept {
     return static_cast<MyFlags>(static_cast<unsigned>(lhs) | static_cast<unsigned>(rhs));
