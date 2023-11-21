@@ -10,7 +10,7 @@ namespace djinni_generated {
 
 struct MyRecord
 {
-    using CppType = ::MyRecord;
+    using CppType = ::testsuite::MyRecord;
     using JsType = em::val;
     using Boxed = MyRecord;
 

@@ -8,7 +8,7 @@
 
 namespace djinni_generated {
 
-struct MyEnum: ::djinni::WasmEnum<::MyEnum> {
+struct MyEnum: ::djinni::WasmEnum<::testsuite::MyEnum> {
     static void staticInitializeConstants();
 };
 

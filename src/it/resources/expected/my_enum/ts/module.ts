@@ -5,10 +5,14 @@
 /** enum comment */
 export enum MyEnum {
     /** enum option comment */
-    OPTION1 = 0,
-    OPTION2 = 1,
-    OPTION3 = 2,
+    OPTION1,
+    OPTION2,
+    OPTION3,
 }
 
+export interface ns_testsuite {
+}
 export interface Module_statics {
+
+    testsuite: ns_testsuite;
 }

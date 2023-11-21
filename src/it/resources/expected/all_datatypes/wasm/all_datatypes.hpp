@@ -10,7 +10,7 @@ namespace djinni_generated {
 
 struct AllDatatypes
 {
-    using CppType = ::AllDatatypes;
+    using CppType = ::testsuite::AllDatatypes;
     using JsType = em::val;
     using Boxed = AllDatatypes;
 

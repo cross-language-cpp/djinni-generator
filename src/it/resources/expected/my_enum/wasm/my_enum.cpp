@@ -7,8 +7,8 @@
 namespace djinni_generated {
 
 namespace {
-    EM_JS(void, djinni_init__my_enum_consts, (), {
-        Module.MyEnum =  {
+    EM_JS(void, djinni_init_testsuite_my_enum_consts, (), {
+        Module.testsuite_MyEnum =  {
             /** enum option comment */
             OPTION1 : 0,
             OPTION2 : 1,
@@ -20,11 +20,12 @@ namespace {
 void MyEnum::staticInitializeConstants() {
     static std::once_flag initOnce;
     std::call_once(initOnce, [] {
-        djinni_init__my_enum_consts();
+        djinni_init_testsuite_my_enum_consts();
+        ::djinni::djinni_register_name_in_ns("testsuite_MyEnum", "testsuite.MyEnum");
     });
 }
 
-EMSCRIPTEN_BINDINGS(_my_enum) {
+EMSCRIPTEN_BINDINGS(testsuite_my_enum) {
     MyEnum::staticInitializeConstants();
 }
 

@@ -7,8 +7,8 @@
 namespace djinni_generated {
 
 namespace {
-    EM_JS(void, djinni_init__enum_data_consts, (), {
-        Module.EnumData =  {
+    EM_JS(void, djinni_init_testsuite_enum_data_consts, (), {
+        Module.testsuite_EnumData =  {
             A : 0,
             B : 1,
         }
@@ -18,11 +18,12 @@ namespace {
 void EnumData::staticInitializeConstants() {
     static std::once_flag initOnce;
     std::call_once(initOnce, [] {
-        djinni_init__enum_data_consts();
+        djinni_init_testsuite_enum_data_consts();
+        ::djinni::djinni_register_name_in_ns("testsuite_EnumData", "testsuite.EnumData");
     });
 }
 
-EMSCRIPTEN_BINDINGS(_enum_data) {
+EMSCRIPTEN_BINDINGS(testsuite_enum_data) {
     EnumData::staticInitializeConstants();
 }
 

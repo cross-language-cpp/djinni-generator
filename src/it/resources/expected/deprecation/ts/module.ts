@@ -68,6 +68,11 @@ export interface MyInterface_statics {
     methodC(value: number): void;
 }
 
-export interface Module_statics {
+export interface ns_testsuite {
     MyInterface: MyInterface_statics;
+}
+export interface Module_statics {
+    testsuite_MyInterface: MyInterface_statics;
+
+    testsuite: ns_testsuite;
 }

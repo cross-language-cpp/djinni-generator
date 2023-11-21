@@ -21,21 +21,22 @@ auto MyRecord::fromCpp(const CppType& c) -> JsType {
 }
 
 namespace {
-    EM_JS(void, djinni_init__my_record_consts, (), {
-        if (!('MyRecord' in Module)) {
-            Module.MyRecord = {};
+    EM_JS(void, djinni_init_testsuite_my_record_consts, (), {
+        if (!('testsuite_MyRecord' in Module)) {
+            Module.testsuite_MyRecord = {};
         }
-        Module.MyRecord.STRING_CONST = "Constants can be put here";
+        Module.testsuite_MyRecord.STRING_CONST = "Constants can be put here";
     })
 }
 void MyRecord::staticInitializeConstants() {
     static std::once_flag initOnce;
     std::call_once(initOnce, [] {
-        djinni_init__my_record_consts();
+        djinni_init_testsuite_my_record_consts();
+        ::djinni::djinni_register_name_in_ns("testsuite_MyRecord", "testsuite.MyRecord");
     });
 }
 
-EMSCRIPTEN_BINDINGS(_my_record_consts) {
+EMSCRIPTEN_BINDINGS(testsuite_my_record_consts) {
     MyRecord::staticInitializeConstants();
 }
 

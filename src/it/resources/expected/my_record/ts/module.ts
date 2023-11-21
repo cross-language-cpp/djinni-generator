@@ -14,5 +14,9 @@ export namespace MyRecord {
     export const STRING_CONST = "Constants can be put here";
 }
 
+export interface ns_testsuite {
+}
 export interface Module_statics {
+
+    testsuite: ns_testsuite;
 }

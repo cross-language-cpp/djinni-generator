@@ -154,6 +154,7 @@ class IntegrationTest extends AnyFunSpec {
     }
     if (wasm) {
       cmd += s" --wasm-out $baseOutputPath/$idl/$WASM"
+      cmd += s" --wasm-namespace testsuite"
       cmd += s" --ts-out $baseOutputPath/$idl/$TS"
     }
     if (useNNHeader) {

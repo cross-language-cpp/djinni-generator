@@ -3,8 +3,8 @@
 
 
 export enum EnumData {
-    A = 0,
-    B = 1,
+    A,
+    B,
 }
 
 export interface /*record*/ AllDatatypes {
@@ -25,5 +25,9 @@ export interface /*record*/ AllDatatypes {
     enumData: EnumData;
 }
 
+export interface ns_testsuite {
+}
 export interface Module_statics {
+
+    testsuite: ns_testsuite;
 }
