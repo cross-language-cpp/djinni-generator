@@ -13,4 +13,7 @@ src/it/resources/result/my_enum/cwrapper/dh__my_enum.hpp
 src/it/resources/result/my_enum/cwrapper/dh__my_enum.cpp
 src/it/resources/result/my_enum/wasm/my_enum.hpp
 src/it/resources/result/my_enum/wasm/my_enum.cpp
+src/it/resources/result/my_enum/ts/DjinniModule.ts
+src/it/resources/result/my_enum/ts/DjinniModule.js
 src/it/resources/result/my_enum/ts/module.ts
+

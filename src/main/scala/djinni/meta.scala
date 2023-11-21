@@ -58,8 +58,7 @@ package object meta {
         header: Option[String],
         byValue: Option[
           Boolean
-        ], // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
-        moveOnly: Option[Boolean]
+        ] // Whether to pass struct by value in C++ (e.g. std::chrono::duration). Only used for "record" types.
     )
     case class Objc(
         typename: Option[String],

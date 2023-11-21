@@ -483,8 +483,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
                 )
                 w.wl(";")
                 m.ret.fold(())(r =>
-                  w.wl(s"return ${helperClass(r.resolved)}::fromCpp(${cppMarshal
-                      .maybeMove("r", r)});")
+                  w.wl(s"return ${helperClass(r.resolved)}::fromCpp(r);")
                 )
               }
               w.w("catch(const std::exception& e)").braced {
@@ -525,8 +524,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
                   m.params,
                   s")",
                   p => {
-                    s"${helperClass(p.ty.resolved)}::fromCpp(${cppMarshal
-                        .maybeMove(idCpp.local(p.ident), p.ty)})"
+                    s"${helperClass(p.ty.resolved)}::fromCpp(${idCpp.local(p.ident)})"
                   }
                 )
                 w.wl(";")
@@ -671,8 +669,7 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
           for (f <- r.fields) {
             w.wl(s"""js.set("${idJs.field(f.ident.name)}", ${helperClass(
                 f.ty.resolved
-              )}::Boxed::fromCpp(${cppMarshal
-                .maybeMove("c." + idCpp.field(f.ident), f.ty)}));""")
+              )}::Boxed::fromCpp(c.${idCpp.field(f.ident)}));""")
           }
           w.wl("return js;")
         }

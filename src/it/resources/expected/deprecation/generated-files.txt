@@ -3,4 +3,7 @@ src/it/resources/result/deprecation/cpp-headers/my_flags.hpp
 src/it/resources/result/deprecation/cpp-headers/my_record.hpp
 src/it/resources/result/deprecation/cpp-headers/my_interface.hpp
 src/it/resources/result/deprecation/cpp/my_interface.cpp
+src/it/resources/result/deprecation/ts/DjinniModule.ts
+src/it/resources/result/deprecation/ts/DjinniModule.js
 src/it/resources/result/deprecation/ts/module.ts
+

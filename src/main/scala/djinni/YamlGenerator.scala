@@ -291,8 +291,7 @@ object YamlGenerator {
         "cpp",
         "byValue",
         _.asInstanceOf[Boolean]
-      ),
-      nested(td, isRequired = false, "cpp", "moveOnly", _.asInstanceOf[Boolean])
+      )
     ),
     MExtern.Objc(
       nested(td, isRequired = objcOutRequired, "objc", "typename", _.toString),
