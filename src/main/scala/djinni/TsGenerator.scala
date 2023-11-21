@@ -169,9 +169,14 @@ class TsGenerator(spec: Spec) extends Generator(spec) {
     w.wl
     writeDoc(w, doc)
     w.w(s"export enum ${idJs.ty(ident)}").braced {
-      writeEnumOptionNone(w, e, idJs.enum, "=")
-      writeEnumOptions(w, e, idJs.enum, "=")
-      writeEnumOptionAll(w, e, idJs.enum, "=")
+      writeEnumOptionNone(w, e, idJs.enum)
+      writeEnumOptions(
+        w,
+        e,
+        idJs.enum,
+        (o: Enum.Option, shift: Int) => s" = 1 << $shift,"
+      )
+      writeEnumOptionAll(w, e, idJs.enum)
     }
   }
   private def generateRecord(

@@ -291,9 +291,23 @@ class WasmGenerator(spec: Spec) extends Generator(spec) {
               s"EM_JS(void, djinni_init_${withCppNamespace(ident.name)}_consts, (), {"
             ).nested {
               w.w(s"Module.${fullyQualifiedName} = ").braced {
-                writeEnumOptionNone(w, e, idJs.enum, ":")
-                writeEnumOptions(w, e, idJs.enum, ":")
-                writeEnumOptionAll(w, e, idJs.enum, ":")
+                writeEnumOptionNone(w, e, idJs.enum, () => ": 0,")
+                writeEnumOptions(
+                  w,
+                  e,
+                  idJs.enum,
+                  (o: Enum.Option, shift: Int) => s": 1 << $shift,",
+                  (ordinal: Int) => s": $ordinal,"
+                )
+                writeEnumOptionAll(
+                  w,
+                  e,
+                  idJs.enum,
+                  (ordinalsAndNames: Seq[Tuple2[Int, String]]) =>
+                    s""": ${ordinalsAndNames
+                        .map(e => e._1)
+                        .fold("0")((acc, o) => acc + s" | (1 << $o)")},"""
+                )
               }
             }
             w.wl("})")

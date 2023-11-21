@@ -760,11 +760,11 @@ abstract class Generator(spec: Spec) {
       w: IndentWriter,
       e: Enum,
       ident: IdentConverter,
-      delim: String = "="
+      noneFlagWriter: () => String = () => " = 0,"
   ): Unit = {
     for (o <- e.options.find(_.specialFlag == Some(Enum.SpecialFlag.NoFlags))) {
       writeDoc(w, o.doc)
-      w.wl(ident(o.ident.name) + s" $delim 0,")
+      w.wl(ident(o.ident.name) + noneFlagWriter())
     }
   }
 
@@ -772,17 +772,16 @@ abstract class Generator(spec: Spec) {
       w: IndentWriter,
       e: Enum,
       ident: IdentConverter,
-      delim: String = "=",
-      optionSuffix: String = ""
+      flagWriter: (Enum.Option, Int) => String = (o: Enum.Option, shift: Int) =>
+        s" = 1u << $shift,",
+      ordinalWriter: (Int) => String = (ordinal: Int) => ","
   ): Unit = {
     var shift = 0
     for (o <- normalEnumOptions(e)) {
       writeDoc(w, o.doc)
       w.wl(
-        ident(o.ident.name) + (if (e.flags) s" $delim 1$optionSuffix << $shift"
-                               else if (delim != "=") s" $delim $shift"
-                               else "")
-          + ","
+        ident(o.ident.name) + (if (e.flags) flagWriter(o, shift)
+                               else ordinalWriter(shift))
       )
       shift += 1
     }
@@ -792,19 +791,19 @@ abstract class Generator(spec: Spec) {
       w: IndentWriter,
       e: Enum,
       ident: IdentConverter,
-      delim: String = "="
+      allFlagWriter: (Seq[Tuple2[Int, String]]) => String =
+        (ordinalsAndNames: Seq[Tuple2[Int, String]]) =>
+          s""" = ${ordinalsAndNames
+              .map(e => e._2)
+              .fold("0")((acc, o) => acc + " | " + o)},"""
   ): Unit = {
     for (
       o <- e.options.find(_.specialFlag.contains(Enum.SpecialFlag.AllFlags))
     ) {
       writeDoc(w, o.doc)
-      w.w(ident(o.ident.name) + s" $delim ")
-      val all =
-        if (delim == "=") normalEnumOptions(e).map(o => ident(o.ident.name))
-        else
-          normalEnumOptions(e).zipWithIndex.map { case (o, i) => s"(1 << $i)" }
-      w.w(all.fold("0")((acc, o) => acc + " | " + o))
-      w.wl(",")
+      val ordinalsAndNames = normalEnumOptions(e).zipWithIndex
+        .map { case (o, i) => Tuple2(i, ident(o.ident.name)) }
+      w.wl(ident(o.ident.name) + allFlagWriter(ordinalsAndNames))
     }
   }
 
