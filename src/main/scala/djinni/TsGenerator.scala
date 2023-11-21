@@ -254,7 +254,9 @@ class TsGenerator(spec: Spec) extends Generator(spec) {
     }
   // --------------------------------------------------------------------------
   override def generate(idl: Seq[TypeDecl]) {
-    writeDjinniModuleFilesFile()
+    if(spec.tsGenerateSupportFiles) {
+      writeDjinniModuleFilesFile()
+    }
     createFile(
       spec.tsOutFolder.get,
       spec.tsModule + ".ts",

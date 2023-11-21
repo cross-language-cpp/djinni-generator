@@ -118,6 +118,7 @@ object Main {
     var jsIdentStyle = IdentStyle.jsDefault
     var tsOutFolder: Option[File] = None
     var tsModule: String = "module"
+    var tsGenerateSupportFiles: Boolean = false
 
     val argParser: OptionParser[Unit] = new scopt.OptionParser[Unit]("djinni") {
 
@@ -604,6 +605,12 @@ object Main {
         .valueName("<name>")
         .foreach(tsModule = _)
         .text("TypeScript declaration module name (default: \"module\").")
+      opt[Boolean]("ts-generate-support-files")
+        .valueName("<true/false>")
+        .foreach(x => tsGenerateSupportFiles = x)
+        .text(
+          "Whether to generate DjinniModule.[ts/js] or not. (default: true)"
+        )
 
       note(
         "\n\nIdentifier styles (ex: \"FooBar\", \"fooBar\", \"foo_bar\", \"FOO_BAR\", \"m_fooBar\")"
@@ -1012,6 +1019,7 @@ object Main {
       jsIdentStyle,
       tsOutFolder,
       tsModule,
+      tsGenerateSupportFiles,
       idlFile.getName.stripSuffix(".djinni")
     )
 

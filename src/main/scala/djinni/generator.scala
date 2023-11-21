@@ -113,6 +113,7 @@ package object generatorTools {
       jsIdentStyle: JsIdentStyle,
       tsOutFolder: Option[File],
       tsModule: String,
+      tsGenerateSupportFiles: Boolean,
       moduleName: String
   )
 
