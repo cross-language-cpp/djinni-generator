@@ -149,9 +149,12 @@ djinni \
 
 | Argument                               | Description                                                                |
 |----------------------------------------|----------------------------------------------------------------------------|
-| `--wasm-out <out-folder>`              | WebAssembly bridge code output folder   |
-| `--ts-out <out-folder>`                | Path to the Typescript type definitions output folder                   |
-| `--ts-module <module>`                 | Name of the module for the Typescript types. `module.ts` by default. |
+| `--wasm-out <out-folder>`              | WebAssembly bridge code output folder.                                     |
+| `--wasm-include-prefix`                | The prefix for #includes of WASM bridge C++ header files.                  |
+| `--wasm-include-cpp-prefix`            | The prefix for #includes of C++ header files.                              |
+| `--wasm-base-lib-include-prefix`       | The path prefix to be added to djinni support library inlcude lines in generated files |
+| `--ts-out <out-folder>`                | Path to the Typescript type definitions output folder                      |
+| `--ts-module <module>`                 | Name of the module for the Typescript types. `module.ts` by default.       |
 
 
 ### Yaml Generation
