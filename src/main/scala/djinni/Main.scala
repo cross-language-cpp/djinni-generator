@@ -801,6 +801,23 @@ object Main {
         "FooBar",
         c => { cppCliIdentStyle = cppCliIdentStyle.copy(file = c) }
       )
+
+      note("\nTypescript/Javascript options:")
+      identStyle(
+        "ident-js-enum",
+        "FOO_BAR",
+        c => { jsIdentStyle = jsIdentStyle.copy(enum = c) }
+      )
+      identStyle(
+        "ident-js-field",
+        "fooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(field = c) }
+      )
+      identStyle(
+        "ident-js-type",
+        "FooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(ty = c) }
+      )
     }
 
     if (argParser.parse(args, ()).isEmpty) {
