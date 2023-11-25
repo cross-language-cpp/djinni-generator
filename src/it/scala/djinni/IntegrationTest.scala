@@ -156,6 +156,7 @@ class IntegrationTest extends AnyFunSpec {
       cmd += s" --wasm-out $baseOutputPath/$idl/$WASM"
       cmd += s" --wasm-namespace testsuite"
       cmd += s" --ts-out $baseOutputPath/$idl/$TS"
+      cmd += s" --ts-support-files-out $baseOutputPath/$idl/$TS/support-lib"
     }
     if (useNNHeader) {
       cmd += " --cpp-nn-header nn.hpp"

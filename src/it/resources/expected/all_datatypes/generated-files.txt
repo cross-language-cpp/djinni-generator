@@ -42,7 +42,7 @@ src/it/resources/result/all_datatypes/wasm/enum_data.hpp
 src/it/resources/result/all_datatypes/wasm/enum_data.cpp
 src/it/resources/result/all_datatypes/wasm/all_datatypes.hpp
 src/it/resources/result/all_datatypes/wasm/all_datatypes.cpp
-src/it/resources/result/all_datatypes/ts/DjinniModule.ts
-src/it/resources/result/all_datatypes/ts/DjinniModule.js
+src/it/resources/result/all_datatypes/ts/support-lib/DjinniModule.ts
+src/it/resources/result/all_datatypes/ts/support-lib/DjinniModule.js
 src/it/resources/result/all_datatypes/ts/module.ts
 

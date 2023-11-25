@@ -34,6 +34,6 @@ src/it/resources/result/using_custom_datatypes/wasm/custom_datatype.hpp
 src/it/resources/result/using_custom_datatypes/wasm/custom_datatype.cpp
 src/it/resources/result/using_custom_datatypes/wasm/other_record.hpp
 src/it/resources/result/using_custom_datatypes/wasm/other_record.cpp
-src/it/resources/result/using_custom_datatypes/ts/DjinniModule.ts
-src/it/resources/result/using_custom_datatypes/ts/DjinniModule.js
+src/it/resources/result/using_custom_datatypes/ts/support-lib/DjinniModule.ts
+src/it/resources/result/using_custom_datatypes/ts/support-lib/DjinniModule.js
 src/it/resources/result/using_custom_datatypes/ts/module.ts

@@ -26,7 +26,7 @@ src/it/resources/result/my_record/cwrapper/dh__my_record.hpp
 src/it/resources/result/my_record/cwrapper/dh__my_record.cpp
 src/it/resources/result/my_record/wasm/my_record.hpp
 src/it/resources/result/my_record/wasm/my_record.cpp
-src/it/resources/result/my_record/ts/DjinniModule.ts
-src/it/resources/result/my_record/ts/DjinniModule.js
+src/it/resources/result/my_record/ts/support-lib/DjinniModule.ts
+src/it/resources/result/my_record/ts/support-lib/DjinniModule.js
 src/it/resources/result/my_record/ts/module.ts
 

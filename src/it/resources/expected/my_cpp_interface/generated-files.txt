@@ -18,7 +18,7 @@ src/it/resources/result/my_cpp_interface/cwrapper/cw__my_cpp_interface.cpp
 src/it/resources/result/my_cpp_interface/cffi/pycffi_lib_build.py
 src/it/resources/result/my_cpp_interface/wasm/my_cpp_interface.hpp
 src/it/resources/result/my_cpp_interface/wasm/my_cpp_interface.cpp
-src/it/resources/result/my_cpp_interface/ts/DjinniModule.ts
-src/it/resources/result/my_cpp_interface/ts/DjinniModule.js
+src/it/resources/result/my_cpp_interface/ts/support-lib/DjinniModule.ts
+src/it/resources/result/my_cpp_interface/ts/support-lib/DjinniModule.js
 src/it/resources/result/my_cpp_interface/ts/module.ts
 
