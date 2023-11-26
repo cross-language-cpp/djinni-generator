@@ -188,17 +188,18 @@ Notable differences when comparing to the Java/ObjC support:
 
 The following code will be generated for each defined type:
 
-| Type       | C++ header               | C++ source                 | WASM header/sources                 |  TS definitions      |
-|------------|--------------------------|----------------------------|-------------------------------------|----------------------|
-| Enum/Flags | my\_enum.hpp             |                            | my_enum.hpp, my_enum.cpp            | module.ts :three:    |
-|            | my\_enum+json.hpp :two:  |                            |                                     |                      |
-| Record     | my\_record.hpp           | my\_record.cpp             | my_record.hpp, my_enum.cpp          |                      |
-|            | my\_record+json.hpp :two:|                            |                                     |                      |
-| Interface  | my\_interface.hpp        | my\_interface.cpp :one:    | my_interface.hpp, my_interface.cpp  |                      |
+| Type       | C++ header               | C++ source                 | WASM header/sources                 |  TS definitions           |
+|------------|--------------------------|----------------------------|-------------------------------------|---------------------------|
+| Enum/Flags | my\_enum.hpp             |                            | my_enum.hpp, my_enum.cpp            | module.ts :three:         |
+|            | my\_enum+json.hpp :two:  |                            |                                     | DjinniModule.ts/js :four: |
+| Record     | my\_record.hpp           | my\_record.cpp             | my_record.hpp, my_enum.cpp          |                           |
+|            | my\_record+json.hpp :two:|                            |                                     |                           |
+| Interface  | my\_interface.hpp        | my\_interface.cpp :one:    | my_interface.hpp, my_interface.cpp  |                           |
 
 - :one: Generated only for types that contain constants.
 - :two: Generated only if cpp json serialization is enabled.
 - :three: Name of file configurable via command-line options.
+- :four: Generated if `ts-support-files-out` is specified at command line.
 
 
 ## C++ JSON Serialization support
