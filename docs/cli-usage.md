@@ -155,7 +155,7 @@ djinni \
 | `--wasm-base-lib-include-prefix`       | The path prefix to be added to djinni support library inlcude lines in generated files |
 | `--ts-out <out-folder>`                | Path to the Typescript type definitions output folder                      |
 | `--ts-module <module>`                 | Name of the module for the Typescript types. `module.ts` by default.       |
-| `--ts-support-files-out <out-folder>`  | Path for where the support files `DjinniModule.[js|ts]` should be generated. No support files are generated if the path is not specified. |
+| `--ts-support-files-out <out-folder>`  | Path for where the support files `DjinniModule.[js\|ts]` should be generated. No support files are generated if the path is not specified. |
 
 
 ### Yaml Generation
@@ -244,11 +244,15 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 
 #### Javascript / Typescript
 
-| Argument             | Default   |
-|----------------------|-----------|
-| `--ident-js-enum`    | `FOO_BAR` |
-| `--ident-js-field`   | `fooBar`  |
-| `--ident-js-type`    | `FooBar`  |
+| Argument                | Default   |
+|-------------------------|-----------|
+| `--ident-js-type`       | `FooBar`  |
+| `--ident-js-type-param` | `FooBar`  |
+| `--ident-js-method`     | `fooBar` |
+| `--ident-js-local`      | `fooBar` |
+| `--ident-js-enum`       | `FOO_BAR` |
+| `--ident-js-const`      | `FOO_BAR` |
+| `--ident-js-field`      | `fooBar`  |
 
 
 Example:

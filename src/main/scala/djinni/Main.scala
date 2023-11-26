@@ -805,6 +805,26 @@ object Main {
 
       note("\nTypescript/Javascript options:")
       identStyle(
+        "ident-js-type",
+        "FooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(ty = c) }
+      )
+      identStyle(
+        "ident-js-type-param",
+        "FooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(typeParam = c) }
+      )
+      identStyle(
+        "ident-js-method",
+        "fooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(method = c) }
+      )
+      identStyle(
+        "ident-js-local",
+        "fooBar",
+        c => { jsIdentStyle = jsIdentStyle.copy(local = c) }
+      )
+      identStyle(
         "ident-js-enum",
         "FOO_BAR",
         c => { jsIdentStyle = jsIdentStyle.copy(enum = c) }
@@ -815,9 +835,9 @@ object Main {
         c => { jsIdentStyle = jsIdentStyle.copy(field = c) }
       )
       identStyle(
-        "ident-js-type",
-        "FooBar",
-        c => { jsIdentStyle = jsIdentStyle.copy(ty = c) }
+        "ident-js-const",
+        "FOO_BAR",
+        c => { jsIdentStyle = jsIdentStyle.copy(const = c) }
       )
     }
 
