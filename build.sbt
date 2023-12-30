@@ -31,6 +31,6 @@ lazy val djinni = (project in file("."))
       dir / s"${(assembly / assemblyJarName).value}${binExt}"
     },
     assembly / assemblyJarName := s"${name.value}",
-    assembly / assemblyPrependShellScript := Some(defaultUniversalScript(shebang = true)),
+    assembly / assemblyPrependShellScript := Some(defaultUniversalScript(shebang = binExt.isEmpty)),
     assembly / test := {}
   )
