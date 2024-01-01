@@ -6,44 +6,71 @@ on:
 name: Upload Release Assets
 
 jobs:
-  build:
-    name: Upload Release Assets
+  buildUnix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Caching dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
-          fetch-depth: 0
           path: |
             ~/.sbt
             ~/.ivy2
           key: scala-build-deps
       - name: Building
         run: sbt assembly
-      - name: creating bat
-        run: cp target/bin/djinni target/bin/djinni.bat
-      - name: get upload-url for latest release
-        run:  |
-              echo "UPLOAD_URL=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases/latest | jq -r '.upload_url')" >> $GITHUB_ENV
-        shell: bash
-      - name: Upload Release Asset for macOS/Linux
-        id: upload-release-asset-unix
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: target/bin/djinni
-          asset_name: djinni
-          asset_content_type: application/octet-stream
-      - name: Upload Release Asset for Windows
-        id: upload-release-asset-windows
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: djinni-generator
+          path: target/bin/djinni
+
+  buildWindows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Caching dependencies
+        uses: actions/cache@v3
         with:
-          upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: target/bin/djinni.bat
-          asset_name: djinni.bat
-          asset_content_type: application/bat
+          path: |
+            ~/.sbt
+            ~/.ivy2
+          key: scala-build-deps-windows
+      - name: Building
+        run: sbt assembly
+      - uses: actions/upload-artifact@v4
+        with:
+          name: djinni-generator.bat
+          path: target/bin/djinni.bat
+
+  publishRelease:
+    runs-on: ubuntu-latest
+    needs: [buildUnix, buildWindows]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: djinni-generator
+          path: target/bin
+      - name: Make unix artifact executable
+        run: chmod u+x target/bin/djinni
+      - name: Execute djinni-generator
+        run: target/bin/djinni --version
+      - name: Generate sha256sum
+        run: sha256sum target/bin/djinni > target/bin/djinni.sha256
+      - uses: actions/download-artifact@v4
+        with:
+          name: djinni-generator.bat
+          path: target/bin
+      - name: Execute djinni-generator.bat
+        run: sh target/bin/djinni.bat --version
+      - name: Generate sha256sum
+        run: sha256sum target/bin/djinni.bat > target/bin/djinni.bat.sha256
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/bin/djinni
+            target/bin/djinni.sha256
+            target/bin/djinni.bat
+            target/bin/djinni.bat.sha256
+
+# TODO create PR for brew tap and scoop bucket

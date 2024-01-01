@@ -11,9 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Caching dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.sbt
@@ -21,16 +21,16 @@ jobs:
           key: scala-build-deps
       - name: Building
         run: sbt assembly
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: djinni-generator
           path: target/bin/djinni
   formatCheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Caching dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.sbt
           key: scala-fmt-deps
@@ -42,15 +42,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, formatCheck]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Caching dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.sbt
             ~/.ivy2
           key: scala-build-deps
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: djinni-generator
           path: target/bin
@@ -59,17 +59,50 @@ jobs:
       - name: Running integration-tests
         run: sbt IntegrationTest/test
 
+  buildWindows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Caching dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.sbt
+            ~/.ivy2
+          key: scala-build-deps-windows
+      - name: Building
+        run: sbt assembly
+      - name: Testing
+        run: sbt IntegrationTest/test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: djinni-generator.bat
+          path: target/bin/djinni.bat
+
+
   publishPreRelease:
     runs-on: ubuntu-latest
-    needs: [it]
+    needs: [it, buildWindows]
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: djinni-generator
           path: target/bin
       - name: Restoring file permissions of artifact
         run: chmod u+x target/bin/djinni
+      - name: Execute djinni-generator
+        run: target/bin/djinni --version
+      - name: Generate sha256sum
+        run: sha256sum target/bin/djinni > target/bin/djinni.sha256
+      - uses: actions/download-artifact@v4
+        with:
+          name: djinni-generator.bat
+          path: target/bin
+      - name: Execute djinni-generator.bat
+        run: sh target/bin/djinni.bat --version
+      - name: Generate sha256sum
+        run: sha256sum target/bin/djinni.bat > target/bin/djinni.bat.sha256
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           title: "Latest development build"
@@ -78,4 +111,6 @@ jobs:
           automatic_release_tag: current-latest
           files: |
             target/bin/djinni
-
+            target/bin/djinni.sha256
+            target/bin/djinni.bat
+            target/bin/djinni.bat.sha256

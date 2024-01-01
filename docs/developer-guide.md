@@ -152,5 +152,5 @@ To release a new version of the generator, the following steps must be followed:
 
 1. Create a [new release](https://github.com/cross-language-cpp/djinni-generator/releases/new) on Github. Set a tag version following [semantic versioning](https://semver.org/) rules (`v<MAJOR>.<MINOR>.<PATCH>`) and describe what has changed in the new version.
 2. Wait. The [Github "release" Action](https://github.com/cross-language-cpp/djinni-generator/blob/main/.github/workflows/release.yaml) will automatically build the project and upload the resulting binaries to the release.
-3. Create a PR to the [conan-center-index](https://github.com/conan-io/conan-center-index/tree/master/recipes/djinni-generator) to publish the new version to [Conan Center](https://conan.io/center/djinni-generator).
-4. Update the [homebrew tap](https://github.com/cross-language-cpp/brew) to make it point to the newest version [here](https://github.com/cross-language-cpp/brew/blob/main/Casks/djinni.rb#L2).
+3. Update the [homebrew tap](https://github.com/cross-language-cpp/brew) to make it point to the newest version [here](https://github.com/cross-language-cpp/brew/blob/main/Casks/djinni.rb#L2).
+4. Update the [scoop bucket](https://github.com/cross-language-cpp/djinni-bucket) to make it point to the newest version [here](https://github.com/cross-language-cpp/djinni-bucket/blob/main/bucket/djinni-generator.json).
