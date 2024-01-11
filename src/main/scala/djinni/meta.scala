@@ -44,7 +44,9 @@ package object meta {
       objcpp: MExtern.Objcpp,
       java: MExtern.Java,
       jni: MExtern.Jni,
-      cs: MExtern.Cs
+      cs: MExtern.Cs,
+      wasm: MExtern.Wasm,
+      ts: MExtern.Ts
   ) extends Meta
   object MExtern {
     // These hold the information marshals need to interface with existing types correctly
@@ -111,6 +113,16 @@ package object meta {
         generic: Option[
           Boolean
         ] // Set to false to exclude type arguments from the C++/CLI typename. This is false by default. Useful if template arguments are only used in C++.
+    )
+    case class Wasm(
+        typename: String, // The Emscripten type to use (e.g. em::val, int32_t)
+        translator: String, // C++ typename containing toCpp/fromCpp methods
+        header: String // Where to find the translator class
+    )
+    case class Ts(
+        typename: String, // The TypeScript type
+        module: String, // The module to import for the type
+        generic: Boolean
     )
   }
 
@@ -268,6 +280,10 @@ package object meta {
       case e: MExtern => e.defType == DInterface
       case _          => false
     }
+  }
+
+  def isOptional(ty: MExpr): Boolean = {
+    ty.base == MOptional && ty.args.length == 1
   }
 
   def isOptionalInterface(ty: MExpr): Boolean = {

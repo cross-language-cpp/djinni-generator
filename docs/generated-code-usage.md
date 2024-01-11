@@ -166,6 +166,42 @@ Add all generated files to your build target, and link against the [djinni-suppo
 
 C++/CLI sources have to be compiled with MSVC and the [`/clr` (Common Language Runtime Compilation)](https://docs.microsoft.com/en-us/cpp/build/reference/clr-common-language-runtime-compilation?view=msvc-160) option.
 
+## TS/JS C++/WASM Project
+
+Djinni can generate code that bridges C++ (that compiles to Web Assembly) and Javascript/TypeScript in web browsers.
+
+For WASM, Djinni generates:
+- C++ code, which should be compiled into the WASM bindary
+- TypeScript code, provides optional TypeScript interface definitions
+
+The generated code can be used with both plain Javascript and TypeScript.
+
+Almost all Djinni features are supported, including importing external types via
+yaml.
+
+Notable differences when comparing to the Java/ObjC support:
+
+- deriving(ord, eq) is not applicable to Javascript because JS doesn't support
+  overloading standard comparison methods.
+
+### Includes & Build target
+
+The following code will be generated for each defined type:
+
+| Type       | C++ header               | C++ source                 | WASM header/sources                 |  TS definitions           |
+|------------|--------------------------|----------------------------|-------------------------------------|---------------------------|
+| Enum/Flags | my\_enum.hpp             |                            | my_enum.hpp, my_enum.cpp            | module.ts :three:         |
+|            | my\_enum+json.hpp :two:  |                            |                                     | DjinniModule.ts/js :four: |
+| Record     | my\_record.hpp           | my\_record.cpp             | my_record.hpp, my_enum.cpp          |                           |
+|            | my\_record+json.hpp :two:|                            |                                     |                           |
+| Interface  | my\_interface.hpp        | my\_interface.cpp :one:    | my_interface.hpp, my_interface.cpp  |                           |
+
+- :one: Generated only for types that contain constants.
+- :two: Generated only if cpp json serialization is enabled.
+- :three: Name of file configurable via command-line options.
+- :four: Generated if `ts-support-files-out` is specified at command line.
+
+
 ## C++ JSON Serialization support
 
 Serialization from C++ types to/from JSON is supported. This feature is currently only enabled for `nlohmann/json`, and if enabled creates `to_json`/`from_json` methods for all djinni records and enums.

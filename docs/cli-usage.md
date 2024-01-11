@@ -145,6 +145,18 @@ djinni \
 | `--cppcli-namespace ...`               | The namespace name to use for generated C++/CLI classes.                   |
 | `--cppcli-include-cpp-prefix <prefix>` | The prefix for `#include` of the main C++ header files from C++/CLI files. |
 
+### WebAssembly/Typescript/Javascript
+
+| Argument                               | Description                                                                |
+|----------------------------------------|----------------------------------------------------------------------------|
+| `--wasm-out <out-folder>`              | WebAssembly bridge code output folder.                                     |
+| `--wasm-include-prefix`                | The prefix for #includes of WASM bridge C++ header files.                  |
+| `--wasm-include-cpp-prefix`            | The prefix for #includes of C++ header files.                              |
+| `--wasm-base-lib-include-prefix`       | The path prefix to be added to djinni support library inlcude lines in generated files |
+| `--ts-out <out-folder>`                | Path to the Typescript type definitions output folder                      |
+| `--ts-module <module>`                 | Name of the module for the Typescript types. `module.ts` by default.       |
+| `--ts-support-files-out <out-folder>`  | Path for where the support files `DjinniModule.[js\|ts]` should be generated. No support files are generated if the path is not specified. |
+
 
 ### Yaml Generation
 
@@ -229,6 +241,19 @@ Possible values: `FooBar`, `fooBar`, `foo_bar`, `FOO_BAR`, `m_fooBar`.
 | `--ident-cppcli-enum`       | `FooBar` |
 | `--ident-cppcli-const`      | `FooBar` |
 | `--ident-cppcli-file`       | `FooBar` |
+
+#### Javascript / Typescript
+
+| Argument                | Default   |
+|-------------------------|-----------|
+| `--ident-js-type`       | `FooBar`  |
+| `--ident-js-type-param` | `FooBar`  |
+| `--ident-js-method`     | `fooBar` |
+| `--ident-js-local`      | `fooBar` |
+| `--ident-js-enum`       | `FOO_BAR` |
+| `--ident-js-const`      | `FOO_BAR` |
+| `--ident-js-field`      | `fooBar`  |
+
 
 Example:
 

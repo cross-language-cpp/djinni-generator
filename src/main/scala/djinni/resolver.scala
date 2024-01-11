@@ -36,7 +36,9 @@ package object resolver {
       objcppOutRequired: Boolean,
       javaOutRequired: Boolean,
       jniOutRequired: Boolean,
-      cppCliOutRequired: Boolean
+      cppCliOutRequired: Boolean,
+      wasmOutRequired: Boolean,
+      tsOutRequired: Boolean
   ): Option[Error] = {
 
     try {
@@ -77,7 +79,9 @@ package object resolver {
                 objcppOutRequired = objcppOutRequired,
                 javaOutRequired = javaOutRequired,
                 jniOutRequired = jniOutRequired,
-                cppCliOutRequired = cppCliOutRequired
+                cppCliOutRequired = cppCliOutRequired,
+                wasmOutRequired = wasmOutRequired,
+                tsOutRequired = tsOutRequired
               )
           }
         )

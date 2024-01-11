@@ -20,6 +20,7 @@ Djinni generator parses an interface definition file and generates:
 - Objective-C++ code to convert between C++ and Objective-C
 - Python and C code to convert between C++ and Python over CFFI
 - C++/CLI code to convert between C++ and C#
+- C++ code to convert between WebAssembly and TS/JS
 
 
 ## Installation
@@ -86,3 +87,5 @@ The code in this repository is in large portions copied from [dropbox/djinni](ht
 - Jacob Potter
 - Iulia Tamas
 - Andrew Twyman
+
+WebAssembly support is borrowed in large part from [snapchat/djinni](https://github.com/snapchat/djinni).

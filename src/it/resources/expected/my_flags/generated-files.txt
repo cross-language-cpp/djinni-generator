@@ -11,3 +11,9 @@ src/it/resources/result/my_flags/python/my_flags.py
 src/it/resources/result/my_flags/cwrapper-headers/dh__my_flags.h
 src/it/resources/result/my_flags/cwrapper/dh__my_flags.hpp
 src/it/resources/result/my_flags/cwrapper/dh__my_flags.cpp
+src/it/resources/result/my_flags/wasm/my_flags.hpp
+src/it/resources/result/my_flags/wasm/my_flags.cpp
+src/it/resources/result/my_flags/ts/support-lib/DjinniModule.ts
+src/it/resources/result/my_flags/ts/support-lib/DjinniModule.js
+src/it/resources/result/my_flags/ts/module.ts
+
