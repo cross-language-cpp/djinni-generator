@@ -16,6 +16,7 @@
 package djinni.ast
 
 import djinni.ast.Record.DerivingType.DerivingType
+import djinni.ast.Interface.RequiringType.RequiringType
 import djinni.meta.MExpr
 import djinni.syntax.Loc
 
@@ -110,9 +111,14 @@ object Record {
 case class Interface(
     ext: Ext,
     methods: Seq[Interface.Method],
-    consts: Seq[Const]
+    consts: Seq[Const],
+    requiringTypes: Set[RequiringType]
 ) extends TypeDef
 object Interface {
+  object RequiringType extends Enumeration {
+    type RequiringType = Value
+    val Eq, Ord = Value
+  }
   case class Method(
       ident: Ident,
       params: Seq[Field],

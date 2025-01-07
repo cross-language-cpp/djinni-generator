@@ -16,6 +16,7 @@
 package djinni
 
 import djinni.ast.Interface.Method
+import djinni.ast.Interface.RequiringType.RequiringType
 import djinni.ast.Record.DerivingType.DerivingType
 import djinni.ast._
 import djinni.syntax._
@@ -189,11 +190,12 @@ case class Parser(includePaths: List[String]) {
 
     def interfaceHeader: Parser[Ext] = "interface" ~> extInterface
     def interface: Parser[Interface] =
-      interfaceHeader ~ bracesList(method | const) ^^ {
-        case ext ~ items => {
+      interfaceHeader ~ bracesList(method | const) ~ opt(requiring) ^^ {
+        case ext ~ items ~ requiring => {
           val methods = items collect { case m: Method => m }
           val consts = items collect { case c: Const => c }
-          Interface(ext, methods, consts)
+          val requiringTypes = requiring.getOrElse(Set[RequiringType]())
+          Interface(ext, methods, consts, requiringTypes)
         }
       }
 
@@ -209,8 +211,9 @@ case class Parser(includePaths: List[String]) {
       case ext ~ deriving =>
         Record(ext, List(), List(), deriving.getOrElse(Set[DerivingType]()))
     }
-    def externInterface: Parser[Interface] = interfaceHeader ^^ { case ext =>
-      Interface(ext, List(), List())
+    def externInterface: Parser[Interface] = interfaceHeader ~ opt(requiring) ^^ { 
+      case ext ~ requiring =>
+        Interface(ext, List(), List(), requiring.getOrElse(Set[RequiringType]()))
     }
 
     def staticLabel: Parser[Boolean] = ("static ".r | "".r) ^^ {
@@ -229,6 +232,18 @@ case class Parser(includePaths: List[String]) {
           Interface.Method(ident, params, ret, doc, staticLabel, constLabel)
       }
     def ret: Parser[TypeRef] = ":" ~> typeRef
+
+    def requiring: Parser[Set[RequiringType]] =
+      "requiring" ~> parens(rep1sepend(ident, ",")) ^^ {
+        _.map(ident =>
+          ident.name match {
+            case "eq"         => Interface.RequiringType.Eq
+            case "ord"        => Interface.RequiringType.Ord
+            case _ =>
+              return err(s"""Unrecognized requiring type "${ident.name}"""")
+          }
+        ).toSet
+      }
 
     def boolValue: Parser[Boolean] = "([Tt]rue)|([Ff]alse)".r ^^ { s: String =>
       s.toBoolean
