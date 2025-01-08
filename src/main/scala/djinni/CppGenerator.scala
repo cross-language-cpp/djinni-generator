@@ -749,6 +749,8 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
           if (i.requiresTypes.contains(RequiresType.Eq)) {
             w.wl
             w.wl(s"virtual bool operator==(const ${self}& other) const = 0;")
+            w.wl
+            w.wl(s"virtual int32_t hashCode() const = 0;")
           }
         }
       }
