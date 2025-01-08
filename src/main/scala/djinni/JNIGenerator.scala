@@ -604,7 +604,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                 w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
                 w.wl(s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);")
                 w.wl("auto r = *ref == *otherRef;")
-                w.wl("return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));")
+                w.wl("return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));")
               }
           }
 
