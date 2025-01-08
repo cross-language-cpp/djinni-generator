@@ -15,6 +15,7 @@
 
 package djinni
 
+import djinni.ast.Interface.RequiresType
 import djinni.ast.Record.DerivingType
 import djinni.ast._
 import djinni.generatorTools._
@@ -318,6 +319,30 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   s"private native $ret native_$meth(long _nativeRef${preComma(params)});"
                 )
               }
+              
+              if (i.requiresTypes.contains(RequiresType.Eq)) {
+                w.wl
+                w.wl("@Override")
+                val nullableAnnotation =
+                  javaNullableAnnotation.map(_ + " ").getOrElse("")
+                w.w(s"public boolean equals(${nullableAnnotation}Object obj)")
+                  .braced {
+                    w.wl(
+                      "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                    )
+                    w.wl
+                    w.w(s"if (!(obj instanceof $javaClass))").braced {
+                    w.wl("return false;")
+                  }
+                  w.wl
+                  w.wl(
+                    s"return native_operator_equals(this.nativeRef, ($javaClass)obj);"
+                  )
+                }
+              }
+              w.wl(
+                s"private native boolean native_operator_equals(long _nativeRef, $javaClass other);"
+              )
 
               // Declare a native method for each of the interface's static methods.
               for (m <- i.methods if m.static) {
