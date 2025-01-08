@@ -15,6 +15,7 @@
 
 package djinni
 
+import djinni.ast.Interface.RequiresType
 import djinni.ast.Record.DerivingType
 import djinni.ast._
 import djinni.generatorTools._
@@ -743,6 +744,11 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
               w.wl(s"virtual $ret ${idCpp.method(m.ident)}${params
                   .mkString("(", ", ", ")")}$constFlag = 0;")
             }
+          }
+          // Requires
+          if (i.requiresTypes.contains(RequiresType.Eq)) {
+            w.wl
+            w.wl(s"virtual bool operator==(const ${self}& other) const = 0;")
           }
         }
       }

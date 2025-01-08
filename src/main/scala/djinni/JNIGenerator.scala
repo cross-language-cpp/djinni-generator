@@ -15,6 +15,7 @@
 
 package djinni
 
+import djinni.ast.Interface.RequiresType
 import djinni.ast._
 import djinni.generatorTools._
 import djinni.meta._
@@ -590,6 +591,22 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
               )
             }
           )
+        }
+        if (i.requiresTypes.contains(RequiresType.Eq)) {
+          val name = "native_operator_equals"
+          val methodNameMunged = name.replaceAllLiterally("_", "_1")
+          w.wl(
+            s"CJNIEXPORT jboolean JNICALL ${prefix}_00024CppProxy_$methodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef, jobject j_obj)"
+          ).braced {
+            w.w("try")
+              .bracedEnd(s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)") {
+                w.wl(s"DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);")
+                w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
+                w.wl(s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);")
+                w.wl("auto r = *ref == *otherRef;")
+                w.wl("return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));")
+              }
+          }
         }
       }
     }
