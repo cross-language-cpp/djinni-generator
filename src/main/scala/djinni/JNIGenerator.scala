@@ -593,10 +593,10 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
           )
         }
         if (i.requiresTypes.contains(RequiresType.Eq)) {
-          val name = "native_operator_equals"
-          val methodNameMunged = name.replaceAllLiterally("_", "_1")
+          val equalsName = "native_operator_equals"
+          val equalsMethodNameMunged = equalsName.replaceAllLiterally("_", "_1")
           w.wl(
-            s"CJNIEXPORT jboolean JNICALL ${prefix}_00024CppProxy_$methodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef, jobject j_obj)"
+            s"CJNIEXPORT jboolean JNICALL ${prefix}_00024CppProxy_$equalsMethodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef, jobject j_obj)"
           ).braced {
             w.w("try")
               .bracedEnd(s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)") {
@@ -604,9 +604,24 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                 w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
                 w.wl(s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);")
                 w.wl("auto r = *ref == *otherRef;")
-                w.wl("return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));")
+                w.wl("return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));")
               }
           }
+
+          val hashCodeName = "native_hash_code"
+          val hashCodeMethodNameMunged = hashCodeName.replaceAllLiterally("_", "_1")
+          w.wl(
+            s"CJNIEXPORT jint JNICALL ${prefix}_00024CppProxy_$hashCodeMethodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef)"
+          ).braced {
+            w.w("try")
+              .bracedEnd(s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)") {
+                w.wl(s"DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);")
+                w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
+                w.wl("auto r = ref->hashCode();")
+                w.wl("return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));")
+              }
+          }
+
         }
       }
     }

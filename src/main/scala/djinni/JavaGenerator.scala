@@ -321,6 +321,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
               }
               
               if (i.requiresTypes.contains(RequiresType.Eq)) {
+                // equals() override
                 w.wl
                 w.wl("@Override")
                 val nullableAnnotation =
@@ -339,9 +340,24 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     s"return native_operator_equals(this.nativeRef, ($javaClass)obj);"
                   )
                 }
+                w.wl(
+                  s"private native boolean native_operator_equals(long _nativeRef, $javaClass other);"
+                )
+
+                // hashCode() override
+                w.wl
+                w.wl("@Override")
+                w.w("public int hashCode()").braced {
+                  w.wl(
+                    "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                  )
+                  w.wl(
+                    s"return native_hash_code(this.nativeRef);"
+                  )
+                }
               }
               w.wl(
-                s"private native boolean native_operator_equals(long _nativeRef, $javaClass other);"
+                s"private native int native_hash_code(long _nativeRef);"
               )
 
               // Declare a native method for each of the interface's static methods.
