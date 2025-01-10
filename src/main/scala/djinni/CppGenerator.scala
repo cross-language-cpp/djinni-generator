@@ -753,9 +753,9 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             w.w("class Operators").bracedSemi {
             	w.wlOutdent("public:")
               if (i.requiresTypes.contains(RequiresType.Eq)) {
-                w.wl(s"static bool equals(const std::shared_ptr<${self}>& left, const std::shared_ptr<${self}>& right);")
+                w.wl(s"static bool equals(const ${self}& left, const ${self}& right);")
                 w.wl
-                w.wl(s"static int32_t hashCode(const std::shared_ptr<${self}>& object);")
+                w.wl(s"static int32_t hashCode(const ${self}& object);")
               }
             }
           }
