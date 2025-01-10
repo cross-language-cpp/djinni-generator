@@ -746,11 +746,18 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             }
           }
           // Requires
-          if (i.requiresTypes.contains(RequiresType.Eq)) {
+          if (i.requiresTypes.contains(RequiresType.Eq) || i.requiresTypes
+              .contains(RequiresType.Ord)
+          ) {
             w.wl
-            w.wl(s"virtual bool operator==(const ${self}& other) const = 0;")
-            w.wl
-            w.wl(s"virtual int32_t hashCode() const = 0;")
+            w.w("class Operators").bracedSemi {
+            	w.wlOutdent("public:")
+              if (i.requiresTypes.contains(RequiresType.Eq)) {
+                w.wl(s"static bool equals(const std::shared_ptr<${self}>& left, const std::shared_ptr<${self}>& right);")
+                w.wl
+                w.wl(s"static int32_t hashCode(const std::shared_ptr<${self}>& object);")
+              }
+            }
           }
         }
       }
