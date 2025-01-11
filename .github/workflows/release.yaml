@@ -8,15 +8,17 @@ name: Upload Release Assets
 jobs:
   buildUnix:
     runs-on: ubuntu-latest
+    env:
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
       - uses: actions/checkout@v4
-      - name: Caching dependencies
-        uses: actions/cache@v3
+      - name: Setup JDK
+        uses: actions/setup-java@v4
         with:
-          path: |
-            ~/.sbt
-            ~/.ivy2
-          key: scala-build-deps
+          distribution: temurin
+          java-version: 17
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
       - name: Building
         run: sbt assembly
       - uses: actions/upload-artifact@v4
