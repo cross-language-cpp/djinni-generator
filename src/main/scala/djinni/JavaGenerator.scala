@@ -355,10 +355,10 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     s"return native_hash_code(this.nativeRef);"
                   )
                 }
+                w.wl(
+                  s"private native int native_hash_code(long _nativeRef);"
+                )
               }
-              w.wl(
-                s"private native int native_hash_code(long _nativeRef);"
-              )
 
               // Declare a native method for each of the interface's static methods.
               for (m <- i.methods if m.static) {
