@@ -746,16 +746,32 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
             }
           }
           // Requires
-          if (i.requiresTypes.contains(RequiresType.Eq) || i.requiresTypes
-              .contains(RequiresType.Ord)
-          ) {
-            w.wl
-            w.w("class Operators").bracedSemi {
-            	w.wlOutdent("public:")
+          if (!i.requiresTypes.isEmpty) {
+            if (i.ext.cpp) {
+              w.wl
+              w.w("class Operators").bracedSemi {
+                w.wlOutdent("public:")
+                if (i.requiresTypes.contains(RequiresType.Eq)) {
+                  w.wl(s"static bool equals(const ${self}& left, const ${self}& right);")
+                  w.wl
+                  w.wl(s"static int32_t hashCode(const ${self}& object);")
+                }
+              }
+            }
+            
+            // TODO: how to apply formating rules to equals/compareTo/hashCode?
+            
+            if (i.ext.java) {
               if (i.requiresTypes.contains(RequiresType.Eq)) {
-                w.wl(s"static bool equals(const ${self}& left, const ${self}& right);")
                 w.wl
-                w.wl(s"static int32_t hashCode(const ${self}& object);")
+                w.wl(s"virtual bool equals(const ${self}& other) const = 0;")
+                w.wl
+                w.wl(s"virtual int hashCode() const = 0;")
+              }
+              
+              if (i.requiresTypes.contains(RequiresType.Ord)) {
+                w.wl
+                w.wl(s"virtual int compareTo(const ${self}& other) const = 0;")
               }
             }
           }

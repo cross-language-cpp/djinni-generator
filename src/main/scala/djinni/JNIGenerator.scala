@@ -361,6 +361,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
         w.wl(s"friend $baseType;")
         w.wl
         if (i.ext.java) {
+          w.wl("// i.ext.java - writeJniPrototype()")
           w.wl(
             s"class JavaProxy final : ::djinni::JavaProxyHandle<JavaProxy>, public $cppSelf"
           ).bracedSemi {
@@ -410,6 +411,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
       w.wl(s"$jniSelfWithParams::~$jniSelf() = default;")
       w.wl
       if (i.ext.java) {
+        w.wl("// i.ext.java - writeJniBody()")
         writeJniTypeParams(w, typeParams)
         w.wl(
           s"$jniSelfWithParams::JavaProxy::JavaProxy(JniType j) : Handle(::djinni::jniGetThreadEnv(), j) { }"
@@ -484,6 +486,7 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
         }
       }
       if (i.ext.cpp) {
+        w.wl("// i.ext.cpp - writeJniBody()")
         // Generate CEXPORT functions for JNI to call.
         val classIdentMunged = javaMarshal
           .fqTypename(ident, i)

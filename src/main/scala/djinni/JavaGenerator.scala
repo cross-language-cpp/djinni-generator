@@ -196,6 +196,12 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
         writeDocAnnotations(w, doc)
 
         javaAnnotationHeader.foreach(w.wl)
+        
+        val interfaces = scala.collection.mutable.ArrayBuffer[String]()
+        if (i.requiresTypes.contains(RequiresType.Ord))
+          interfaces += s"Comparable<$javaClass>"
+        val implementsSection = if (interfaces.isEmpty) "" 
+          else " implements " + interfaces.mkString(", ")
 
         // Generate an interface or an abstract class depending on whether the use
         // of Java interfaces was requested.
@@ -207,7 +213,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
         val innerClassAccessibility =
           if (spec.javaGenerateInterfaces) "" else "private "
         w.w(
-          s"${javaClassAccessModifierString}$classPrefix $javaClass$typeParamList"
+          s"${javaClassAccessModifierString}$classPrefix $javaClass$typeParamList$implementsSection"
         ).braced {
           val skipFirst = SkipFirst()
           generateJavaConstants(w, i.consts, spec.javaGenerateInterfaces)
@@ -262,6 +268,24 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
               w.wl
             }
           }
+          
+          if (i.ext.java) {
+            if (i.requiresTypes.contains(RequiresType.Eq)) {
+              w.wl
+              w.wl("@Override")
+              if (i.ext.java) {
+                w.wl("public abstract boolean equals(@Nullable Object obj);")
+              }
+            }
+
+            if (i.requiresTypes.contains(RequiresType.Ord)) {
+              w.wl
+              w.wl("@Override")
+              if (i.ext.java) {
+                w.wl(s"public abstract int compareTo($javaClass other);")
+              }
+            }
+          }
 
           if (i.ext.cpp) {
             w.wl
@@ -306,7 +330,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   m.params.map(p => idJava.local(p.ident)).mkString(", ")
                 val meth = idJava.method(m.ident)
                 w.wl
-                w.wl(s"@Override")
+                w.wl("@Override")
                 w.wl(s"public $ret $meth($params)$throwException").braced {
                   w.wl(
                     "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
