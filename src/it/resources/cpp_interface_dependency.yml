@@ -36,3 +36,10 @@ cs:
   header: '"InterfaceDependency.hpp"'
   typename: InterfaceDependency^
   reference: true
+wasm:
+  translator: '::InterfaceDependency'
+  header: '"InterfaceDependency.hpp"'
+  typename: InterfaceDependency
+ts:
+  typename: InterfaceDependency
+  module: "InterfaceDependency.ts"

@@ -11,3 +11,9 @@ src/it/resources/result/my_enum/python/my_enum.py
 src/it/resources/result/my_enum/cwrapper-headers/dh__my_enum.h
 src/it/resources/result/my_enum/cwrapper/dh__my_enum.hpp
 src/it/resources/result/my_enum/cwrapper/dh__my_enum.cpp
+src/it/resources/result/my_enum/wasm/my_enum.hpp
+src/it/resources/result/my_enum/wasm/my_enum.cpp
+src/it/resources/result/my_enum/ts/support-lib/DjinniModule.ts
+src/it/resources/result/my_enum/ts/support-lib/DjinniModule.js
+src/it/resources/result/my_enum/ts/module.ts
+
