@@ -599,26 +599,41 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
             s"CJNIEXPORT jboolean JNICALL ${prefix}_00024CppProxy_$equalsMethodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef, jobject j_obj)"
           ).braced {
             w.w("try")
-              .bracedEnd(s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)") {
+              .bracedEnd(
+                s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)"
+              ) {
                 w.wl(s"DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);")
-                w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
-                w.wl(s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);")
+                w.wl(
+                  s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);"
+                )
+                w.wl(
+                  s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);"
+                )
                 w.wl(s"auto r = $cppSelf::Operators::equals(*ref, *otherRef);")
-                w.wl("return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));")
+                w.wl(
+                  "return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));"
+                )
               }
           }
 
           val hashCodeName = "native_hash_code"
-          val hashCodeMethodNameMunged = hashCodeName.replaceAllLiterally("_", "_1")
+          val hashCodeMethodNameMunged =
+            hashCodeName.replaceAllLiterally("_", "_1")
           w.wl(
             s"CJNIEXPORT jint JNICALL ${prefix}_00024CppProxy_$hashCodeMethodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef)"
           ).braced {
             w.w("try")
-              .bracedEnd(s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)") {
+              .bracedEnd(
+                s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)"
+              ) {
                 w.wl(s"DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);")
-                w.wl(s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);")
+                w.wl(
+                  s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);"
+                )
                 w.wl(s"auto r = $cppSelf::Operators::hashCode(*ref);")
-                w.wl("return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));")
+                w.wl(
+                  "return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));"
+                )
               }
           }
 

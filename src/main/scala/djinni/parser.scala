@@ -211,10 +211,10 @@ case class Parser(includePaths: List[String]) {
       case ext ~ deriving =>
         Record(ext, List(), List(), deriving.getOrElse(Set[DerivingType]()))
     }
-    def externInterface: Parser[Interface] = interfaceHeader ~ opt(requires) ^^ { 
-      case ext ~ requires =>
+    def externInterface: Parser[Interface] =
+      interfaceHeader ~ opt(requires) ^^ { case ext ~ requires =>
         Interface(ext, List(), List(), requires.getOrElse(Set[RequiresType]()))
-    }
+      }
 
     def staticLabel: Parser[Boolean] = ("static ".r | "".r) ^^ {
       case "static " => true
@@ -237,8 +237,8 @@ case class Parser(includePaths: List[String]) {
       "requires" ~> parens(rep1sepend(ident, ",")) ^^ {
         _.map(ident =>
           ident.name match {
-            case "eq"         => Interface.RequiresType.Eq
-            case "ord"        => Interface.RequiresType.Ord
+            case "eq"  => Interface.RequiresType.Eq
+            case "ord" => Interface.RequiresType.Ord
             case _ =>
               return err(s"""Unrecognized requires type "${ident.name}"""")
           }

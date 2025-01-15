@@ -196,11 +196,12 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
         writeDocAnnotations(w, doc)
 
         javaAnnotationHeader.foreach(w.wl)
-        
+
         val interfaces = scala.collection.mutable.ArrayBuffer[String]()
         if (i.requiresTypes.contains(RequiresType.Ord))
           interfaces += s"Comparable<$javaClass>"
-        val implementsSection = if (interfaces.isEmpty) "" 
+        val implementsSection =
+          if (interfaces.isEmpty) ""
           else " implements " + interfaces.mkString(", ")
 
         // Generate an interface or an abstract class depending on whether the use
@@ -268,7 +269,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
               w.wl
             }
           }
-          
+
           if (i.ext.java) {
             if (i.requiresTypes.contains(RequiresType.Eq)) {
               w.wl
@@ -343,7 +344,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   s"private native $ret native_$meth(long _nativeRef${preComma(params)});"
                 )
               }
-              
+
               if (i.requiresTypes.contains(RequiresType.Eq)) {
                 // equals() override
                 w.wl
@@ -357,13 +358,13 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                     )
                     w.wl
                     w.w(s"if (!(obj instanceof $javaClass))").braced {
-                    w.wl("return false;")
+                      w.wl("return false;")
+                    }
+                    w.wl
+                    w.wl(
+                      s"return native_operator_equals(this.nativeRef, ($javaClass)obj);"
+                    )
                   }
-                  w.wl
-                  w.wl(
-                    s"return native_operator_equals(this.nativeRef, ($javaClass)obj);"
-                  )
-                }
                 w.wl(
                   s"private native boolean native_operator_equals(long _nativeRef, $javaClass other);"
                 )
