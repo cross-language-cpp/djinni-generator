@@ -1,0 +1,5 @@
+src/it/resources/result/requires/cpp-headers/requires_interface.hpp
+src/it/resources/result/requires/java/RequiresInterface.java
+src/it/resources/result/requires/jni/djinni_jni_main.cpp
+src/it/resources/result/requires/jni-headers/requires_interface.hpp
+src/it/resources/result/requires/jni/requires_interface.cpp

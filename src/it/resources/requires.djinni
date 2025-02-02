@@ -1,0 +1,3 @@
+requires_interface = interface +c {
+  some_method() : bool;
+} requires(eq)
