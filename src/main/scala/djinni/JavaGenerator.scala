@@ -270,24 +270,6 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
             }
           }
 
-          if (i.ext.java) {
-            if (i.requiresTypes.contains(RequiresType.Eq)) {
-              w.wl
-              w.wl("@Override")
-              if (i.ext.java) {
-                w.wl("public abstract boolean equals(@Nullable Object obj);")
-              }
-            }
-
-            if (i.requiresTypes.contains(RequiresType.Ord)) {
-              w.wl
-              w.wl("@Override")
-              if (i.ext.java) {
-                w.wl(s"public abstract int compareTo($javaClass other);")
-              }
-            }
-          }
-
           if (i.ext.cpp) {
             w.wl
             javaAnnotationHeader.foreach(w.wl)
