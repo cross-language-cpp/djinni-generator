@@ -13,6 +13,6 @@ public:
     public:
         static bool equals(const RequiresInterface& left, const RequiresInterface& right);
 
-        static int32_t hashCode(const RequiresInterface& object);
+        static int32_t hash_code(const RequiresInterface& object);
     };
 };

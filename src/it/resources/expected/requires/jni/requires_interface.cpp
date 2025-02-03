@@ -43,7 +43,7 @@ CJNIEXPORT jint JNICALL Java_djinni_it_RequiresInterface_00024CppProxy_native_1h
     try {
         DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);
         const auto& ref = ::djinni::objectFromHandleAddress<::RequiresInterface>(nativeRef);
-        auto r = ::RequiresInterface::Operators::hashCode(*ref);
+        auto r = ::RequiresInterface::Operators::hash_code(*ref);
         return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));
     } JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)
 }
