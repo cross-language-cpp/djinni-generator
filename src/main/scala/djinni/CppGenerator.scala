@@ -758,7 +758,9 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                   )
                   val hashCodeMethodName = idCpp.method("hash_code")
                   w.wl
-                  w.wl(s"static int32_t ${hashCodeMethodName}(const ${self}& object);")
+                  w.wl(
+                    s"static int32_t ${hashCodeMethodName}(const ${self}& object);"
+                  )
                 }
               }
             }

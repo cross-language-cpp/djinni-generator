@@ -610,7 +610,9 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                   s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);"
                 )
                 val equalsMethodName = idCpp.method("equals")
-                w.wl(s"auto r = $cppSelf::Operators::${equalsMethodName}(*ref, *otherRef);")
+                w.wl(
+                  s"auto r = $cppSelf::Operators::${equalsMethodName}(*ref, *otherRef);"
+                )
                 w.wl(
                   "return ::djinni::release(::djinni::Bool::fromCpp(jniEnv, r));"
                 )
@@ -632,7 +634,9 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
                   s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);"
                 )
                 val hashCodeMethodName = idCpp.method("hash_code")
-                w.wl(s"auto r = $cppSelf::Operators::${hashCodeMethodName}(*ref);")
+                w.wl(
+                  s"auto r = $cppSelf::Operators::${hashCodeMethodName}(*ref);"
+                )
                 w.wl(
                   "return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));"
                 )
