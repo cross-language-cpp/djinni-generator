@@ -935,7 +935,7 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     )
     assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
   }
-  
+
   it(
     "should generate equality or ordinality operators for interfaces that ask for them using the require clause"
   ) {
