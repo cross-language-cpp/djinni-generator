@@ -367,6 +367,27 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                 )
               }
 
+              if (i.requiresTypes.contains(RequiresType.Ord)) {
+                // compare() override
+                w.wl
+                w.wl("@Override")
+                val nullableAnnotation =
+                  javaNullableAnnotation.map(_ + " ").getOrElse("")
+                w.w(s"public int compareTo($javaClass obj)")
+                  .braced {
+                    w.wl(
+                      "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                    )
+                    w.wl
+                    w.wl(
+                      s"return native_compare(this.nativeRef, obj);"
+                    )
+                  }
+                w.wl(
+                  s"private native int native_compare(long _nativeRef, $javaClass other);"
+                )
+              }
+
               // Declare a native method for each of the interface's static methods.
               for (m <- i.methods if m.static) {
                 skipFirst { w.wl }

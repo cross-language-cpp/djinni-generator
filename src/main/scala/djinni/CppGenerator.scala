@@ -757,9 +757,14 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
                     s"static bool ${equalsMethodName}(const ${self}& left, const ${self}& right);"
                   )
                   val hashCodeMethodName = idCpp.method("hash_code")
-                  w.wl
                   w.wl(
                     s"static int32_t ${hashCodeMethodName}(const ${self}& object);"
+                  )
+                }
+                if (i.requiresTypes.contains(RequiresType.Ord)) {
+                  val compareMethodName = idCpp.method("compare")
+                  w.wl(
+                    s"static int32_t ${compareMethodName}(const ${self}& left, const ${self}& right);"
                   )
                 }
               }

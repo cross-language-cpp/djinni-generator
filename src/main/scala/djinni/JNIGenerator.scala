@@ -644,6 +644,37 @@ class JNIGenerator(spec: Spec) extends Generator(spec) {
           }
 
         }
+
+        if (i.requiresTypes.contains(RequiresType.Ord)) {
+          val compareName = "native_compare"
+          val comareMethodNameMunged =
+            compareName.replaceAllLiterally("_", "_1")
+          w.wl(
+            s"CJNIEXPORT jint JNICALL ${prefix}_00024CppProxy_$comareMethodNameMunged(JNIEnv* jniEnv, jobject /*this*/, jlong nativeRef, jobject j_obj)"
+          ).braced {
+            w.w("try")
+              .bracedEnd(
+                s" JNI_TRANSLATE_EXCEPTIONS_RETURN(jniEnv, 0 /* value doesn't matter */)"
+              ) {
+                w.wl(s"DJINNI_FUNCTION_PROLOGUE1(jniEnv, nativeRef);")
+                w.wl(
+                  s"const auto& ref = ::djinni::objectFromHandleAddress<$cppSelf>(nativeRef);"
+                )
+                w.wl(
+                  s"const auto& otherRef = ${withNs(Some(spec.jniNamespace), jniSelf)}::toCpp(jniEnv, j_obj);"
+                )
+                val compareMethodName = idCpp.method("compare")
+                w.wl(
+                  s"auto r = $cppSelf::Operators::${compareMethodName}(*ref, *otherRef);"
+                )
+                w.wl(
+                  "return ::djinni::release(::djinni::I32::fromCpp(jniEnv, r));"
+                )
+              }
+          }
+
+        }
+
       }
     }
 

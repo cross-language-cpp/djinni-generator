@@ -5,10 +5,10 @@ package djinni.it;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class RequiresInterface {
+public abstract class RequiresOrdInterface implements Comparable<RequiresOrdInterface> {
     public abstract boolean someMethod();
 
-    private static final class CppProxy extends RequiresInterface
+    private static final class CppProxy extends RequiresOrdInterface
     {
         private final long nativeRef;
         private final AtomicBoolean destroyed = new AtomicBoolean(false);
@@ -41,22 +41,11 @@ public abstract class RequiresInterface {
         private native boolean native_someMethod(long _nativeRef);
 
         @Override
-        public boolean equals(Object obj) {
+        public int compareTo(RequiresOrdInterface obj) {
             assert !this.destroyed.get() : "trying to use a destroyed object";
 
-            if (!(obj instanceof RequiresInterface)) {
-                return false;
-            }
-
-            return native_operator_equals(this.nativeRef, (RequiresInterface)obj);
+            return native_compare(this.nativeRef, obj);
         }
-        private native boolean native_operator_equals(long _nativeRef, RequiresInterface other);
-
-        @Override
-        public int hashCode() {
-            assert !this.destroyed.get() : "trying to use a destroyed object";
-            return native_hash_code(this.nativeRef);
-        }
-        private native int native_hash_code(long _nativeRef);
+        private native int native_compare(long _nativeRef, RequiresOrdInterface other);
     }
 }

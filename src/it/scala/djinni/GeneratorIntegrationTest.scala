@@ -945,10 +945,26 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     val idlFile = "requires"
 
     When("generating Java, JNI & C++ source")
-    val cppHeaderFilenames = CppHeaders("requires_interface.hpp")
-    val javaFilenames = Java("RequiresInterface.java")
-    val jniFilenames = Jni("requires_interface.cpp")
-    val jniHeaderFilenames = JniHeaders("requires_interface.hpp")
+    val cppHeaderFilenames = CppHeaders(
+      "requires_all_interface.hpp",
+      "requires_eq_interface.hpp",
+      "requires_ord_interface.hpp"
+    )
+    val javaFilenames = Java(
+      "RequiresAllInterface.java",
+      "RequiresEqInterface.java",
+      "RequiresOrdInterface.java"
+    )
+    val jniFilenames = Jni(
+      "requires_all_interface.cpp",
+      "requires_eq_interface.cpp",
+      "requires_ord_interface.cpp"
+    )
+    val jniHeaderFilenames = JniHeaders(
+      "requires_all_interface.hpp",
+      "requires_eq_interface.hpp",
+      "requires_ord_interface.hpp"
+    )
 
     val cmd = djinniParams(
       idlFile,
