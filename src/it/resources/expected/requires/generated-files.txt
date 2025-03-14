@@ -1,0 +1,13 @@
+src/it/resources/result/requires/cpp-headers/requires_eq_interface.hpp
+src/it/resources/result/requires/cpp-headers/requires_ord_interface.hpp
+src/it/resources/result/requires/cpp-headers/requires_all_interface.hpp
+src/it/resources/result/requires/java/RequiresEqInterface.java
+src/it/resources/result/requires/java/RequiresOrdInterface.java
+src/it/resources/result/requires/java/RequiresAllInterface.java
+src/it/resources/result/requires/jni/djinni_jni_main.cpp
+src/it/resources/result/requires/jni-headers/requires_eq_interface.hpp
+src/it/resources/result/requires/jni/requires_eq_interface.cpp
+src/it/resources/result/requires/jni-headers/requires_ord_interface.hpp
+src/it/resources/result/requires/jni/requires_ord_interface.cpp
+src/it/resources/result/requires/jni-headers/requires_all_interface.hpp
+src/it/resources/result/requires/jni/requires_all_interface.cpp

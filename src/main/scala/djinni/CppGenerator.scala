@@ -15,6 +15,7 @@
 
 package djinni
 
+import djinni.ast.Interface.RequiresType
 import djinni.ast.Record.DerivingType
 import djinni.ast._
 import djinni.generatorTools._
@@ -742,6 +743,31 @@ class CppGenerator(spec: Spec) extends Generator(spec) {
               val constFlag = if (m.const) " const" else ""
               w.wl(s"virtual $ret ${idCpp.method(m.ident)}${params
                   .mkString("(", ", ", ")")}$constFlag = 0;")
+            }
+          }
+          // Requires
+          if (!i.requiresTypes.isEmpty) {
+            if (i.ext.cpp) {
+              w.wl
+              w.w("class Operators").bracedSemi {
+                w.wlOutdent("public:")
+                if (i.requiresTypes.contains(RequiresType.Eq)) {
+                  val equalsMethodName = idCpp.method("equals")
+                  w.wl(
+                    s"static bool ${equalsMethodName}(const ${self}& left, const ${self}& right);"
+                  )
+                  val hashCodeMethodName = idCpp.method("hash_code")
+                  w.wl(
+                    s"static int32_t ${hashCodeMethodName}(const ${self}& object);"
+                  )
+                }
+                if (i.requiresTypes.contains(RequiresType.Ord)) {
+                  val compareMethodName = idCpp.method("compare")
+                  w.wl(
+                    s"static int32_t ${compareMethodName}(const ${self}& left, const ${self}& right);"
+                  )
+                }
+              }
             }
           }
         }

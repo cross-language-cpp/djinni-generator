@@ -15,6 +15,7 @@
 
 package djinni
 
+import djinni.ast.Interface.RequiresType
 import djinni.ast.Record.DerivingType
 import djinni.ast._
 import djinni.generatorTools._
@@ -196,6 +197,13 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
 
         javaAnnotationHeader.foreach(w.wl)
 
+        val interfaces = scala.collection.mutable.ArrayBuffer[String]()
+        if (i.requiresTypes.contains(RequiresType.Ord))
+          interfaces += s"Comparable<$javaClass>"
+        val implementsSection =
+          if (interfaces.isEmpty) ""
+          else " implements " + interfaces.mkString(", ")
+
         // Generate an interface or an abstract class depending on whether the use
         // of Java interfaces was requested.
         val classPrefix =
@@ -206,7 +214,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
         val innerClassAccessibility =
           if (spec.javaGenerateInterfaces) "" else "private "
         w.w(
-          s"${javaClassAccessModifierString}$classPrefix $javaClass$typeParamList"
+          s"${javaClassAccessModifierString}$classPrefix $javaClass$typeParamList$implementsSection"
         ).braced {
           val skipFirst = SkipFirst()
           generateJavaConstants(w, i.consts, spec.javaGenerateInterfaces)
@@ -305,7 +313,7 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                   m.params.map(p => idJava.local(p.ident)).mkString(", ")
                 val meth = idJava.method(m.ident)
                 w.wl
-                w.wl(s"@Override")
+                w.wl("@Override")
                 w.wl(s"public $ret $meth($params)$throwException").braced {
                   w.wl(
                     "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
@@ -316,6 +324,67 @@ class JavaGenerator(spec: Spec) extends Generator(spec) {
                 }
                 w.wl(
                   s"private native $ret native_$meth(long _nativeRef${preComma(params)});"
+                )
+              }
+
+              if (i.requiresTypes.contains(RequiresType.Eq)) {
+                // equals() override
+                w.wl
+                w.wl("@Override")
+                val nullableAnnotation =
+                  javaNullableAnnotation.map(_ + " ").getOrElse("")
+                w.w(s"public boolean equals(${nullableAnnotation}Object obj)")
+                  .braced {
+                    w.wl(
+                      "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                    )
+                    w.wl
+                    w.w(s"if (!(obj instanceof $javaClass))").braced {
+                      w.wl("return false;")
+                    }
+                    w.wl
+                    w.wl(
+                      s"return native_operator_equals(this.nativeRef, ($javaClass)obj);"
+                    )
+                  }
+                w.wl(
+                  s"private native boolean native_operator_equals(long _nativeRef, $javaClass other);"
+                )
+
+                // hashCode() override
+                w.wl
+                w.wl("@Override")
+                w.w("public int hashCode()").braced {
+                  w.wl(
+                    "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                  )
+                  w.wl(
+                    s"return native_hash_code(this.nativeRef);"
+                  )
+                }
+                w.wl(
+                  s"private native int native_hash_code(long _nativeRef);"
+                )
+              }
+
+              if (i.requiresTypes.contains(RequiresType.Ord)) {
+                // compare() override
+                w.wl
+                w.wl("@Override")
+                val nullableAnnotation =
+                  javaNullableAnnotation.map(_ + " ").getOrElse("")
+                w.w(s"public int compareTo($javaClass obj)")
+                  .braced {
+                    w.wl(
+                      "assert !this.destroyed.get() : \"trying to use a destroyed object\";"
+                    )
+                    w.wl
+                    w.wl(
+                      s"return native_compare(this.nativeRef, obj);"
+                    )
+                  }
+                w.wl(
+                  s"private native int native_compare(long _nativeRef, $javaClass other);"
                 )
               }
 

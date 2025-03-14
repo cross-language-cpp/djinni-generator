@@ -935,4 +935,56 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
     )
     assertFileContentEquals(idlFile, OBJC_HEADERS, objcHeaderFilenames)
   }
+
+  it(
+    "should generate equality or ordinality operators for interfaces that ask for them using the require clause"
+  ) {
+    Given(
+      "an IDL-file that contains a C++ iterface with the requires() clause"
+    )
+    val idlFile = "requires"
+
+    When("generating Java, JNI & C++ source")
+    val cppHeaderFilenames = CppHeaders(
+      "requires_all_interface.hpp",
+      "requires_eq_interface.hpp",
+      "requires_ord_interface.hpp"
+    )
+    val javaFilenames = Java(
+      "RequiresAllInterface.java",
+      "RequiresEqInterface.java",
+      "RequiresOrdInterface.java"
+    )
+    val jniFilenames = Jni(
+      "requires_all_interface.cpp",
+      "requires_eq_interface.cpp",
+      "requires_ord_interface.cpp"
+    )
+    val jniHeaderFilenames = JniHeaders(
+      "requires_all_interface.hpp",
+      "requires_eq_interface.hpp",
+      "requires_ord_interface.hpp"
+    )
+
+    val cmd = djinniParams(
+      idlFile,
+      cpp = true,
+      objc = false,
+      java = true,
+      python = false,
+      cWrapper = false,
+      cppCLI = false,
+      cppOmitDefaultRecordCtor = false
+    )
+
+    djinni(cmd)
+
+    Then(
+      "the interface with a requires() clause has generated the requested operator functions in C++ and hooked them up to equals() in the Java class via JNI"
+    )
+    assertFileContentEquals(idlFile, CPP_HEADERS, cppHeaderFilenames)
+    assertFileContentEquals(idlFile, JAVA, javaFilenames)
+    assertFileContentEquals(idlFile, JNI, jniFilenames)
+    assertFileContentEquals(idlFile, JNI_HEADERS, jniHeaderFilenames)
+  }
 }
