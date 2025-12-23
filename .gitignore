@@ -22,3 +22,8 @@ ztest/
 # OS specific
 .DS_Store
 
+
+bazel-bin
+bazel-djinni-generator
+bazel-out
+bazel-testlogs

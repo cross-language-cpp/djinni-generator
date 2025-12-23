@@ -1,10 +1,10 @@
 import sbtassembly.AssemblyPlugin.defaultUniversalScript
 
-ThisBuild / scalaVersion := "2.12.18"
+ThisBuild / scalaVersion := "2.12.20"
 ThisBuild / organization := "com.github.cross-language-cpp"
 
 ThisBuild / semanticdbEnabled := true // enable SemanticDB
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision // use Scalafix compatible version
+ThisBuild / semanticdbVersion := "4.13.10" // latest available version
 
 // Keep this as a reminder, we will use that later
 // ThisBuild / scalacOptions += "-Ywarn-unused"

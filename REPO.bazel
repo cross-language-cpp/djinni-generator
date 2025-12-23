@@ -1,0 +1,15 @@
+"""Repository configuration for djinni-generator"""
+
+# Repository boundary - mark directories to ignore
+ignored_directories = [
+    "target",
+    "project/target",
+    "project/project/target",
+    ".bloop",
+    ".bsp",
+    ".metals",
+    ".vscode",
+    ".idea",
+    ".cache",
+    "test/result",
+]

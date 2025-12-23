@@ -1,0 +1,67 @@
+"""Djinni generator - Cross-language bindings generator for C++, Java, Objective-C"""
+
+module(
+    name = "djinni-generator",
+    version = "1.4.1",
+)
+
+# MODULE.bazel
+
+bazel_dep(name = "rules_scala", version = "7.1.2")
+
+# Selects the Scala version and other configuration parameters.
+#
+# 2.12 is the default version. Use other versions by passing them explicitly, as
+# illustrated below.
+#
+# See the documentation of `_settings_attrs` in `scala/extensions/config.bzl`
+# for other available parameters.
+#
+# You may define your own custom toolchain using Maven artifact dependencies
+# configured by your `WORKSPACE` file, imported using an external loader like
+# https://github.com/bazelbuild/rules_jvm_external. See docs/scala_toolchain.md.
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+)
+scala_config.settings(scala_version = "2.12.20")
+
+# See the `scala/extensions/deps.bzl` docstring for a high level description of
+# the tag classes exported by this module extension.
+scala_deps = use_extension(
+    "@rules_scala//scala/extensions:deps.bzl",
+    "scala_deps",
+)
+
+# Defines a default toolchain repo for the configured Scala version that loads
+# Maven deps like the Scala compiler and standard libs. Enable and configure
+# other builtin toolchains by instantiating their corresponding tag classes.
+# See the documentation in `scala/extensions/deps.bzl` for all builtin
+# toolchain configuration options.
+#
+# On production projects, you may consider defining a custom toolchain to use
+# your project's required dependencies instead. In that case, you can omit using
+# the module extension and this next line altogether. Or, you can still use the
+# module extension to instantiate other optional `rules_scala` toolchains
+# without it.
+scala_deps.scala()
+scala_deps.scalatest()
+
+# Add Maven dependencies for djinni
+bazel_dep(name = "rules_jvm_external", version = "6.4")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        "org.scala-lang.modules:scala-parser-combinators_2.12:2.1.0",
+        "org.yaml:snakeyaml:1.29",
+        "com.github.scopt:scopt_2.12:4.0.1",
+        "commons-io:commons-io:2.11.0",
+        "org.scalactic:scalactic_2.12:3.2.10",
+        "org.scalatest:scalatest_2.12:3.2.10",
+    ],
+    repositories = [
+        "https://repo1.maven.org/maven2",
+    ],
+)
+use_repo(maven, "maven")

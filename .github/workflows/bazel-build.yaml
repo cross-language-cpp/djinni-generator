@@ -1,0 +1,34 @@
+name: build bazel
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+#          - windows-latest
+    steps:
+      - uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          external-cache: true
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build (fastbuild)
+        run: bazel build //...
+
+      - name: Test (fastbuild)
+        run: bazel test //...
