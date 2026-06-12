@@ -53,6 +53,7 @@ object Main {
     var javaNullableAnnotation: Option[String] = None
     var javaNonnullAnnotation: Option[String] = None
     var javaImplementAndroidOsParcelable: Boolean = false
+    var javaNonBlockingFinalizers: Boolean = false
     var javaUseFinalForRecord: Boolean = true
     var jniOutFolder: Option[File] = None
     var jniHeaderOutFolderOptional: Option[File] = None
@@ -193,6 +194,12 @@ object Main {
         .foreach(x => javaUseFinalForRecord = x)
         .text(
           "Whether generated Java classes for records should be marked 'final' (default: true). "
+        )
+      opt[Boolean]("java-non-blocking-finalizers")
+        .valueName("<true/false>")
+        .foreach(x => javaNonBlockingFinalizers = x)
+        .text(
+          "Generated CppProxy finalizers enqueue the native destruction to a dedicated daemon thread instead of destroying inline on the GC finalizer thread, which e.g. Android kills after 10 seconds if a native destructor blocks on a lock (default: false)."
         )
       note("\nC++")
       opt[File]("cpp-out")
@@ -702,6 +709,7 @@ object Main {
       javaNonnullAnnotation,
       javaImplementAndroidOsParcelable,
       javaUseFinalForRecord,
+      javaNonBlockingFinalizers,
       cppOutFolder,
       cppHeaderOutFolder,
       cppIncludePrefix,

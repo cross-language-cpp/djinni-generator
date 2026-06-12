@@ -87,7 +87,8 @@ class IntegrationTest extends AnyFunSpec {
       objc: Boolean = true,
       useNNHeader: Boolean = false,
       cppOmitDefaultRecordCtor: Boolean = false,
-      cppJsonSerialization: Option[String] = None
+      cppJsonSerialization: Option[String] = None,
+      javaNonBlockingFinalizers: Boolean = false
   ): String = {
     var cmd = s"--idl src/it/resources/$idl.djinni"
     if (cpp) {
@@ -119,6 +120,9 @@ class IntegrationTest extends AnyFunSpec {
     }
     if (cppJsonSerialization.isDefined) {
       cmd += s" --cpp-json-serialization ${cppJsonSerialization.get}"
+    }
+    if (javaNonBlockingFinalizers) {
+      cmd += " --java-non-blocking-finalizers true"
     }
     cmd += s" --list-out-files $baseOutputPath/$idl/generated-files.txt"
     return cmd

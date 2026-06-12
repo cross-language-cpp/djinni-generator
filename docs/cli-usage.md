@@ -52,6 +52,7 @@ djinni \
 | `--java-nullable-annotation <nullable-annotation-class>` | Java annotation (`@Nullable`) to place on all fields and return values that are optional                   |
 | `--java-nonnull-annotation <nonnull-annotation-class>`   | Java annotation (`@Nonnull`) to place on all fields and return values that are not optional                |
 | `--java-implement-android-os-parcelable <true/false>`    | all generated java classes will implement the interface `android.os.Parcelable`                            |
+| `--java-non-blocking-finalizers <true/false>`            | generated `CppProxy` finalizers enqueue the native destruction to a dedicated daemon thread instead of destroying inline on the GC finalizer thread, which e.g. Android kills after 10 seconds if a native destructor blocks on a lock (default: `false`)   |
 | `--java-use-final-for-record <use-final-for-record>`     | Whether generated Java classes for records should be marked `final` (default: `true`).                     |
 
 ### C++

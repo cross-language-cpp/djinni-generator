@@ -565,6 +565,33 @@ class GeneratorIntegrationTest extends IntegrationTest with GivenWhenThen {
   }
 
   it(
+    "should route CppProxy destruction through the destruction queue when --java-non-blocking-finalizers is set"
+  ) {
+    Given("an IDL-file with a C++ implemented interface")
+    val idlFile = "non_blocking_finalizers"
+
+    When("generating Java source with --java-non-blocking-finalizers true")
+    val javaFilenames = Java(
+      "NonBlockingFinalizersInterface.java",
+      "DjinniNativeDestructionQueue.java"
+    )
+    val cmd = djinniParams(
+      idlFile,
+      cpp = false,
+      objc = false,
+      java = true,
+      javaNonBlockingFinalizers = true
+    )
+
+    djinni(cmd)
+
+    Then(
+      "finalize() enqueues the destruction and the queue support class is emitted"
+    )
+    assertFileContentEquals(idlFile, JAVA, javaFilenames)
+  }
+
+  it(
     "should generate @Deprecated annotations for Java from @deprecated notes in comments"
   ) {
     Given(
