@@ -206,9 +206,8 @@ class IntegrationTest extends AnyFunSpec {
   ) {
     val directory = new Directory(new File(baseOutputPath))
     if (directory.deleteRecursively()) {
-      System.console.printf(
-        "[info] Clean up old generated test output/files.\n"
-      )
+      // Not System.console — it is null when running non-interactively (e.g. CI, piped output).
+      println("[info] Clean up old generated test output/files.")
     }
   }
 
